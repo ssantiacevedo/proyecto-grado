@@ -9,3 +9,13 @@ print('####Object Properties#####')
 print(list(onto.object_properties()))
 print('####Data Properties#####')
 print(list(onto.data_properties()))
+
+print([
+  { 'classes': list(onto.classes())},
+  { 'object_properties': list(onto.object_properties())},
+  { 'data_properties': list(onto.data_properties())},
+])
+# def data_to_json(data, name):
+#   res = []
+#   for item in data:
+#     res.append({ name: })

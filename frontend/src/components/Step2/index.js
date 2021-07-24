@@ -3,10 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { Step2Container, Text, StyledInput, IconText } from './Step2.styled';
 
-const Step2 = () => {
+const Step2 = ({ setUploaded }) => {
   const [file, setFile ] = useState({file: '', name: ''})
 
   const handleInputChange = (e) => {
+    setUploaded(true);
     const { files } = e.target;
     setFile({file: files?.[0], name: files?.[0].name});
   };

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCloudUploadAlt, faPlusSquare, faMinusSquare } from '@fortawesome/free-solid-svg-icons'
 import { Text, Step1Container, AddButon, ButtonContainer, StyledInput, IconText } from './Step1.styled';
 
-const Step1 = () => {
+const Step1 = ({ setUploaded }) => {
   const [inputLists, setInputLists] = useState([{ ontology: '', name: '' }, { ontology: '', name: '' }])
 
   const handleAddClick = () => {
@@ -18,13 +18,13 @@ const Step1 = () => {
   };
 
   const handleInputChange = (e, index) => {
+    setUploaded(true);
     const { files } = e.target;
     const list = [...inputLists];
     list[index] = {file: files?.[0], name: files?.[0].name};
     setInputLists(list);
   };
 
-  console.log(inputLists);
   return (
     <Step1Container>
       <Text>Upload your ontologies (minimum 2)</Text>
