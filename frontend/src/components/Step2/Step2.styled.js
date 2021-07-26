@@ -5,6 +5,7 @@ export const Text = styled.span`
   font-family: 'Roboto';
   font-size: 15px;
   margin-bottom: 10px;
+  text-align: center;
 `;
 
 export const IconText = styled.span`
