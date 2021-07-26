@@ -3,7 +3,9 @@ version: "3"
 services:
   django:
     build: ./backend
-    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    command: ["python", "-u", "manage.py", "runserver", "0.0.0.0:8000"]
+    environment:
+      - PYTHONUNBUFFERED=1
     volumes:
       - ./backend:/app/api
     ports:
