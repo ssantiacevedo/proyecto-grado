@@ -1,10 +1,9 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { Step2Container, Text, StyledInput, IconText } from './Step2.styled';
 
-const Step2 = ({ setUploaded }) => {
-  const [file, setFile ] = useState({file: '', name: ''})
+const Step2 = ({ setUploaded, file, setFile }) => {
 
   const handleInputChange = (e) => {
     setUploaded(true);

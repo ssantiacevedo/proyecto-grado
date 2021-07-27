@@ -1,10 +1,10 @@
-import React, { useState, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCloudUploadAlt, faPlusSquare, faMinusSquare } from '@fortawesome/free-solid-svg-icons'
 import { Text, Step1Container, AddButon, ButtonContainer, StyledInput, IconText } from './Step1.styled';
 
-const Step1 = ({ setUploaded }) => {
-  const [inputLists, setInputLists] = useState([{ ontology: '', name: '' }, { ontology: '', name: '' }])
+const Step1 = ({ setUploaded, inputLists, setInputLists }) => {
+  // const [inputLists, setInputLists] = useState([{ ontology: '', name: '' }, { ontology: '', name: '' }])
 
   const handleAddClick = () => {
     setInputLists([...inputLists, { ontology: ''  }]);
