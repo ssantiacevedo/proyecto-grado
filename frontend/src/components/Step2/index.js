@@ -1,29 +1,50 @@
-import React, { Fragment } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faDatabase } from '@fortawesome/free-solid-svg-icons'
-import { Step2Container, Text, StyledInput, IconText } from './Step2.styled';
+import React, { Fragment, useEffect } from "react";
+import { Step2Container, Text, Input, Label } from "./Step2.styled";
 
-const Step2 = ({ setUploaded, file, setFile }) => {
+const Step2 = ({
+  setUploaded,
+  dbName,
+  setDbName,
+  dbPass,
+  setDbPass,
+  dbUser,
+  setDbUser,
+}) => {
 
-  const handleInputChange = (e) => {
-    setUploaded(true);
-    const { files } = e.target;
-    setFile({file: files?.[0], name: files?.[0].name});
-  };
+  useEffect(() => {
+    if(dbName.length && dbPass.length && dbUser.length) {
+      setUploaded(true);
+    } else {
+      setUploaded(false);
+    }
+  }, [dbName, dbPass, dbUser]);
 
   return (
     <Step2Container>
       <Text>Upload your Database</Text>
-        <Fragment>
-          <StyledInput htmlFor='file-upload'>
-            <FontAwesomeIcon icon={faDatabase} />
-            <IconText> Upload Database</IconText>
-          </StyledInput>
-          {file?.name && <Text>File name: {file.name}</Text>}
-          <input onChange={e => handleInputChange(e)} id='file-upload' name='database' type="file" accept="application/sql, text/sql, .sql, .txt" style={{display: 'none'}}/>
-        </Fragment>
+      <Fragment>
+        <Label>Database Name</Label>
+        <Input
+          placeholder="Name"
+          value={dbName}
+          onChange={(e) => setDbName(e.target.value)}
+        />
+        <Label>Database User</Label>
+        <Input
+          placeholder="User"
+          value={dbUser}
+          onChange={(e) => setDbUser(e.target.value)}
+        />
+        <Label>Database Password</Label>
+        <Input
+          type="password"
+          placeholder="Password"
+          value={dbPass}
+          onChange={(e) => setDbPass(e.target.value)}
+        />
+      </Fragment>
     </Step2Container>
-  )
-}
+  );
+};
 
 export default Step2;

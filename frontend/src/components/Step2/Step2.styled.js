@@ -8,12 +8,6 @@ export const Text = styled.span`
   text-align: center;
 `;
 
-export const IconText = styled.span`
-  font-family: 'Roboto';
-  font-size: 13px;
-  margin-left: 10px;
-`;
-
 export const Step2Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -23,15 +17,22 @@ export const Step2Container = styled.div`
   align-items: flex-start;
 `;
 
-export const StyledInput = styled.label`
-  border: 1px solid ${palette.beta800gray};
+export const Label = styled.span`
+  font-family: 'Roboto';
+  font-size: 15px;
+  text-align: center;
+  margin: 0.5rem 0;
+`;
+
+export const Input = styled.input`
   display: inline-block;
   padding: 6px 12px;
-  cursor: pointer;
   margin: 5px 0;
   font-family: 'Roboto';
   font-size: 13px;
   border-radius: 6px;
-  background-color: ${palette.beta800gray};
-  color: white;
+  border: 1px solid ${palette.beta800gray};
+  color: ${palette.beta800gray};
+  outline: none;
+  width: 50%;
 `;
