@@ -2,6 +2,8 @@ from django.db import models
 import uuid
 
 class Ontology(models.Model):
+    class Meta:
+        verbose_name_plural = "Ontologies"
 
     URI = 'URI'
     FILE = 'FILE'
@@ -17,6 +19,10 @@ class Ontology(models.Model):
         verbose_name='Type of the ontology uploaded')
 
 class RelationalDB(models.Model):
+
+    def __str__(self):
+        return self.relational_db_name
+
     relational_db_name = models.CharField(max_length=120, blank=True, null=True)
     relational_db_user = models.CharField(max_length=120, blank=True, null=True)
     relational_db_password = models.CharField(max_length=120, blank=True, null=True)

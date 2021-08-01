@@ -29,7 +29,7 @@ export const SubTitle = styled.div`
   font-family: 'Roboto';
   font-size: 15px;
   text-align: center;
-  color: ${palette.darkGray};
+  color: ${palette.black};
 `;
 
 export const CardContainer = styled.div`

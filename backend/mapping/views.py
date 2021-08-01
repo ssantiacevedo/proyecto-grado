@@ -40,10 +40,16 @@ class RelationalDBView(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        db_info = RelationalDB(relational_db_name=db_name, relational_db_user=db_user, relational_db_password=db_password)
+        connection = RelationalDB.objects.filter(relational_db_name=db_name)
+        if connection:
+            connection.relational_db_user = db_user
+            connection.relational_db_password = db_password
+        else:
+            connection = RelationalDB(relational_db_name=db_name, relational_db_user=db_user, relational_db_password=db_password)
+
         res = get_database_info(db_name, db_user, db_password)
         try:
-            db_info.save()
+            connection.save()
             return Response(res, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(e.__str__(), status=400)
