@@ -6,16 +6,18 @@ import StepCard from '../../components/StepCard';
 import DBDataDisplay from '../../components/DBDataDisplay';
 import OntoDataDisplay from '../../components/OntoDataDisplay';
 
-import { dataDB, dataOnto } from '../../data/dummy';
+import { useDataContext } from '../../context/Context';
 
 const Mappings = () => {
+  const { mappingData, ontologyData } = useDataContext();
+
   return (
     <MappingPage>
       <StepCard expanded number={1} title={'Database Elements'} description={'Upload your input ontologies in .owl'}>
-        <DBDataDisplay data={dataDB} />
+        <DBDataDisplay data={mappingData} />
       </StepCard>
       <StepCard expanded number={2} title={'Ontologies Elements'} description={'Upload your .sql for database'}>
-        <OntoDataDisplay data={dataOnto}/>
+        <OntoDataDisplay data={ontologyData}/>
       </StepCard>
     </MappingPage>
   );

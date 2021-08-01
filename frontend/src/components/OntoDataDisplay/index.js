@@ -7,7 +7,7 @@ const OntoDataDisplay = ({ data }) => {
   return (
     <OntoDataDisplayContainer>
       <Text>Your Ontologies Elements</Text>
-      {data.map((x, i) => (
+      {data?.map((x, i) => (
         <Fragment key={i}>
           <StyledInput htmlFor={`file-upload-${i}`}>
             <TableNameContainer>

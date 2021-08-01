@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import RelationalDB, Ontology
 
-# Register your models here.
+admin.site.register(RelationalDB)
+admin.site.register(Ontology)

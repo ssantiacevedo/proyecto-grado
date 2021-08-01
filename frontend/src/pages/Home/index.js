@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axiosInstance from "../../axios";
-import { CREATE_DB } from "../../axios/routes";
 import CardPage from "../../components/CardPage";
 import StepCard from "../../components/StepCard";
 
@@ -9,13 +8,15 @@ import Step2 from "../../components/Step2";
 import Step3 from "../../components/Step3";
 
 import { useHistory } from "react-router-dom";
+import { useDataContext } from '../../context/Context';
 
 const Home = () => {
   const [dbUploaded, setDbUploaded] = useState(false);
   const [ontologyUploaded, setOntologyUploaded] = useState(false);
-  const [inputLists, setInputLists] = useState([{ type: "file", ontology: "", name: "" }]);
+  const [inputLists, setInputLists] = useState([{ type:"uri", uri: "" }]);
   const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
 
+  const { getMappingElements, getOntoElementsWithUri } = useDataContext();
   // DB Form
   const [dbName, setDbName] = useState("");
   const [dbPass, setDbPass] = useState("");
@@ -23,7 +24,7 @@ const Home = () => {
 
   const history = useHistory();
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     // var formData = new FormData();
     // formData.append("db", file);
     // axiosInstance.post(CREATE_DB, formData, {
@@ -33,12 +34,10 @@ const Home = () => {
     // }).then(
     //   history.push('/mappings')
     // )
-    // TODO: Add ontologies to send that with an uuid
-    // axiosInstance.post(CREATE_DB, { 
-    //   name: dbName,
-    //   user: dbUser,
-    //   password: dbPass 
-    // });
+
+    await getMappingElements(dbName, dbUser, dbPass);
+    await getOntoElementsWithUri(inputLists)
+    history.push('/mappings')
   };
   const disabledMapping = !dbUploaded || !ontologyUploaded;
   return (

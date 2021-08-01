@@ -4,22 +4,46 @@ from rest_framework.response import Response
 from rest_framework import views
 from owlready2 import *
 from get_table_names_from_create_table import get_database_info
+from process_ontology import get_ontology_info_from_uri
 import time
-
+from .models import RelationalDB, Ontology
 
 class OntologyView(views.APIView):
 
     def post(self, request):  # noqa C901
-        # TODO: save .owl file as an Ontology model.
-        return Response({"message": "OK"})
+        data = request.data
+        if 'uris' in data:
+            res = [] 
+            uris = data['uris']
+            for uri in uris:
+                onto_info = Ontology(ontology_type='URI', ontology_uri=uri['uri'])
+                res += get_ontology_info_from_uri(uri['uri'])
+                try:
+                    onto_info.save()
+                except Exception as e:
+                    return Response(e.__str__(), status=400)
+            return Response(res, status=status.HTTP_200_OK)
 
+        return Response(status=status.HTTP_200_OK)
 
 class RelationalDBView(views.APIView):
 
     def post(self, request):  # noqa C901
-        # TODO: save .sql file as a RelationalDB model.
-        # TODO: change the following code
         data = request.data
-        res = get_database_info(data['name'], data['user'], data['password'])
-        # print(res, request.data, data['name'])
-        return Response({"data": res})
+        try:
+            db_user = data['user']
+            db_name = data['name']
+            db_password = data['password']
+        except KeyError as e:
+            return Response(
+                data={'error': 'Fields are missing'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        db_info = RelationalDB(relational_db_name=db_name, relational_db_user=db_user, relational_db_password=db_password)
+        res = get_database_info(db_name, db_user, db_password)
+        try:
+            db_info.save()
+            return Response(res, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(e.__str__(), status=400)
