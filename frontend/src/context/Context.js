@@ -22,13 +22,14 @@ function DataContextProvider(props) {
     setUuid(uuidV4);
   }, []);
 
-  const getMappingElements = (dbName, dbUser, dbPass) => {
+  const getMappingElements = (dbName, dbUser, dbPort, dbPass) => {
     setMappingData([]);
     axiosInstance
       .post(CREATE_DB, {
         uuid,
         name: dbName,
         user: dbUser,
+        port: dbPort,
         password: dbPass,
       })
       .then((res) => {
@@ -37,12 +38,12 @@ function DataContextProvider(props) {
       });
   };
 
-  const getOntoElementsWithUri = (uri) => {
+  const getOntoElementsWithUri = (owls) => {
     setOntologyData([]);
     axiosInstance
       .post(CREATE_ONTOLOGY, {
         uuid,
-        uris: uri,
+        owls: owls,
       })
       .then((res) => {
         console.log(res.data);

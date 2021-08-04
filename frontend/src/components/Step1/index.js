@@ -26,7 +26,7 @@ const Step1 = ({
   setOntologyMethod,
 }) => {
   const handleAddClick = () => {
-    setInputLists([...inputLists, { type:"uri", uri: "" }]);
+    setInputLists([...inputLists, { type: "uri", uri: "" }]);
     setOntologyMethod([...ontologyMethodList, { choice: "uri" }]);
   };
 

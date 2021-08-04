@@ -26,6 +26,7 @@ class RelationalDB(models.Model):
     relational_db_name = models.CharField(max_length=120, blank=True, null=True)
     relational_db_user = models.CharField(max_length=120, blank=True, null=True)
     relational_db_password = models.CharField(max_length=120, blank=True, null=True)
+    relational_db_port = models.IntegerField(null=True, blank=True)
 
 class MappingProcess(models.Model):
 
@@ -38,8 +39,8 @@ class MappingProcess(models.Model):
                         (MAPPING_DONE, 'Mapping done'))
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ontologies = models.ForeignKey(Ontology, on_delete=models.CASCADE)
-    relational_db = models.OneToOneField(RelationalDB, on_delete=models.CASCADE)
+    ontologies = models.ForeignKey(Ontology, on_delete=models.CASCADE, null=True)
+    relational_db = models.ForeignKey(RelationalDB, on_delete=models.CASCADE, null=True)
     state = models.CharField(
         choices=PROCESS_STATES,
         default=ONTOLOGIES_ENTERED,
