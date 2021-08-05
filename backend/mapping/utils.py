@@ -45,7 +45,7 @@ def get_ontology_info_from_uri(uri, is_file):
     # onto = get_ontology("http://www.lesfleursdunormal.fr/static/_downloads/pizza_onto.owl").load()
 
     if is_file:
-        onto = get_ontology("file://" + uri).load()
+        onto = get_ontology("file://media/" + uri).load()
     else:
         onto = get_ontology(uri).load()
 

@@ -1,14 +1,27 @@
-import React, { Fragment } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThList, faMinus, faCube, faDatabase } from '@fortawesome/free-solid-svg-icons'
-import { Text, OntoDataDisplayContainer, TableNameContainer, ColumnNameContainer, StyledInput, ColumnsContainer } from './OntoDataDisplay';
+import React, { Fragment } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faThList,
+  faMinus,
+  faCube,
+  faDatabase,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  Text,
+  OntoDataDisplayContainer,
+  TableNameContainer,
+  ColumnNameContainer,
+  StyledInput,
+  ColumnsContainer,
+  OntoContainer,
+} from "./OntoDataDisplay";
 
 const OntoDataDisplay = ({ data }) => {
   return (
     <OntoDataDisplayContainer>
       <Text>Your Ontologies Elements</Text>
       {data?.map((x, i) => (
-        <Fragment key={i}>
+        <Fragment key={`ontology-${i}`}>
           <StyledInput htmlFor={`file-upload-${i}`}>
             <TableNameContainer>
               {x?.classes && (
@@ -31,7 +44,7 @@ const OntoDataDisplay = ({ data }) => {
               )}
             </TableNameContainer>
             <ColumnsContainer>
-              {x?.classes?.map(name => (
+              {x?.classes?.map((name) => (
                 <ColumnNameContainer>
                   <FontAwesomeIcon icon={faMinus} />
                   <Text>{name}</Text>
@@ -39,7 +52,7 @@ const OntoDataDisplay = ({ data }) => {
               ))}
             </ColumnsContainer>
             <ColumnsContainer>
-              {x?.object_properties?.map(name => (
+              {x?.object_properties?.map((name) => (
                 <ColumnNameContainer>
                   <FontAwesomeIcon icon={faMinus} />
                   <Text>{name}</Text>
@@ -47,7 +60,7 @@ const OntoDataDisplay = ({ data }) => {
               ))}
             </ColumnsContainer>
             <ColumnsContainer>
-              {x?.data_properties?.map(name => (
+              {x?.data_properties?.map((name) => (
                 <ColumnNameContainer>
                   <FontAwesomeIcon icon={faMinus} />
                   <Text>{name}</Text>
@@ -58,7 +71,7 @@ const OntoDataDisplay = ({ data }) => {
         </Fragment>
       ))}
     </OntoDataDisplayContainer>
-  )
-}
+  );
+};
 
 export default OntoDataDisplay;

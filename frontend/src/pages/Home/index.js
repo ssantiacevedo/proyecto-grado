@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axiosInstance from "../../axios";
 import CardPage from "../../components/CardPage";
 import StepCard from "../../components/StepCard";
@@ -16,7 +16,7 @@ const Home = () => {
   const [inputLists, setInputLists] = useState([{ type: "uri", uri: "" }]);
   const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
 
-  const { getMappingElements, getOntoElementsWithUri } = useDataContext();
+  const { getDbElements, getOntoElementsWithFile, getOntoElementsWithUris, resetOntologyElements } = useDataContext();
   // DB Form
   const [dbName, setDbName] = useState("");
   const [dbPass, setDbPass] = useState("");
@@ -25,20 +25,23 @@ const Home = () => {
 
   const history = useHistory();
 
-  const handleContinue = async () => {
-    // var formData = new FormData();
-    // formData.append("onto", inputLists[0].file);
-    // axiosInstance
-    //   .post("/mapping/ontologies/", formData, {
-    //     headers: {
-    //       "Content-Type":
-    //         "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
-    //     },
-    //   })
-    //   .then(history.push("/mappings"));
+  useEffect(() => {
+    resetOntologyElements();
+  }, []);
 
-    await getMappingElements(dbName, dbUser, dbPort, dbPass);
-    await getOntoElementsWithUri(inputLists);
+  const handleContinue = async () => {
+
+    const uris = [...inputLists].filter(input => input.type == 'uri');
+    const files = [...inputLists].filter(input => input.type == 'file');
+    var formData = new FormData();
+
+    files.map(file => {
+      formData.append("onto", file?.file);
+    })
+
+    await getOntoElementsWithFile(formData);
+    await getOntoElementsWithUris(uris);
+    await getDbElements(dbName, dbUser, dbPort, dbPass);
     history.push("/mappings");
   };
   const disabledMapping = !dbUploaded || !ontologyUploaded;

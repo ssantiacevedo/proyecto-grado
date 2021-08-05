@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { palette } from '../../theme/palette';
 
 export const Text = styled.span`
   font-family: 'Roboto';
@@ -56,4 +57,11 @@ export const StyledInput = styled.label`
   max-width: 90%;
   width: 90%;
   border-radius: 6px;
+`;
+
+export const OntoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid ${palette.alpha50Blue};
+  margin: 10px 0;
 `;

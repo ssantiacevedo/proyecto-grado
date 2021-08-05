@@ -9,7 +9,7 @@ const DBDisplay = ({ data }) => {
     <DBDataDisplayContainer>
       <Text>Your DB Elements</Text>
       {data?.map((x, i) => (
-        <Fragment key={i}>
+        <Fragment key={`db-${i}`}>
           <StyledInput>
             <TableNameContainer>
               <FontAwesomeIcon icon={faTable} />

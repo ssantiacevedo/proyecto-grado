@@ -9,15 +9,15 @@ import OntoDataDisplay from '../../components/OntoDataDisplay';
 import { useDataContext } from '../../context/Context';
 
 const Mappings = () => {
-  const { mappingData, ontologyData } = useDataContext();
+  const { ontologyElements, dbElements } = useDataContext();
 
   return (
     <MappingPage>
       <StepCard expanded number={1} title={'Database Elements'} description={'Upload your input ontologies in .owl'}>
-        <DBDataDisplay data={mappingData} />
+        <DBDataDisplay data={dbElements} />
       </StepCard>
       <StepCard expanded number={2} title={'Ontologies Elements'} description={'Upload your .sql for database'}>
-        <OntoDataDisplay data={ontologyData}/>
+        <OntoDataDisplay data={ontologyElements}/>
       </StepCard>
     </MappingPage>
   );

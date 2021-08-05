@@ -12,29 +12,33 @@ class OntologyView(views.APIView):
 
     def post(self, request):  # noqa C901
         data = request.data
-        
-        # onto_info = Ontology.objects.create(ontology_type='FILE', ontology_file=request.FILES['onto'])
-        # res = get_ontology_info_from_uri(onto_info.ontology_file.name, True)
-        # print(res)
-        
-        if 'owls' in data:
-            res = []
-            ontology_objects = []
-            owls = data['owls']
+        res = []
+        ontology_objects = []
+        uuid = ''
+        if len(request.FILES) > 0:
+            files = request.FILES.getlist('onto')
+            for ff in files:
+                onto_info = Ontology.objects.create(ontology_type='FILE', ontology_file=ff)
+                res += get_ontology_info_from_uri(onto_info.ontology_file.name, True)
+                ontology_objects.append(onto_info)
+
+            uuid = request.FILES.getlist('uuid')[0].name
+
+        if 'uris' in data and len(data['uris']) > 0:
+            owls = data['uris']
+            uuid = request.data['uuid']
             for owl in owls:
                 try:
-                    if owl['type'] == 'file':
-                        onto_info = Ontology.objects.create(ontology_type='FILE', ontology_file=owl['file'])
-                        res += get_ontology_info_from_uri(onto_info.ontology_file.name, True)
-                    else:
+                    if owl['type'] == 'uri':
                         onto_info = Ontology.objects.create(ontology_type='URI', ontology_uri=owl['uri'])
                         res += get_ontology_info_from_uri(owl['uri'], False)
                     ontology_objects.append(onto_info)
                 except Exception as e:
                     return Response(e.__str__(), status=400)
-            
+
+        if (len(res) > 0):
             try:
-                mapping_process, _ = MappingProcess.objects.get_or_create(uuid=data['uuid'])
+                mapping_process, _ = MappingProcess.objects.get_or_create(uuid=uuid)
                 for ontology in ontology_objects:
                     mapping_process.ontologies = ontology
                 mapping_process.state = 'ONTOS_ENT'

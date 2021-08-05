@@ -5,16 +5,19 @@ import axiosInstance from "../axios";
 import { CREATE_DB, CREATE_ONTOLOGY } from "../axios/routes";
 
 const DataContext = createContext({
-  mappingData: [],
-  ontologyData: [],
+  dbElements: [],
+  ontologyElements: [],
   uuid: null,
-  getMappingElements: () => {},
-  getOntoElementsWithUri: () => {},
+  getDbElements: () => {},
+  getOntoElementsWithUris: () => {},
+  getOntoElementsWithFile: () => {},
+  resetOntologyElements: () => {},
+  resetDbElements: () => {},
 });
 
 function DataContextProvider(props) {
-  const [mappingData, setMappingData] = useState([]);
-  const [ontologyData, setOntologyData] = useState([]);
+  const [dbElements, setDbElements] = useState([]);
+  const [ontologyElements, setOntologyElements] = useState([]);
   const [uuid, setUuid] = useState(null);
 
   useEffect(() => {
@@ -22,8 +25,12 @@ function DataContextProvider(props) {
     setUuid(uuidV4);
   }, []);
 
-  const getMappingElements = (dbName, dbUser, dbPort, dbPass) => {
-    setMappingData([]);
+
+  const resetOntologyElements = () => setOntologyElements([]);
+  const resetDbElements = () => setDbElements([]);
+
+  const getDbElements = (dbName, dbUser, dbPort, dbPass) => {
+    setDbElements([]);
     axiosInstance
       .post(CREATE_DB, {
         uuid,
@@ -33,31 +40,46 @@ function DataContextProvider(props) {
         password: dbPass,
       })
       .then((res) => {
-        console.log(res.data);
-        setMappingData(res?.data);
+        setDbElements(res?.data);
       });
   };
 
-  const getOntoElementsWithUri = (owls) => {
-    setOntologyData([]);
+  const getOntoElementsWithFile = (files) => {
+    const blob = new File([], uuid);
+    files.append("uuid", blob);
+    axiosInstance
+      .post(CREATE_ONTOLOGY, files, {
+        headers: {
+          "Content-Type":
+            "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+        },
+      })
+      .then((res) => {
+        setOntologyElements(old => [...old, ...res?.data]);
+      });
+  };
+
+  const getOntoElementsWithUris = (uris) => {
     axiosInstance
       .post(CREATE_ONTOLOGY, {
         uuid,
-        owls: owls,
+        uris,
       })
       .then((res) => {
-        console.log(res.data);
-        setOntologyData(res?.data);
+        setOntologyElements(old => [...old, ...res?.data]);
       });
   };
 
   return (
     <DataContext.Provider
       value={{
-        mappingData,
-        ontologyData,
-        getMappingElements,
-        getOntoElementsWithUri,
+        dbElements,
+        ontologyElements,
+        getDbElements,
+        getOntoElementsWithUris,
+        getOntoElementsWithFile,
+        resetOntologyElements,
+        resetDbElements,
         uuid,
       }}
       {...props}
