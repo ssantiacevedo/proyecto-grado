@@ -15,11 +15,13 @@ class OntologyView(views.APIView):
         res = []
         ontology_objects = []
         uuid = ''
+        identifier = 1
         if len(request.FILES) > 0:
             files = request.FILES.getlist('onto')
             for ff in files:
                 onto_info = Ontology.objects.create(ontology_type='FILE', ontology_file=ff)
-                res += get_ontology_info_from_uri(onto_info.ontology_file.name, True)
+                res.append({ "id": identifier, "data": get_ontology_info_from_uri(onto_info.ontology_file.name, True)})
+                identifier += 1
                 ontology_objects.append(onto_info)
 
             uuid = request.FILES.getlist('uuid')[0].name
@@ -31,7 +33,8 @@ class OntologyView(views.APIView):
                 try:
                     if owl['type'] == 'uri':
                         onto_info = Ontology.objects.create(ontology_type='URI', ontology_uri=owl['uri'])
-                        res += get_ontology_info_from_uri(owl['uri'], False)
+                        res.append({ "id": identifier, "data": get_ontology_info_from_uri(owl['uri'], False)})
+                        identifier += 1
                     ontology_objects.append(onto_info)
                 except Exception as e:
                     return Response(e.__str__(), status=400)
