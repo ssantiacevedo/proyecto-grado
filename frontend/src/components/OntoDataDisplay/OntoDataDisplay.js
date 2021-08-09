@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { palette } from '../../theme/palette';
 
 export const Text = styled.span`
   font-family: 'Roboto';
@@ -18,9 +19,9 @@ export const OntoDataDisplayContainer = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  margin-top: 30px;
   align-items: flex-start;
   z-index: 2;
+  margin-top: 30px;
 `;
 
 export const TableNameContainer = styled.div`
@@ -53,7 +54,21 @@ export const StyledInput = styled.label`
   margin: 5px 0;
   font-family: 'Roboto';
   font-size: 13px;
-  max-width: 90%;
-  width: 90%;
   border-radius: 6px;
+`;
+
+export const OntoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid ${palette.alpha50Blue};
+  margin: 10px 0;
+  padding: 10px;
+  width: 90%;
+  border-radius: 4px;
+`;
+
+export const OntologyTitle = styled.span`
+  font-family: 'RobotoBold';
+  font-size: 15px;
+  color: ${palette.alpha600};
 `;

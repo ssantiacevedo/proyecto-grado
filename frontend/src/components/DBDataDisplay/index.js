@@ -8,8 +8,8 @@ const DBDisplay = ({ data }) => {
   return (
     <DBDataDisplayContainer>
       <Text>Your DB Elements</Text>
-      {data.map((x, i) => (
-        <Fragment key={i}>
+      {data?.map((x, i) => (
+        <Fragment key={`db-${i}`}>
           <StyledInput>
             <TableNameContainer>
               <FontAwesomeIcon icon={faTable} />
@@ -19,7 +19,7 @@ const DBDisplay = ({ data }) => {
               {x?.columns.map(column => (
                 <ColumnNameContainer>
                   <FontAwesomeIcon icon={faColumns} />
-                  <Text>{column}</Text>
+                  <Text>{column.name}</Text>
                 </ColumnNameContainer>
               ))}
             </ColumnsContainer>

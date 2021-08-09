@@ -6,6 +6,7 @@ export const Text = styled.span`
   font-size: 15px;
   margin-bottom: 10px;
   text-align: center;
+  margin: 0 auto 1rem;
 `;
 
 export const Step2Container = styled.div`
@@ -19,6 +20,8 @@ export const Step2Container = styled.div`
 
 export const Label = styled.span`
   font-family: 'Roboto';
+  font-weight: 600;
+  color: ${palette.alpha600};
   font-size: 15px;
   text-align: center;
   margin: 0.5rem 0;

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axiosInstance from "../../axios";
-import { CREATE_DB } from "../../axios/routes";
 import CardPage from "../../components/CardPage";
 import StepCard from "../../components/StepCard";
 
@@ -9,36 +8,41 @@ import Step2 from "../../components/Step2";
 import Step3 from "../../components/Step3";
 
 import { useHistory } from "react-router-dom";
+import { useDataContext } from "../../context/Context";
 
 const Home = () => {
   const [dbUploaded, setDbUploaded] = useState(false);
   const [ontologyUploaded, setOntologyUploaded] = useState(false);
-  const [inputLists, setInputLists] = useState([{ type: "file", ontology: "", name: "" }]);
+  const [inputLists, setInputLists] = useState([{ type: "uri", uri: "" }]);
   const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
 
+  const { getDbElements, getOntoElementsWithFile, getOntoElementsWithUris, resetOntologyElements } = useDataContext();
   // DB Form
   const [dbName, setDbName] = useState("");
   const [dbPass, setDbPass] = useState("");
   const [dbUser, setDbUser] = useState("");
+  const [dbPort, setDbPort] = useState("");
 
   const history = useHistory();
 
-  const handleContinue = () => {
-    // var formData = new FormData();
-    // formData.append("db", file);
-    // axiosInstance.post(CREATE_DB, formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data'
-    //     }
-    // }).then(
-    //   history.push('/mappings')
-    // )
-    // TODO: Add ontologies to send that with an uuid
-    // axiosInstance.post(CREATE_DB, { 
-    //   name: dbName,
-    //   user: dbUser,
-    //   password: dbPass 
-    // });
+  useEffect(() => {
+    resetOntologyElements();
+  }, []);
+
+  const handleContinue = async () => {
+
+    const uris = [...inputLists].filter(input => input.type == 'uri');
+    const files = [...inputLists].filter(input => input.type == 'file');
+    var formData = new FormData();
+
+    files.map(file => {
+      formData.append("onto", file?.file);
+    })
+
+    await getOntoElementsWithFile(formData);
+    await getOntoElementsWithUris(uris);
+    await getDbElements(dbName, dbUser, dbPort, dbPass);
+    history.push("/mappings");
   };
   const disabledMapping = !dbUploaded || !ontologyUploaded;
   return (
@@ -66,9 +70,11 @@ const Home = () => {
           dbName={dbName}
           dbUser={dbUser}
           dbPass={dbPass}
+          dbPort={dbPort}
           setDbName={setDbName}
           setDbUser={setDbUser}
           setDbPass={setDbPass}
+          setDbPort={setDbPort}
         />
       </StepCard>
       <StepCard

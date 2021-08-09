@@ -2,10 +2,31 @@ from django.db import models
 import uuid
 
 class Ontology(models.Model):
-    ontology_field = models.FileField(upload_to='ontologies/')
+    class Meta:
+        verbose_name_plural = "Ontologies"
+
+    URI = 'URI'
+    FILE = 'FILE'
+    ONTOLOGY_TYPES = ((URI, 'Ontology URI'), 
+                        (FILE, 'Ontology File'))
+
+    ontology_file = models.FileField(upload_to='ontologies/', blank=True, null=True)
+    ontology_uri = models.TextField(blank=True, null=True)
+    ontology_type = models.CharField(
+        choices=ONTOLOGY_TYPES,
+        default=URI,
+        max_length=10,
+        verbose_name='Type of the ontology uploaded')
 
 class RelationalDB(models.Model):
-    relational_db_field = models.FileField(upload_to='relational_dbs/')
+
+    def __str__(self):
+        return self.relational_db_name
+
+    relational_db_name = models.CharField(max_length=120, blank=True, null=True)
+    relational_db_user = models.CharField(max_length=120, blank=True, null=True)
+    relational_db_password = models.CharField(max_length=120, blank=True, null=True)
+    relational_db_port = models.IntegerField(null=True, blank=True)
 
 class MappingProcess(models.Model):
 
@@ -18,8 +39,8 @@ class MappingProcess(models.Model):
                         (MAPPING_DONE, 'Mapping done'))
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ontologies = models.ForeignKey(Ontology, on_delete=models.CASCADE)
-    relational_db = models.OneToOneField(RelationalDB, on_delete=models.CASCADE)
+    ontologies = models.ForeignKey(Ontology, on_delete=models.CASCADE, null=True)
+    relational_db = models.ForeignKey(RelationalDB, on_delete=models.CASCADE, null=True)
     state = models.CharField(
         choices=PROCESS_STATES,
         default=ONTOLOGIES_ENTERED,

@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import RelationalDB, Ontology, MappingProcess
 
-# Register your models here.
+admin.site.register(RelationalDB)
+admin.site.register(Ontology)
+admin.site.register(MappingProcess)
