@@ -15,65 +15,76 @@ import {
   ColumnsContainer,
   OntoContainer,
   OntologyTitle,
+  SpinnerContainer,
 } from "./OntoDataDisplay";
 
-const OntoDataDisplay = ({ data }) => {
+import Spinner from '../Spinner';
+
+const OntoDataDisplay = ({ data, loading }) => {
   return (
     <OntoDataDisplayContainer>
       <Text>Your Ontologies Elements</Text>
-      {data?.map((elements, i) => (
-        <OntoContainer key={`ontology-${i}`}>
-          <OntologyTitle>Ontology Elements: </OntologyTitle>
-          {elements?.data?.map((x, i) => (
-            <StyledInput htmlFor={`file-upload-${i}`}>
-              <TableNameContainer>
-                {x?.classes && (
-                  <>
-                    <FontAwesomeIcon icon={faThList} />
-                    <Text>Classes:</Text>
-                  </>
-                )}
-                {x?.object_properties && (
-                  <>
-                    <FontAwesomeIcon icon={faCube} />
-                    <Text>Object Properties:</Text>
-                  </>
-                )}
-                {x?.data_properties && (
-                  <>
-                    <FontAwesomeIcon icon={faDatabase} />
-                    <Text>Data Properties:</Text>
-                  </>
-                )}
-              </TableNameContainer>
-              <ColumnsContainer>
-                {x?.classes?.map((name) => (
-                  <ColumnNameContainer>
-                    <FontAwesomeIcon icon={faMinus} />
-                    <Text>{name}</Text>
-                  </ColumnNameContainer>
-                ))}
-              </ColumnsContainer>
-              <ColumnsContainer>
-                {x?.object_properties?.map((name) => (
-                  <ColumnNameContainer>
-                    <FontAwesomeIcon icon={faMinus} />
-                    <Text>{name}</Text>
-                  </ColumnNameContainer>
-                ))}
-              </ColumnsContainer>
-              <ColumnsContainer>
-                {x?.data_properties?.map((name) => (
-                  <ColumnNameContainer>
-                    <FontAwesomeIcon icon={faMinus} />
-                    <Text>{name}</Text>
-                  </ColumnNameContainer>
-                ))}
-              </ColumnsContainer>
-            </StyledInput>
+      {loading ? (
+        <SpinnerContainer>
+          <Spinner />
+        </SpinnerContainer>
+      ) : (
+        <>
+          {data?.map((elements, i) => (
+            <OntoContainer key={`ontology-${i}`}>
+              <OntologyTitle>Ontology Elements: </OntologyTitle>
+              {elements?.data?.map((x, i) => (
+                <StyledInput htmlFor={`file-upload-${i}`}>
+                  <TableNameContainer>
+                    {x?.classes && (
+                      <>
+                        <FontAwesomeIcon icon={faThList} />
+                        <Text>Classes:</Text>
+                      </>
+                    )}
+                    {x?.object_properties && (
+                      <>
+                        <FontAwesomeIcon icon={faCube} />
+                        <Text>Object Properties:</Text>
+                      </>
+                    )}
+                    {x?.data_properties && (
+                      <>
+                        <FontAwesomeIcon icon={faDatabase} />
+                        <Text>Data Properties:</Text>
+                      </>
+                    )}
+                  </TableNameContainer>
+                  <ColumnsContainer>
+                    {x?.classes?.map((name) => (
+                      <ColumnNameContainer>
+                        <FontAwesomeIcon icon={faMinus} />
+                        <Text>{name}</Text>
+                      </ColumnNameContainer>
+                    ))}
+                  </ColumnsContainer>
+                  <ColumnsContainer>
+                    {x?.object_properties?.map((name) => (
+                      <ColumnNameContainer>
+                        <FontAwesomeIcon icon={faMinus} />
+                        <Text>{name}</Text>
+                      </ColumnNameContainer>
+                    ))}
+                  </ColumnsContainer>
+                  <ColumnsContainer>
+                    {x?.data_properties?.map((name) => (
+                      <ColumnNameContainer>
+                        <FontAwesomeIcon icon={faMinus} />
+                        <Text>{name}</Text>
+                      </ColumnNameContainer>
+                    ))}
+                  </ColumnsContainer>
+                </StyledInput>
+              ))}
+            </OntoContainer>
           ))}
-        </OntoContainer>
-      ))}
+        </>
+      )}
     </OntoDataDisplayContainer>
   );
 };

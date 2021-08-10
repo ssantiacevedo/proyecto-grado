@@ -20,6 +20,7 @@ export const OntoDataDisplayContainer = styled.div`
   width: 100%;
   height: 100%;
   align-items: flex-start;
+  overflow-y: auto;
   z-index: 2;
   margin-top: 30px;
 `;
@@ -60,7 +61,7 @@ export const StyledInput = styled.label`
 export const OntoContainer = styled.div`
   display: flex;
   flex-direction: column;
-  border: 1px solid ${palette.alpha50Blue};
+  border: 1px solid ${palette.alpha600};
   margin: 10px 0;
   padding: 10px;
   width: 90%;
@@ -71,4 +72,12 @@ export const OntologyTitle = styled.span`
   font-family: 'RobotoBold';
   font-size: 15px;
   color: ${palette.alpha600};
+`;
+
+export const SpinnerContainer = styled.div`
+  display: flex;
+  align-items: center;
+  height: 20rem;
+  justify-content: center;
+  width: 100%;
 `;

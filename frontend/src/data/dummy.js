@@ -27,3 +27,18 @@ export const dataOnto = [
     'pizza_onto.Name'
   ]}
 ]
+
+export const dataMapping = [
+  {"leftSide": "Elemnt123213123123123213231231231313121", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt2", "rightSide": ["Element2Right"]},
+  {"leftSide": "Elemnt3", "rightSide": ["Element1Right", "Element2same", "Element3same"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+]
