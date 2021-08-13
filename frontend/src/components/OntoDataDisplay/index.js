@@ -56,26 +56,26 @@ const OntoDataDisplay = ({ data, loading }) => {
                     )}
                   </TableNameContainer>
                   <ColumnsContainer>
-                    {x?.classes?.map((name) => (
+                    {x?.classes?.map((c) => (
                       <ColumnNameContainer>
                         <FontAwesomeIcon icon={faMinus} />
-                        <Text>{name}</Text>
+                        <Text>{c?.name}</Text>
                       </ColumnNameContainer>
                     ))}
                   </ColumnsContainer>
                   <ColumnsContainer>
-                    {x?.object_properties?.map((name) => (
+                    {x?.object_properties?.map((objectProperty) => (
                       <ColumnNameContainer>
                         <FontAwesomeIcon icon={faMinus} />
-                        <Text>{name}</Text>
+                        <Text>{objectProperty?.name}</Text>
                       </ColumnNameContainer>
                     ))}
                   </ColumnsContainer>
                   <ColumnsContainer>
-                    {x?.data_properties?.map((name) => (
+                    {x?.data_properties?.map((dataProperty) => (
                       <ColumnNameContainer>
                         <FontAwesomeIcon icon={faMinus} />
-                        <Text>{name}</Text>
+                        <Text>{dataProperty?.name}</Text>
                       </ColumnNameContainer>
                     ))}
                   </ColumnsContainer>

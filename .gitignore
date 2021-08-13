@@ -53,5 +53,4 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-media
-backend/db.sqlite3
+*.sqlite3
