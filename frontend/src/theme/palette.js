@@ -50,4 +50,5 @@ export const palette = {
   brownGray: '#9b9b9b',
   lightGray: '#dddddd',
   clearGray: '#f6f6f6',
+  gama800Success: '#22543D',
 };

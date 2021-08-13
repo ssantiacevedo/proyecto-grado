@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, createContext, useContext, useEffect } from "react";
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from "uuid";
 import axiosInstance from "../axios";
 import { CREATE_DB, CREATE_ONTOLOGY } from "../axios/routes";
@@ -36,6 +37,29 @@ function DataContextProvider(props) {
   }, []);
 
 
+  const notifySuccess = (successText) =>
+  toast.error( <div>{successText}</div>, {
+    position: 'top-right',
+    autoClose: 2000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: false,
+    progress: undefined,
+  });
+
+
+  const notifyError = (errorText) =>
+  toast.success(<div>{errorText}</div>, {
+    position: 'top-right',
+    autoClose: 2000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: false,
+    progress: undefined,
+  });
+
   const resetOntologyElements = () => setOntologyElements([]);
   const resetDbElements = () => setDbElements([]);
 
@@ -52,6 +76,9 @@ function DataContextProvider(props) {
       })
       .then((res) => {
         setDbElements(res?.data);
+      })
+      .catch(() => {
+        notifyError('Error connecting to Postgres DB');
       })
       .finally(() => {
         setLoadingDB(false);
@@ -72,6 +99,10 @@ function DataContextProvider(props) {
       })
       .then((res) => {
         setOntologyElements(old => [...old, ...res?.data]);
+        
+      })
+      .catch(() => {
+        notifyError('Error while loading Ontology file');
       })
       .finally(() => {
         setLoadingOntologyFile(false);
@@ -87,6 +118,9 @@ function DataContextProvider(props) {
       })
       .then((res) => {
         setOntologyElements(old => [...old, ...res?.data]);
+      })
+      .catch(() => {
+        notifyError('Error while loading Ontology URIs');
       })
       .finally(() => {
         setLoadingOntologyUri(false);
