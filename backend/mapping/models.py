@@ -1,23 +1,6 @@
 from django.db import models
 import uuid
 
-class Ontology(models.Model):
-    class Meta:
-        verbose_name_plural = "Ontologies"
-
-    URI = 'URI'
-    FILE = 'FILE'
-    ONTOLOGY_TYPES = ((URI, 'Ontology URI'), 
-                        (FILE, 'Ontology File'))
-
-    ontology_file = models.FileField(upload_to='ontologies/', blank=True, null=True)
-    ontology_uri = models.TextField(blank=True, null=True)
-    ontology_type = models.CharField(
-        choices=ONTOLOGY_TYPES,
-        default=URI,
-        max_length=10,
-        verbose_name='Type of the ontology uploaded')
-
 class RelationalDB(models.Model):
 
     def __str__(self):
@@ -39,10 +22,27 @@ class MappingProcess(models.Model):
                         (MAPPING_DONE, 'Mapping done'))
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ontologies = models.ForeignKey(Ontology, on_delete=models.CASCADE, null=True)
     relational_db = models.ForeignKey(RelationalDB, on_delete=models.CASCADE, null=True)
     state = models.CharField(
         choices=PROCESS_STATES,
         default=ONTOLOGIES_ENTERED,
         verbose_name='State of the mapping proccess',
         max_length=10)
+
+class Ontology(models.Model):
+    class Meta:
+        verbose_name_plural = "Ontologies"
+
+    URI = 'URI'
+    FILE = 'FILE'
+    ONTOLOGY_TYPES = ((URI, 'Ontology URI'), 
+                        (FILE, 'Ontology File'))
+
+    ontology_file = models.FileField(upload_to='ontologies/', blank=True, null=True)
+    ontology_uri = models.TextField(blank=True, null=True)
+    ontology_type = models.CharField(
+        choices=ONTOLOGY_TYPES,
+        default=URI,
+        max_length=10,
+        verbose_name='Type of the ontology uploaded')
+    mapping_proccess = models.ForeignKey(MappingProcess, on_delete=models.CASCADE, null=True)

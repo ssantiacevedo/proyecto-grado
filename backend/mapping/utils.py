@@ -55,9 +55,9 @@ def get_ontology_info_from_uri(uri, is_file):
     onto_data_properties = list(onto.data_properties())
     
     ## Transform generators to string names to be serializable
-    classes = [i.name for i in onto_classes]
-    obj_properties = [i.name for i in onto_object_properties]
-    data_properties = [i.name for i in onto_data_properties]
+    classes = [{'name':i.name, 'iri': i.iri} for i in onto_classes]
+    obj_properties = [{'name':i.name, 'iri': i.iri} for i in onto_object_properties]
+    data_properties = [{'name':i.name, 'iri': i.iri} for i in onto_data_properties]
 
     res = [
         { "classes": classes}, 
