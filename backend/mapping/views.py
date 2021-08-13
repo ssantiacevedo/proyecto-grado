@@ -43,7 +43,7 @@ class OntologyView(views.APIView):
             try:
                 mapping_process, _ = MappingProcess.objects.get_or_create(uuid=uuid)
                 for ontology in ontology_objects:
-                    mapping_process.ontologies = ontology
+                    mapping_process.ontology_set.add(ontology) 
                 mapping_process.state = 'ONTOS_ENT'
                 mapping_process.save()
                 return Response(res, status=status.HTTP_200_OK)
