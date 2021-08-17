@@ -11,10 +11,12 @@ import {
   DbContainer,
   SpinnerContainer,
 } from "./DBDataDisplay.styled";
-
+import { useDataContext } from "../../context/Context";
 import Spinner from "../Spinner";
 
 const DBDisplay = ({ data, loading }) => {
+  const { setCurrentDbMapping, isMapping } = useDataContext();
+
   return (
     <DBDataDisplayContainer>
       <Text>Your DB Elements</Text>
@@ -27,13 +29,19 @@ const DBDisplay = ({ data, loading }) => {
           {data?.map((x, i) => (
             <DbContainer key={`db-${i}`}>
               <StyledInput>
-                <TableNameContainer>
+                <TableNameContainer
+                  isMapping={isMapping}
+                  onClick={() => isMapping && setCurrentDbMapping(x?.table)}
+                >
                   <FontAwesomeIcon icon={faTable} />
                   {x?.table && <Text>Table: {x.table}</Text>}
                 </TableNameContainer>
                 <ColumnsContainer>
                   {x?.columns.map((column) => (
-                    <ColumnNameContainer>
+                    <ColumnNameContainer
+                      onClick={() => isMapping && setCurrentDbMapping(column?.name)}
+                      isMapping={isMapping}
+                    >
                       <FontAwesomeIcon icon={faColumns} />
                       <Text>{column.name}</Text>
                     </ColumnNameContainer>

@@ -37,6 +37,7 @@ export const ColumnNameContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: ${props => props.isMapping ? 'pointer' : 'normal'};
 `;
 
 export const ColumnsContainer = styled.div`

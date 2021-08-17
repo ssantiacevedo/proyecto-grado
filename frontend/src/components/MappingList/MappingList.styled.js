@@ -34,6 +34,7 @@ export const TableNameContainer = styled.div`
 
 export const MappingRow = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
   padding: 10px;
@@ -44,12 +45,11 @@ export const MappingRow = styled.div`
 export const MappingContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
   margin-top: 30px;
   align-items: flex-start;
   justify-content: flex-start;
   overflow-y: auto;
-  max-height: 53vh;
+  max-height: 51vh;
   height: 80%;
   z-index: 2;
 
@@ -94,7 +94,7 @@ export const ElementText = styled.div`
 export const SubmitButton = styled.button`
   text-decoration: none;
   border: none;
-  cursor: pointer;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   outline: none;
   border-radius: 8px;
   height: 35px;
@@ -102,4 +102,73 @@ export const SubmitButton = styled.button`
   margin-top: 20px;
   background-color: ${palette.alpha600};
   color: white;
+  opacity: ${props => props.disabled ? '0.7' : '1'};
+`;
+
+
+export const AddMappingButton = styled.button`
+  text-decoration: none;
+  border: none;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  outline: none;
+  border-radius: 8px;
+  height: 35px;
+  width: 30%;
+  margin-top: 0px;
+  background-color: ${palette.alpha700};
+  color: white;
+  opacity: ${props => props.disabled ? '0.7' : '1'};
+`;
+
+export const ConfirmMappingButton = styled.button`
+  text-decoration: none;
+  border: none;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  outline: none;
+  border-radius: 8px;
+  height: 35px;
+  width: 30%;
+  margin-top: 0px;
+  background-color: ${palette.gama800Success};
+  color: white;
+  opacity: ${props => props.disabled ? '0.7' : '1'};
+`;
+
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  width: 100%;
+
+  & > * {
+    margin-right: 10px;
+  }
+`;
+
+export const HeaderMapping = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 5px;
+  justify-content: space-between;
+  font-family: 'Roboto';
+  font-size: 10px;
+  color: ${palette.beta700gray};
+`;
+
+export const InfoContainer = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+export const RightHeaderContainer = styled.div`
+  display: flex;
+  width: 45%;
+  justify-content: space-between;
+`;
+
+export const LeftHeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 55%;
 `;

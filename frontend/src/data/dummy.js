@@ -29,16 +29,16 @@ export const dataOnto = [
 ]
 
 export const dataMapping = [
-  {"leftSide": "Elemnt123213123123123213231231231313121", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt2", "rightSide": ["Element2Right"]},
-  {"leftSide": "Elemnt3", "rightSide": ["Element1Right", "Element2same", "Element3same"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
-  {"leftSide": "Elemnt4", "rightSide": ["Element1Right"]},
+  {"Elemnt123213123123123213231231231313121": [{name: "Element1Right", uri: 'trst'}]},
+  { "Elemnt2": [{name: "DB key", uri: 'bla bla blahttp'}]},
+  { "Elemnt3": [{name: "user_id", uri: 'trst'}, {name: "Element1Right", uri: 'trst'}, {name: "Element1Right", uri: 'trst'}]},
+  { "Elemnt4": [{name: "table", uri: 'trst'}]},
+  { "Elemnt4": [{name: "column", uri: 'lelele'}]},
+  { "Elemnt4": [{name: "Element1Right", uri: 'tddddrst'}]},
+  { "Elemnt4": [{name: "Element1Right", uri: 'tadasdrst'}]},
+  { "Elemnt4": [{name: "Element1Right", uri: 'trasdasdst'}]},
+  { "Elemnt4": [{name: "Element1Right", uri: 'trdddst'}]},
+  { "Elemnt4": [{name: "Element1Right", uri: 'dsad'}]},
+  { "Elemnt4": [{name: "Element1Right", uri: 'trst'}]},
+  { "Elemnt4": [{name: "Element1Right", uri: 'trst'}]},
 ]

@@ -14,35 +14,74 @@ import {
   RightRow,
   ElementText,
   SubmitButton,
+  AddMappingButton,
+  ButtonContainer,
+  ConfirmMappingButton,
+  HeaderMapping,
+  InfoContainer,
+  RightHeaderContainer,
+  LeftHeaderContainer,
 } from "./MappingList.styled";
 import { useDataContext } from "../../context/Context";
 const MappingList = () => {
-  const { mappedElements, deleteMappingElement } = useDataContext();
+  const {
+    mappedElements,
+    deleteMappingElement,
+    currentDbMapping,
+    currentOntoMapping,
+    addMappingElement,
+    startNewMapping,
+    isMapping,
+  } = useDataContext();
   return (
     <DBDataDisplayContainer>
-      <Text>Your Mapped Elements</Text>
+      <ButtonContainer>
+        <AddMappingButton onClick={startNewMapping}>Add new mapping</AddMappingButton>
+        <ConfirmMappingButton
+          disabled={!currentDbMapping || !currentOntoMapping?.length > 0 || !isMapping}
+          onClick={(currentDbMapping && currentOntoMapping?.length > 0 && isMapping) && addMappingElement}
+        >
+          Confirm mapping
+        </ConfirmMappingButton>
+      </ButtonContainer>
       <MappingContainer>
         {mappedElements?.map((mapped, i) => (
-          <MappingRow key={`mapped-element-${i}`}>
-            <Left>
-              <ElementText>{mapped?.leftSide}</ElementText>
-            </Left>
-            <FontAwesomeIcon
-              icon={faLongArrowAltRight}
-              style={{ width: "5%" }}
-            />
-            <Right>
-              {mapped?.rightSide?.map((elem) => (
-                <RightRow>
-                 <ElementText>{elem}</ElementText>
-                </RightRow>
-              ))}
-            </Right>
-            <FontAwesomeIcon icon={faTrash} style={{ width: "5%", cursor: 'pointer' }} onClick={() => deleteMappingElement(i)} />
-          </MappingRow>
+          <>
+            <MappingRow key={`mapped-element-${i}`}>
+              <HeaderMapping>
+                <LeftHeaderContainer>DB Element</LeftHeaderContainer>
+                <RightHeaderContainer>
+                  <span>Ontology Elements</span>
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    style={{ width: "5%", cursor: "pointer" }}
+                    onClick={() => deleteMappingElement(i)}
+                  />
+                </RightHeaderContainer>
+              </HeaderMapping>
+              <InfoContainer>
+                <Left>
+                  <ElementText>{Object.keys(mapped)}</ElementText>
+                </Left>
+                <FontAwesomeIcon
+                  icon={faLongArrowAltRight}
+                  style={{ width: "5%" }}
+                />
+                <Right>
+                  {Object.values(mapped)?.[0]?.map((elem) => (
+                    <RightRow>
+                      <ElementText>{elem?.name}</ElementText>
+                    </RightRow>
+                  ))}
+                </Right>
+              </InfoContainer>
+            </MappingRow>
+          </>
         ))}
       </MappingContainer>
-      <SubmitButton>Submit your mappings</SubmitButton>
+      <SubmitButton disabled={mappedElements?.length === 0}>
+        Submit your mappings
+      </SubmitButton>
     </DBDataDisplayContainer>
   );
 };

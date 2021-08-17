@@ -17,10 +17,11 @@ import {
   OntologyTitle,
   SpinnerContainer,
 } from "./OntoDataDisplay";
-
-import Spinner from '../Spinner';
+import { useDataContext } from "../../context/Context";
+import Spinner from "../Spinner";
 
 const OntoDataDisplay = ({ data, loading }) => {
+  const { setCurrentOntoMapping, currentOntoMapping, isMapping } = useDataContext();
   return (
     <OntoDataDisplayContainer>
       <Text>Your Ontologies Elements</Text>
@@ -57,7 +58,13 @@ const OntoDataDisplay = ({ data, loading }) => {
                   </TableNameContainer>
                   <ColumnsContainer>
                     {x?.classes?.map((c) => (
-                      <ColumnNameContainer>
+                      <ColumnNameContainer
+                        onClick={() =>
+                          isMapping && setCurrentOntoMapping([...currentOntoMapping, {name: c?.name, iri: c?.iri}])
+                        }
+                        key={c?.iri}
+                        isMapping={isMapping}
+                      >
                         <FontAwesomeIcon icon={faMinus} />
                         <Text>{c?.name}</Text>
                       </ColumnNameContainer>
@@ -65,7 +72,13 @@ const OntoDataDisplay = ({ data, loading }) => {
                   </ColumnsContainer>
                   <ColumnsContainer>
                     {x?.object_properties?.map((objectProperty) => (
-                      <ColumnNameContainer>
+                      <ColumnNameContainer
+                        onClick={() =>
+                          isMapping && setCurrentOntoMapping([...currentOntoMapping, {name: objectProperty?.name, iri: objectProperty?.iri}])
+                        }
+                        key={objectProperty?.iri}
+                        isMapping={isMapping}
+                      >
                         <FontAwesomeIcon icon={faMinus} />
                         <Text>{objectProperty?.name}</Text>
                       </ColumnNameContainer>
@@ -73,7 +86,13 @@ const OntoDataDisplay = ({ data, loading }) => {
                   </ColumnsContainer>
                   <ColumnsContainer>
                     {x?.data_properties?.map((dataProperty) => (
-                      <ColumnNameContainer>
+                      <ColumnNameContainer
+                        onClick={() =>
+                          isMapping && setCurrentOntoMapping([...currentOntoMapping, {name: dataProperty?.name, iri: dataProperty?.iri}])
+                        }
+                        key={dataProperty?.iri}
+                        isMapping={isMapping}
+                      >
                         <FontAwesomeIcon icon={faMinus} />
                         <Text>{dataProperty?.name}</Text>
                       </ColumnNameContainer>

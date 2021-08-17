@@ -30,12 +30,14 @@ export const TableNameContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 10px;
+  cursor: ${props => props.isMapping ? 'pointer' : 'normal'};
 `;
 
 export const ColumnNameContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: ${props => props.isMapping ? 'pointer' : 'normal'};
 `;
 
 export const ColumnsContainer = styled.div`
