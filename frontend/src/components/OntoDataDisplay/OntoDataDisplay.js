@@ -82,3 +82,11 @@ export const SpinnerContainer = styled.div`
   justify-content: center;
   width: 100%;
 `;
+
+export const PopperContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+`;

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faLongArrowAltRight,
@@ -31,15 +31,38 @@ const MappingList = () => {
     currentOntoMapping,
     addMappingElement,
     startNewMapping,
+    setCurrentDbMapping,
+    setCurrentOntoMapping,
+    setIsMapping,
     isMapping,
   } = useDataContext();
+
+  useEffect(() => {
+    setIsMapping(false);
+    setCurrentOntoMapping([]);
+    setCurrentDbMapping("");
+  }, []);
+
+  const handleConfirm = () => {
+    console.log(mappedElements);
+  };
+
   return (
     <DBDataDisplayContainer>
       <ButtonContainer>
-        <AddMappingButton onClick={startNewMapping}>Add new mapping</AddMappingButton>
+        <AddMappingButton onClick={startNewMapping}>
+          Add new mapping
+        </AddMappingButton>
         <ConfirmMappingButton
-          disabled={!currentDbMapping || !currentOntoMapping?.length > 0 || !isMapping}
-          onClick={(currentDbMapping && currentOntoMapping?.length > 0 && isMapping) && addMappingElement}
+          disabled={
+            !currentDbMapping || !currentOntoMapping?.length > 0 || !isMapping
+          }
+          onClick={() => {
+            currentDbMapping &&
+              currentOntoMapping?.length > 0 &&
+              isMapping &&
+              addMappingElement();
+          }}
         >
           Confirm mapping
         </ConfirmMappingButton>
@@ -79,7 +102,10 @@ const MappingList = () => {
           </>
         ))}
       </MappingContainer>
-      <SubmitButton disabled={mappedElements?.length === 0}>
+      <SubmitButton
+        onClick={handleConfirm}
+        disabled={mappedElements?.length === 0}
+      >
         Submit your mappings
       </SubmitButton>
     </DBDataDisplayContainer>

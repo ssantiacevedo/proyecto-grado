@@ -25,6 +25,8 @@ const DataContext = createContext({
   deleteMappingElement: () => {},
   addMappingElement: () => {},
   startNewMapping: () => {},
+  setCurrentDbMapping: () => {},
+  setCurrentOntoMapping: () => {},
   setIsMapping: () => {},
 });
 
@@ -35,7 +37,7 @@ function DataContextProvider(props) {
   const [loadingOntologyFile, setLoadingOntologyFile] = useState(false);
   const [loadingOntologyUri, setLoadingOntologyUri] = useState(false);
   const [loadingDB, setLoadingDB] = useState(false);
-  const [mappedElements, setMappedElements] = useState(dataMapping);
+  const [mappedElements, setMappedElements] = useState([]);
   const [currentDbMapping, setCurrentDbMapping] = useState("");
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [uuid, setUuid] = useState(null);

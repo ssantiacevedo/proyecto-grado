@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThList,
@@ -16,15 +16,28 @@ import {
   OntoContainer,
   OntologyTitle,
   SpinnerContainer,
+  PopperContainer,
 } from "./OntoDataDisplay";
+import Popper from "../Popper";
+import { usePopper } from "../../helpers/usePopper";
 import { useDataContext } from "../../context/Context";
 import Spinner from "../Spinner";
 
 const OntoDataDisplay = ({ data, loading }) => {
-  const { setCurrentOntoMapping, currentOntoMapping, isMapping } = useDataContext();
+  const {
+    setCurrentOntoMapping,
+    currentOntoMapping,
+    isMapping,
+    currentDbMapping,
+  } = useDataContext();
+
+  const [referenceElement, setReferenceElement] = useState(null);
+  const { popperOpen, togglePopper } = usePopper(`onto-popper`);
   return (
     <OntoDataDisplayContainer>
-      <Text>Your Ontologies Elements</Text>
+      <Text ref={setReferenceElement}>
+        Your Ontologies Elements
+      </Text>
       {loading ? (
         <SpinnerContainer>
           <Spinner />
@@ -60,7 +73,11 @@ const OntoDataDisplay = ({ data, loading }) => {
                     {x?.classes?.map((c) => (
                       <ColumnNameContainer
                         onClick={() =>
-                          isMapping && setCurrentOntoMapping([...currentOntoMapping, {name: c?.name, iri: c?.iri}])
+                          isMapping &&
+                          setCurrentOntoMapping([
+                            ...currentOntoMapping,
+                            { name: c?.name, iri: c?.iri },
+                          ])
                         }
                         key={c?.iri}
                         isMapping={isMapping}
@@ -74,7 +91,14 @@ const OntoDataDisplay = ({ data, loading }) => {
                     {x?.object_properties?.map((objectProperty) => (
                       <ColumnNameContainer
                         onClick={() =>
-                          isMapping && setCurrentOntoMapping([...currentOntoMapping, {name: objectProperty?.name, iri: objectProperty?.iri}])
+                          isMapping &&
+                          setCurrentOntoMapping([
+                            ...currentOntoMapping,
+                            {
+                              name: objectProperty?.name,
+                              iri: objectProperty?.iri,
+                            },
+                          ])
                         }
                         key={objectProperty?.iri}
                         isMapping={isMapping}
@@ -88,7 +112,14 @@ const OntoDataDisplay = ({ data, loading }) => {
                     {x?.data_properties?.map((dataProperty) => (
                       <ColumnNameContainer
                         onClick={() =>
-                          isMapping && setCurrentOntoMapping([...currentOntoMapping, {name: dataProperty?.name, iri: dataProperty?.iri}])
+                          isMapping &&
+                          setCurrentOntoMapping([
+                            ...currentOntoMapping,
+                            {
+                              name: dataProperty?.name,
+                              iri: dataProperty?.iri,
+                            },
+                          ])
                         }
                         key={dataProperty?.iri}
                         isMapping={isMapping}
@@ -104,6 +135,14 @@ const OntoDataDisplay = ({ data, loading }) => {
           ))}
         </>
       )}
+      <Popper
+        show={isMapping && currentDbMapping}
+        referenceElement={referenceElement}
+      >
+        <PopperContainer>
+          Select at least one element from your Ontologies
+        </PopperContainer>
+      </Popper>
     </OntoDataDisplayContainer>
   );
 };
