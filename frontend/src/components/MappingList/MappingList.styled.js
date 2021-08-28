@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { palette } from '../../theme/palette';
 
 export const Text = styled.span`
@@ -171,4 +171,21 @@ export const LeftHeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 55%;
+`;
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export const StyledSpinnerImage = styled.img`
+  display: block;
+  width: 100%;
+  height: 80%;
+  animation: ${rotate} 2s linear infinite;
+  margin: 0 auto;
 `;

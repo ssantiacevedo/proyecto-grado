@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import spinnerImage from "../../assets/spinner.svg";
 import {
   faLongArrowAltRight,
   faTrash,
@@ -21,7 +22,9 @@ import {
   InfoContainer,
   RightHeaderContainer,
   LeftHeaderContainer,
+  StyledSpinnerImage,
 } from "./MappingList.styled";
+import Spinner from "../Spinner";
 import { useDataContext } from "../../context/Context";
 const MappingList = () => {
   const {
@@ -34,6 +37,8 @@ const MappingList = () => {
     setCurrentDbMapping,
     setCurrentOntoMapping,
     setIsMapping,
+    validateMappings,
+    isLoadingValidation,
     isMapping,
   } = useDataContext();
 
@@ -42,10 +47,6 @@ const MappingList = () => {
     setCurrentOntoMapping([]);
     setCurrentDbMapping("");
   }, []);
-
-  const handleConfirm = () => {
-    console.log(mappedElements);
-  };
 
   return (
     <DBDataDisplayContainer>
@@ -103,10 +104,14 @@ const MappingList = () => {
         ))}
       </MappingContainer>
       <SubmitButton
-        onClick={handleConfirm}
+        onClick={validateMappings}
         disabled={mappedElements?.length === 0}
       >
-        Submit your mappings
+        {isLoadingValidation ? (
+          <StyledSpinnerImage src={spinnerImage} />
+        ) : (
+          "Submit your mappings"
+        )}
       </SubmitButton>
     </DBDataDisplayContainer>
   );

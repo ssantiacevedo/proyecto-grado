@@ -29,15 +29,60 @@ const Container = styled.div`
 
 const TopContainer = styled.div`
   display: flex;
+  position: relative;
   width: 100%;
   height: 100%;
   justify-content: center;
   align-items: center;
 `;
 
+const HelpButton = styled.button`
+  
+  border-radius: 8px;
+  cursor: pointer;
+  position: absolute;
+  right: 2rem;
+  margin-top: 0;
+  border: none;
+  font-family: 'Roboto';
+  font-size: 1rem;
+  padding: 0.5rem 3rem;
+  color: ${palette.alpha600};
+`;
+
+const RulesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto';
+  padding: 0.5rem;
+  color: ${palette.alpha600};
+  width: 100%;
+  height: 100%;
+`;
+
+const Rule = styled.div`
+  display: flex;
+  font-family: 'RobotoBold';
+  flex-direction: column;
+  padding: 0.5rem;
+  color: ${palette.alpha600};
+  width: 100%;
+  height: 100%;
+`;
+
+const RuleDescription = styled.div`
+  color: ${palette.black};
+  font-family: 'Roboto';
+  font-size: 1rem;
+  padding-left: 0.3rem;
+`;
 
 export {
   Logo,
   Container,
   TopContainer,
+  HelpButton,
+  RulesContainer,
+  Rule,
+  RuleDescription,
 };

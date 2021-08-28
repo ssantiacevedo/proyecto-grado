@@ -11,7 +11,7 @@ class ValidationView(views.APIView):
     def post(self, request):  # noqa C901
         data = request.data
         uuid = data.get('uuid', None)
-        mapping = data.get('mapping', None)
+        mapping = data.get('mapping', None)[0]
 
         if not uuid or not mapping:
             return Response(
@@ -77,7 +77,7 @@ class ValidationView(views.APIView):
                 # Rule 2: handling of associative tables 
                 if db_elem in associative_tables:
                     for onto_elem in onto_elems:
-                        if onto_elem not in ontos_object_properties.keys():
+                        if onto_elem['iri'] not in ontos_object_properties.keys():
                             return Response(
                                 {'error': f'{onto_elem} is not an OWL Object Property'},
                                 status=status.HTTP_400_BAD_REQUEST
@@ -85,9 +85,9 @@ class ValidationView(views.APIView):
                 else:
                     # Rule 1: mapping of tables to OWL Classes
                     for onto_elem in onto_elems:
-                        if onto_elem not in ontos_classes:
+                        if onto_elem['iri'] not in ontos_classes:
                             return Response(
-                                {'error': f'{onto_elem} is not an OWL Class'},
+                                {'error': '{} is not an OWL Class'.format(onto_elem['name'])},
                                 status=status.HTTP_400_BAD_REQUEST
                             )
             else:
@@ -96,9 +96,9 @@ class ValidationView(views.APIView):
                 # of the range must also be mapped.
                 if db_elem in foreign_keys:
                     for onto_elem in onto_elems:
-                        if onto_elem not in ontos_object_properties.keys():
+                        if onto_elem['iri'] not in ontos_object_properties.keys():
                             return Response(
-                                {'error': f'{onto_elem} is not an OWL Object Property'},
+                                {'error': '{} is not an OWL Object Property'.format(onto_elem['name'])},
                                 status=status.HTTP_400_BAD_REQUEST
                             )
                         is_mapped_domain = False
@@ -106,16 +106,17 @@ class ValidationView(views.APIView):
                         onto_mapping_elems = [
                             onto_elem for map_elem in mapping.values() for onto_elem in map_elem
                         ]
-                        for domain_elem in ontos_object_properties[onto_elem]['domain']:
+                        print(ontos_object_properties)
+                        for domain_elem in ontos_object_properties[onto_elem['iri']]['domain']:
                             if domain_elem in onto_mapping_elems:
                                 is_mapped_domain = True
                                 continue
-                        for range_elem in ontos_object_properties[onto_elem]['range']:
+                        for range_elem in ontos_object_properties[onto_elem['iri']]['range']:
                             if range_elem in onto_mapping_elems:
                                 is_mapped_range = True
                         if not is_mapped_domain or not is_mapped_range:
                             return Response(
-                                {'error': f'You must also map the domain and range of the Object Property: {onto_elem}'},
+                                {'error': 'You must also map the domain and range of the Object Property: {}'.format(onto_elem['name'])},
                                 status=status.HTTP_400_BAD_REQUEST
                             )
 
@@ -124,9 +125,9 @@ class ValidationView(views.APIView):
                 # Rule 4: mapping of columns (not foreign keys) to OWL Clases
                 # TODO Rule 5: mapping of columns (not foreign keys) to Ontologies 
                     for onto_elem in onto_elems:
-                        if onto_elem not in ontos_data_properties + ontos_classes:
+                        if onto_elem['iri'] not in ontos_data_properties + ontos_classes:
                             return Response(
-                                {'error': f'Onto Element {onto_elem} is not a Correct Element'},
+                                {'error': 'Onto Element {} is not a Correct Element'.format(onto_elem['name'])},
                                 status=status.HTTP_400_BAD_REQUEST
                             )
         return Response({"OK": "Correct mapping"}, status=status.HTTP_200_OK)

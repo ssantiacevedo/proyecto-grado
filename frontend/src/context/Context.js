@@ -3,7 +3,7 @@ import React, { useState, createContext, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import axiosInstance from "../axios";
-import { CREATE_DB, CREATE_ONTOLOGY } from "../axios/routes";
+import { CREATE_DB, CREATE_ONTOLOGY, VALIDATION } from "../axios/routes";
 import { dataMapping } from "../data/dummy";
 
 const DataContext = createContext({
@@ -13,6 +13,7 @@ const DataContext = createContext({
   uuid: null,
   loadingOntologyFile: false,
   loadingOntologyUri: false,
+  loadingValidation: false,
   loadingDB: false,
   currentDbMapping: "",
   currentOntoMapping: [],
@@ -28,6 +29,8 @@ const DataContext = createContext({
   setCurrentDbMapping: () => {},
   setCurrentOntoMapping: () => {},
   setIsMapping: () => {},
+  setLoadingValidation: () => {},
+  validateMappings: () => {},
 });
 
 function DataContextProvider(props) {
@@ -36,6 +39,7 @@ function DataContextProvider(props) {
   const [isMapping, setIsMapping] = useState(false);
   const [loadingOntologyFile, setLoadingOntologyFile] = useState(false);
   const [loadingOntologyUri, setLoadingOntologyUri] = useState(false);
+  const [loadingValidation, setLoadingValidation] = useState(false);
   const [loadingDB, setLoadingDB] = useState(false);
   const [mappedElements, setMappedElements] = useState([]);
   const [currentDbMapping, setCurrentDbMapping] = useState("");
@@ -48,7 +52,7 @@ function DataContextProvider(props) {
   }, []);
 
   const notifySuccess = (successText) =>
-    toast.error(<div>{successText}</div>, {
+    toast.success(<div>{successText}</div>, {
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: true,
@@ -59,9 +63,20 @@ function DataContextProvider(props) {
     });
 
   const notifyError = (errorText) =>
-    toast.success(<div>{errorText}</div>, {
+    toast.error(<div>{errorText}</div>, {
       position: "top-right",
       autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+    });
+
+  const notifyErrorPersisted = (errorText) =>
+    toast.error(<div>{errorText}</div>, {
+      position: "top-right",
+      autoClose: false,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
@@ -143,16 +158,38 @@ function DataContextProvider(props) {
   const addMappingElement = () => {
     const list = [...mappedElements];
     const newObj = {};
-    newObj[currentDbMapping] = currentOntoMapping
+    newObj[currentDbMapping] = currentOntoMapping;
     const newList = [newObj, ...list];
     setMappedElements(newList);
     setIsMapping(false);
   };
 
   const startNewMapping = () => {
-    setCurrentDbMapping('');
+    setCurrentDbMapping("");
     setCurrentOntoMapping([]);
     setIsMapping(true);
+  };
+
+  const validateMappings = () => {
+    setLoadingValidation(true);
+    axiosInstance
+      .post(VALIDATION, {
+        uuid,
+        mapping: mappedElements,
+      })
+      .then((res) => {
+        notifySuccess("Mapping correct");
+      })
+      .catch((e) => {
+        if (e?.response?.data?.error) {
+          notifyErrorPersisted(e?.response?.data?.error);
+        } else {
+          notifyError("Something went wrong");
+        }
+      })
+      .finally(() => {
+        setLoadingValidation(false);
+      });
   };
 
   return (
@@ -166,6 +203,7 @@ function DataContextProvider(props) {
         loadingDB,
         currentDbMapping,
         currentOntoMapping,
+        loadingValidation,
         isMapping,
         setCurrentDbMapping,
         setCurrentOntoMapping,
@@ -178,6 +216,7 @@ function DataContextProvider(props) {
         addMappingElement,
         startNewMapping,
         setIsMapping,
+        validateMappings,
         uuid,
       }}
       {...props}
