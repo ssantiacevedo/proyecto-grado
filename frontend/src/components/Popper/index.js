@@ -10,7 +10,7 @@ const StyledPopper = styled.div`
   min-width: 15rem;
   max-width: 25rem;
   min-height: 5rem;
-  padding: 1rem;
+  padding: 0 1rem 1rem 1rem;
 
   background-color: ${({ white }) =>
     white ? palette.white : palette.alpha600};
@@ -27,8 +27,8 @@ const StyledArrow = styled.div`
   &,
   &:before {
     position: absolute;
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 0.9rem;
+    height: 0.9rem;
     z-index: 2;
   }
 

@@ -11,8 +11,7 @@ class ValidationView(views.APIView):
     def post(self, request):  # noqa C901
         data = request.data
         uuid = data.get('uuid', None)
-        mapping = data.get('mapping', None)[0]
-
+        mapping = data.get('mapping', None)
         if not uuid or not mapping:
             return Response(
                 'Error not uuid or mapping',
@@ -71,7 +70,9 @@ class ValidationView(views.APIView):
             elem['columns'][1]['foreign_key']
         ]
 
-        for db_elem, onto_elems in mapping.items():
+        for elem in mapping:
+            db_elem = list(elem.keys())[0]
+            onto_elems = elem[db_elem]
             # Rules List
             if db_elem in tables:
                 # Rule 2: handling of associative tables 
@@ -79,7 +80,7 @@ class ValidationView(views.APIView):
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_object_properties.keys():
                             return Response(
-                                {'error': f'{onto_elem} is not an OWL Object Property'},
+                                {'error': '{} is not an OWL Object Property'.format(onto_elem['name'])},
                                 status=status.HTTP_400_BAD_REQUEST
                             )
                 else:
@@ -104,9 +105,9 @@ class ValidationView(views.APIView):
                         is_mapped_domain = False
                         is_mapped_range = False
                         onto_mapping_elems = [
-                            onto_elem for map_elem in mapping.values() for onto_elem in map_elem
+                            onto_elem['iri'] for map_elem in mapping for onto_elem in list(map_elem.values())[0]
                         ]
-                        print(ontos_object_properties)
+
                         for domain_elem in ontos_object_properties[onto_elem['iri']]['domain']:
                             if domain_elem in onto_mapping_elems:
                                 is_mapped_domain = True

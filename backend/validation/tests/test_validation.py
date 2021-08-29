@@ -53,13 +53,13 @@ class ValidationTests(TestCase):
         )
         self.mapping_process.ontology_set.add(self.ontology)
         self.iri = "http://www.lesfleursdunormal.fr/static/_downloads/pizza_onto.owl"
-        self.success_mapping = {
-            'MappedTable1': [f'{self.iri}#Pizza'],
-            'MappedTable2': [f'{self.iri}#Topping'],
-            'AssociativeTable': [f'{self.iri}#has_topping'],
-            'MappedTable2_Column1': [f'{self.iri}#has_topping'],
-            'MappedTable2_Column3': [f'{self.iri}#TomatoTopping']
-        }
+        self.success_mapping = [{
+            'MappedTable1': [{'name': 'Pizza', 'iri': f'{self.iri}#Pizza'}]},{
+            'MappedTable2': [{'name': 'Topping', 'iri': f'{self.iri}#Topping'}]},{
+            'AssociativeTable': [{'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}]},{
+            'MappedTable2_Column1': [{'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}]},{
+            'MappedTable2_Column3': [{'name': 'TomatoTopping', 'iri': f'{self.iri}#TomatoTopping'}]}
+        ]
 
     @patch("validation.views.get_database_info", mocked_db_connection)
     def test_successful_mapping(self):
@@ -73,98 +73,99 @@ class ValidationTests(TestCase):
     
     @patch("validation.views.get_database_info", mocked_db_connection)
     def test_invalid_table_mapping(self):
-        bad_mapping = {
-            'MappedTable1': [f'{self.iri}#has_topping'],
-        }
+        bad_mapping = [{
+            'MappedTable1': [{'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}],
+        }]
         payload = {
             'uuid': self.uuid,
             'mapping': bad_mapping,
         }
 
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
-        error_msg= f'{self.iri}#has_topping is not an OWL Class'
+        error_msg= 'has_topping is not an OWL Class'
         
         self.assertEqual(res.data['error'], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch("validation.views.get_database_info", mocked_db_connection)
     def test_invalid_associative_table_mapping(self):
-        bad_mapping = {
-            'AssociativeTable': [f'{self.iri}#CheeseTopping'],
-        }
+        bad_mapping = [
+            {'AssociativeTable': [{'name': 'CheeseTopping', 'iri': f'{self.iri}#CheeseTopping'}]}
+        ]
         payload = {
             'uuid': self.uuid,
             'mapping': bad_mapping
         }
 
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
-        error_msg= f'{self.iri}#CheeseTopping is not an OWL Object Property'
+        error_msg= 'CheeseTopping is not an OWL Object Property'
         
         self.assertEqual(res.data['error'], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
     
     @patch("validation.views.get_database_info", mocked_db_connection)
     def test_invalid_foreign_keys_mapping(self):
-        bad_mapping = {
-            'MappedTable2_Column1': [f'{self.iri}#CheeseTopping', f'{self.iri}#has_topping'],
-        }
+        bad_mapping = [
+            {'MappedTable2_Column1': [{'name': 'CheeseTopping', 'iri': f'{self.iri}#CheeseTopping'}, 
+                                    {'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}]},
+        ]
         payload = {
             'uuid': self.uuid,
             'mapping': bad_mapping
         }
 
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
-        error_msg= f'{self.iri}#CheeseTopping is not an OWL Object Property'
+        error_msg= 'CheeseTopping is not an OWL Object Property'
         
         self.assertEqual(res.data['error'], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
     
     @patch("validation.views.get_database_info", mocked_db_connection)
     def test_invalid_no_foreign_keys_mapping(self):
-        bad_mapping = {
-            'MappedTable2_Column3': [f'{self.iri}#has_topping'],
-        }
+        bad_mapping = [
+            {'MappedTable2_Column3': [{'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}]},
+        ]
         payload = {
             'uuid': self.uuid,
             'mapping': bad_mapping
         }
 
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
-        error_msg= f'Onto Element {self.iri}#has_topping is not a Correct Element'
+        error_msg= 'Onto Element has_topping is not a Correct Element'
         
         self.assertEqual(res.data['error'], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
     
     @patch("validation.views.get_database_info", mocked_db_connection)
     def test_invalid_foreign_key_mapping_range(self):
-        bad_mapping = {
-            'MappedTable1': [f'{self.iri}#Pizza'],
-            'MappedTable2_Column1': [f'{self.iri}#has_topping'],
-        }
+        bad_mapping = [
+            {'MappedTable1': [{'name': 'Pizza', 'iri': f'{self.iri}#Pizza'}]},
+            {'MappedTable2_Column1': [{'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}]},
+        ]
         payload = {
             'uuid': self.uuid,
             'mapping': bad_mapping
         }
 
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
-        error_msg = f'You must also map the domain and range of the Object Property: {self.iri}#has_topping'
+        error_msg = 'You must also map the domain and range of the Object Property: has_topping'
         
         self.assertEqual(res.data['error'], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch("validation.views.get_database_info", mocked_db_connection)
     def test_invalid_foreign_key_mapping_domain(self):
-        bad_mapping = {
-            'MappedTable1': [f'{self.iri}#Topping'],
-            'MappedTable2_Column1': [f'{self.iri}#has_topping'],
-        }
+        bad_mapping = [
+            {'MappedTable1': [{'name': 'Topping', 'iri': f'{self.iri}#Topping'}]},
+            {'MappedTable2_Column1': [{'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}]},
+        ]
         payload = {
             'uuid': self.uuid,
             'mapping': bad_mapping
         }
 
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
-        error_msg = f'You must also map the domain and range of the Object Property: {self.iri}#has_topping'
+        error_msg = 'You must also map the domain and range of the Object Property: has_topping'
         
         self.assertEqual(res.data['error'], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
