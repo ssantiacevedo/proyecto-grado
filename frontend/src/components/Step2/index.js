@@ -23,7 +23,6 @@ const Step2 = ({
 
   return (
     <Step2Container>
-      <Text>Upload your Database</Text>
       <Fragment>
         <Label>
           Database Name <span style={{ color: palette.darkRed }}>*</span>

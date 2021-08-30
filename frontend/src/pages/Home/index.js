@@ -63,7 +63,7 @@ const Home = () => {
       <StepCard
         number={2}
         title={"Step 2 - Upload your Database"}
-        description={"Fill your database information to connect"}
+        description={"Fill your Postgres database information to connect"}
       >
         <Step2
           setUploaded={setOntologyUploaded}
