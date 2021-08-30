@@ -31,8 +31,9 @@ export const AddButon = styled.button`
   cursor: pointer;
   outline: none;
   border-radius: 8px;
-  height: 35px;
+  height: 40px;
   width: 50%;
+  max-width: 200px;
   margin-top: 20px;
   background-color: ${palette.alpha600};
   color: white;

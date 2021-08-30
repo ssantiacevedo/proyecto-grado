@@ -30,7 +30,8 @@ export const GoButton = styled.button`
   outline: none;
   border-radius: 8px;
   height: 50px;
-  width: 50%;
+  width: 100%;
+  max-width: 200px;
   margin-top: 20px;
   background-color: ${palette.alpha600};
   color: white;
@@ -49,4 +50,26 @@ export const ButtonContainer = styled.div`
   width: 100%;
   margin-top: 20px;
   justify-content: center;
+`;
+
+export const Label = styled.span`
+  font-family: 'Roboto';
+  font-weight: 600;
+  color: ${palette.alpha600};
+  font-size: 15px;
+  text-align: center;
+  margin: 0.5rem 0;
+`;
+
+export const Input = styled.input`
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 5px 0;
+  font-family: 'Roboto';
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid ${palette.beta800gray};
+  color: ${palette.beta800gray};
+  outline: none;
+  width: 50%;
 `;

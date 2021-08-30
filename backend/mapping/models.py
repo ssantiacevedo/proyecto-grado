@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
 
 class RelationalDB(models.Model):
@@ -23,6 +24,13 @@ class MappingProcess(models.Model):
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     relational_db = models.ForeignKey(RelationalDB, on_delete=models.CASCADE, null=True)
+    steps_amount = models.IntegerField(
+        default=2,
+        validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ]
+    )
     state = models.CharField(
         choices=PROCESS_STATES,
         default=ONTOLOGIES_ENTERED,

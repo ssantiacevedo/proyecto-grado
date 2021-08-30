@@ -7,6 +7,7 @@ import { PopperContextProvider } from "./helpers/usePopper";
 import "react-toastify/dist/ReactToastify.css";
 import Home from "./pages/Home";
 import Mappings from "./pages/Mappings";
+import Download from "./pages/Download";
 import "./App.css";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
               </Route>
               <Route exact path="/home" component={Home} />
               <Route exact path="/mappings" component={Mappings} />
+              <Route exact path="/download" component={Download} />
               <Route path="">
                 <Redirect to="/home" />
               </Route>

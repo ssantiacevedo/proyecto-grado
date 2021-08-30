@@ -18,6 +18,7 @@ const DataContext = createContext({
   currentDbMapping: "",
   currentOntoMapping: [],
   isMapping: false,
+  stepsAmount: 2,
   getDbElements: () => {},
   getOntoElementsWithUris: () => {},
   getOntoElementsWithFile: () => {},
@@ -31,6 +32,8 @@ const DataContext = createContext({
   setIsMapping: () => {},
   setLoadingValidation: () => {},
   validateMappings: () => {},
+  setMappedElements: () => {},
+  setStepsAmount: () => {},
 });
 
 function DataContextProvider(props) {
@@ -43,6 +46,7 @@ function DataContextProvider(props) {
   const [loadingDB, setLoadingDB] = useState(false);
   const [mappedElements, setMappedElements] = useState([]);
   const [currentDbMapping, setCurrentDbMapping] = useState("");
+  const [stepsAmount, setStepsAmount] = useState(2);
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [uuid, setUuid] = useState(null);
 
@@ -97,6 +101,7 @@ function DataContextProvider(props) {
         user: dbUser,
         port: dbPort,
         password: dbPass,
+        steps: stepsAmount,
       })
       .then((res) => {
         setDbElements(res?.data);
@@ -205,6 +210,7 @@ function DataContextProvider(props) {
         currentOntoMapping,
         loadingValidation,
         isMapping,
+        stepsAmount,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
@@ -217,6 +223,8 @@ function DataContextProvider(props) {
         startNewMapping,
         setIsMapping,
         validateMappings,
+        setMappedElements,
+        setStepsAmount,
         uuid,
       }}
       {...props}
