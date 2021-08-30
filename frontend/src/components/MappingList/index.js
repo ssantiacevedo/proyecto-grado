@@ -40,9 +40,11 @@ const MappingList = () => {
     validateMappings,
     isLoadingValidation,
     isMapping,
+    setMappedElements,
   } = useDataContext();
 
   useEffect(() => {
+    setMappedElements([]);
     setIsMapping(false);
     setCurrentOntoMapping([]);
     setCurrentDbMapping("");

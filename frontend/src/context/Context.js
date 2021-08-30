@@ -31,6 +31,7 @@ const DataContext = createContext({
   setIsMapping: () => {},
   setLoadingValidation: () => {},
   validateMappings: () => {},
+  setMappedElements: () => {},
 });
 
 function DataContextProvider(props) {
@@ -217,6 +218,7 @@ function DataContextProvider(props) {
         startNewMapping,
         setIsMapping,
         validateMappings,
+        setMappedElements,
         uuid,
       }}
       {...props}
