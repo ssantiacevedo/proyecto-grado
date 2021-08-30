@@ -16,7 +16,14 @@ const Home = () => {
   const [inputLists, setInputLists] = useState([{ type: "uri", uri: "" }]);
   const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
 
-  const { getDbElements, getOntoElementsWithFile, getOntoElementsWithUris, resetOntologyElements } = useDataContext();
+  const {
+    getDbElements,
+    getOntoElementsWithFile,
+    getOntoElementsWithUris,
+    resetOntologyElements,
+    setStepsAmount,
+    stepsAmount,
+  } = useDataContext();
   // DB Form
   const [dbName, setDbName] = useState("");
   const [dbPass, setDbPass] = useState("");
@@ -30,14 +37,13 @@ const Home = () => {
   }, []);
 
   const handleContinue = async () => {
-
-    const uris = [...inputLists].filter(input => input.type == 'uri');
-    const files = [...inputLists].filter(input => input.type == 'file');
+    const uris = [...inputLists].filter((input) => input.type == "uri");
+    const files = [...inputLists].filter((input) => input.type == "file");
     var formData = new FormData();
 
-    files.map(file => {
+    files.map((file) => {
       formData.append("onto", file?.file);
-    })
+    });
 
     await getOntoElementsWithFile(formData);
     await getOntoElementsWithUris(uris);
@@ -62,7 +68,7 @@ const Home = () => {
       </StepCard>
       <StepCard
         number={2}
-        title={"Step 2 - Upload your Database"}
+        title={"Step 2 - Upload your Database Connection"}
         description={"Fill your Postgres database information to connect"}
       >
         <Step2
@@ -85,6 +91,8 @@ const Home = () => {
         <Step3
           disabledMapping={disabledMapping}
           handleContinue={handleContinue}
+          setStepsAmount={setStepsAmount}
+          stepsAmount={stepsAmount}
         />
       </StepCard>
     </CardPage>

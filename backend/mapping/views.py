@@ -63,6 +63,7 @@ class RelationalDBView(views.APIView):
             db_name = data['name']
             db_port = data.get('port', None)
             db_password = data['password']
+            steps_amount = data['steps']
         except KeyError as e:
             return Response(
                 data={'error': 'Fields are missing'},
@@ -94,6 +95,8 @@ class RelationalDBView(views.APIView):
             mapping_process, _ = MappingProcess.objects.get_or_create(
                 uuid=uuid,
             )
+
+            mapping_process.steps_amount = steps_amount
             mapping_process.relational_db=db
             mapping_process.state='DB_ENT'
             mapping_process.save()
