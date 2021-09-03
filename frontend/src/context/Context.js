@@ -2,9 +2,14 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import { useHistory } from "react-router-dom";
 import axiosInstance from "../axios";
-import { CREATE_DB, CREATE_ONTOLOGY, VALIDATION } from "../axios/routes";
-import { dataMapping } from "../data/dummy";
+import {
+  CREATE_DB,
+  CREATE_ONTOLOGY,
+  VALIDATION,
+  ONTOLOGY_GENERATOR,
+} from "../axios/routes";
 
 const DataContext = createContext({
   dbElements: [],
@@ -34,6 +39,8 @@ const DataContext = createContext({
   validateMappings: () => {},
   setMappedElements: () => {},
   setStepsAmount: () => {},
+  clearAllData: () => {},
+  getOntologyForDownload: () => {},
 });
 
 function DataContextProvider(props) {
@@ -54,6 +61,8 @@ function DataContextProvider(props) {
     const uuidV4 = uuidv4();
     setUuid(uuidV4);
   }, []);
+
+  const history = useHistory();
 
   const notifySuccess = (successText) =>
     toast.success(<div>{successText}</div>, {
@@ -90,6 +99,14 @@ function DataContextProvider(props) {
 
   const resetOntologyElements = () => setOntologyElements([]);
   const resetDbElements = () => setDbElements([]);
+
+  const clearAllData = () => {
+    resetOntologyElements();
+    resetDbElements();
+    setMappedElements([]);
+    setCurrentDbMapping("");
+    setCurrentOntoMapping([]);
+  };
 
   const getDbElements = (dbName, dbUser, dbPort, dbPass) => {
     setDbElements([]);
@@ -175,6 +192,38 @@ function DataContextProvider(props) {
     setIsMapping(true);
   };
 
+  const getOntologyForDownload = () => {
+    setCurrentDbMapping("");
+    axiosInstance
+      .post(ONTOLOGY_GENERATOR, {
+        uuid,
+        mapping: mappedElements,
+      })
+      .then((res) => {
+        console.log(res?.data);
+        console.log(typeof res?.data);
+        // const a = document.createElement("a");
+        // a.href = content;
+        // ver de generar yo un FileName tipo Extended Ontology
+        // a.download = fileName;
+        // a.click();
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "OntologyDOWNLOAD.owl");
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((e) => {
+        if (e?.response?.data?.error) {
+          notifyErrorPersisted(e?.response?.data?.error);
+        } else {
+          notifyError("Something went wrong");
+        }
+      });
+  };
+
   const validateMappings = () => {
     setLoadingValidation(true);
     axiosInstance
@@ -184,6 +233,8 @@ function DataContextProvider(props) {
       })
       .then((res) => {
         notifySuccess("Mapping correct");
+        console.log(history);
+        history.push("/download");
       })
       .catch((e) => {
         if (e?.response?.data?.errors) {
@@ -227,6 +278,8 @@ function DataContextProvider(props) {
         validateMappings,
         setMappedElements,
         setStepsAmount,
+        clearAllData,
+        getOntologyForDownload,
         uuid,
       }}
       {...props}

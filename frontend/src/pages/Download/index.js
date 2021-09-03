@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import axiosInstance from "../../axios";
 import CardPage from "../../components/CardPage";
 import StepCard from "../../components/StepCard";
 import Spinner from "../../components/Spinner";
@@ -10,23 +9,21 @@ import { useDataContext } from "../../context/Context";
 
 const Download = () => {
   const [loadingOntology, setLoadingOntology] = useState(false);
-  const { resetOntologyElements, uuid } = useDataContext();
+  const { getOntologyForDownload } = useDataContext();
 
   const history = useHistory();
 
-  const handleDownload =
-    (() => {
-      setLoadingOntology(true);
-      // make the request to get the ontology
-      resetOntologyElements();
-      setLoadingOntology(false);
-      // const a = document.createElement("a");
-      // a.href = content;
-      // ver de generar yo un FileName tipo Extended Ontology
-      // a.download = fileName;
-      // a.click();
-    },
-    []);
+  const handleDownload = () => {
+    setLoadingOntology(true);
+    // make the request to get the ontology
+    getOntologyForDownload();
+    setLoadingOntology(false);
+    // const a = document.createElement("a");
+    // a.href = content;
+    // ver de generar yo un FileName tipo Extended Ontology
+    // a.download = fileName;
+    // a.click();
+  };
 
   return (
     <CardPage>
