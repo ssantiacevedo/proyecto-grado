@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/mapping/', include('mapping.urls')),
     path('api/validation/', include('validation.urls')),
+    path('api/ontology-generator/', include('generator.urls')),
 ]
 
 media_url = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
