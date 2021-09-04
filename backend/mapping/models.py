@@ -22,6 +22,7 @@ class MappingProcess(models.Model):
                         (RELATIONAL_DB_ENTERED, 'Relational DB entered'),
                         (MAPPING_DONE, 'Mapping done'))
 
+    name = models.CharField(max_length=120, blank=True, null=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     relational_db = models.ForeignKey(RelationalDB, on_delete=models.CASCADE, null=True)
     steps_amount = models.IntegerField(
@@ -36,6 +37,7 @@ class MappingProcess(models.Model):
         default=ONTOLOGIES_ENTERED,
         verbose_name='State of the mapping proccess',
         max_length=10)
+    valid_mapping = models.JSONField(null=True)
 
 class Ontology(models.Model):
     class Meta:

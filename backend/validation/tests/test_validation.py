@@ -84,11 +84,11 @@ class ValidationTests(TestCase):
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
         error_msg= 'has_topping is not an OWL Class'
         
-        self.assertEqual(res.data['error'], error_msg)
+        self.assertEqual(res.data['errors'][0], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch("validation.views.get_database_info", mocked_db_connection)
-    def test_invalid_associative_table_mapping(self):
+    def test_invalid_associative_table_mapping_no_object_property(self):
         bad_mapping = [
             {'AssociativeTable': [{'name': 'CheeseTopping', 'iri': f'{self.iri}#CheeseTopping'}]}
         ]
@@ -100,7 +100,41 @@ class ValidationTests(TestCase):
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
         error_msg= 'CheeseTopping is not an OWL Object Property'
         
-        self.assertEqual(res.data['error'], error_msg)
+        self.assertEqual(res.data['errors'][0], error_msg)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    @patch("validation.views.get_database_info", mocked_db_connection)
+    def test_invalid_associative_table_mapping_no_domain(self):
+        bad_mapping = [
+            {'AssociativeTable': [{'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}]},
+            {'MappedTable1': [{'name': 'Pizza', 'iri': f'{self.iri}#Pizza'}]}
+        ]
+        payload = {
+            'uuid': self.uuid,
+            'mapping': bad_mapping
+        }
+
+        res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
+        error_msg= 'You must also map the domain and range of the Object Property: has_topping'
+        
+        self.assertEqual(res.data['errors'][0], error_msg)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    @patch("validation.views.get_database_info", mocked_db_connection)
+    def test_invalid_associative_table_mapping_no_range(self):
+        bad_mapping = [
+            {'AssociativeTable': [{'name': 'has_topping', 'iri': f'{self.iri}#has_topping'}]},
+            {'MappedTable1': [{'name': 'Topping', 'iri': f'{self.iri}#Topping'}]}
+        ]
+        payload = {
+            'uuid': self.uuid,
+            'mapping': bad_mapping
+        }
+
+        res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
+        error_msg= 'You must also map the domain and range of the Object Property: has_topping'
+        
+        self.assertEqual(res.data['errors'][0], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
     
     @patch("validation.views.get_database_info", mocked_db_connection)
@@ -117,7 +151,7 @@ class ValidationTests(TestCase):
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
         error_msg= 'CheeseTopping is not an OWL Object Property'
         
-        self.assertEqual(res.data['error'], error_msg)
+        self.assertEqual(res.data['errors'][0], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
     
     @patch("validation.views.get_database_info", mocked_db_connection)
@@ -133,7 +167,7 @@ class ValidationTests(TestCase):
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
         error_msg= 'Onto Element has_topping is not a Correct Element'
         
-        self.assertEqual(res.data['error'], error_msg)
+        self.assertEqual(res.data['errors'][0], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
     
     @patch("validation.views.get_database_info", mocked_db_connection)
@@ -150,7 +184,7 @@ class ValidationTests(TestCase):
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
         error_msg = 'You must also map the domain and range of the Object Property: has_topping'
         
-        self.assertEqual(res.data['error'], error_msg)
+        self.assertEqual(res.data['errors'][0], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch("validation.views.get_database_info", mocked_db_connection)
@@ -167,5 +201,5 @@ class ValidationTests(TestCase):
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
         error_msg = 'You must also map the domain and range of the Object Property: has_topping'
         
-        self.assertEqual(res.data['error'], error_msg)
+        self.assertEqual(res.data['errors'][0], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

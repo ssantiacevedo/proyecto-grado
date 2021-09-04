@@ -186,8 +186,10 @@ function DataContextProvider(props) {
         notifySuccess("Mapping correct");
       })
       .catch((e) => {
-        if (e?.response?.data?.error) {
-          notifyErrorPersisted(e?.response?.data?.error);
+        if (e?.response?.data?.errors) {
+          e.response.data.errors.forEach((error) =>
+            notifyErrorPersisted(error)
+          );
         } else {
           notifyError("Something went wrong");
         }

@@ -15,8 +15,7 @@ class GeneratorView(views.APIView):
         data = request.data
 
         uuid = data.get('uuid', None)
-        mapping = data.get('mapping', None)
-        if not uuid or not mapping:
+        if not uuid:
             return Response(
                 'Error not uuid or mapping',
                 status=status.HTTP_400_BAD_REQUEST
@@ -26,12 +25,10 @@ class GeneratorView(views.APIView):
         except Exception as e:
             msg = f"No mapping process found with uuid: {uuid}."
             return Response(msg, status=400) 
-
-        if not generator(map_proccess, mapping):
+        if not generator(map_proccess):
             msg = f"A problem has occurred in the generation of the ontology."
             return Response(msg, status=400)  
-
-        with open(f"result-{map_proccess.uuid}.owl", 'r') as f:
+        with open(f"media/result-{map_proccess.uuid}-{map_proccess.steps_amount-1}.owl", 'r') as f:
            ontology_file = f.read()
 
         try:    
