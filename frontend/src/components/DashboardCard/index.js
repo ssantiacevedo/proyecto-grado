@@ -10,7 +10,8 @@ import {
   CardContainer,
 } from "./DashboardCard.styled";
 
-const DashboardCard = ({ handleCreateNew }) => {
+const DashboardCard = ({ handleCreateNew, process }) => {
+  console.log(process);
   return (
     <Step1Container>
       <ButtonContainer>
@@ -19,12 +20,9 @@ const DashboardCard = ({ handleCreateNew }) => {
           <IconText>{"Or create a new one"}</IconText>
         </AddButon>
         <ListContainer>
-          <CardContainer>Process: Hola</CardContainer>
-          <CardContainer>Process: Chau</CardContainer>
-          <CardContainer>Process: Nose </CardContainer>
-          <CardContainer>Process: Nos vemos</CardContainer>
-          <CardContainer>Process: Rota</CardContainer>
-          <CardContainer>Process: No se</CardContainer>
+          {process?.map((p) => (
+            <CardContainer>{`Process: ${p?.uuid}`}</CardContainer>
+          ))}
         </ListContainer>
       </ButtonContainer>
     </Step1Container>

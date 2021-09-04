@@ -9,6 +9,8 @@ const Step3 = ({
   handleContinue,
   setStepsAmount,
   stepsAmount,
+  mappingName,
+  setMappingName,
 }) => {
   return (
     <Step3Container>
@@ -24,6 +26,14 @@ const Step3 = ({
           placeholder="2"
           value={stepsAmount}
           onChange={(e) => setStepsAmount(e.target.value)}
+        />
+        <Label>
+          Name to identify your process
+        </Label>
+        <Input
+          placeholder="eg: InCo mapping process"
+          value={mappingName}
+          onChange={(e) => setMappingName(e.target.value)}
         />
         <ButtonContainer>
           <GoButton onClick={handleContinue} disabled={disabledMapping}>

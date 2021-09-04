@@ -9,6 +9,7 @@ import {
   CREATE_ONTOLOGY,
   VALIDATION,
   ONTOLOGY_GENERATOR,
+  MAPPING_PROCESS,
 } from "../axios/routes";
 
 const DataContext = createContext({
@@ -24,6 +25,8 @@ const DataContext = createContext({
   currentOntoMapping: [],
   isMapping: false,
   stepsAmount: 2,
+  mappingName: "",
+  mappingProcess: [],
   getDbElements: () => {},
   getOntoElementsWithUris: () => {},
   getOntoElementsWithFile: () => {},
@@ -39,8 +42,11 @@ const DataContext = createContext({
   validateMappings: () => {},
   setMappedElements: () => {},
   setStepsAmount: () => {},
+  setMappingName: () => {},
   clearAllData: () => {},
   getOntologyForDownload: () => {},
+  getMappingProcess: () => {},
+  setMappingProcess: () => {},
 });
 
 function DataContextProvider(props) {
@@ -54,6 +60,8 @@ function DataContextProvider(props) {
   const [mappedElements, setMappedElements] = useState([]);
   const [currentDbMapping, setCurrentDbMapping] = useState("");
   const [stepsAmount, setStepsAmount] = useState(2);
+  const [mappingName, setMappingName] = useState("");
+  const [mappingProcess, setMappingProcess] = useState([]);
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [uuid, setUuid] = useState(null);
 
@@ -119,6 +127,7 @@ function DataContextProvider(props) {
         port: dbPort,
         password: dbPass,
         steps: stepsAmount,
+        mappingName: mappingName,
       })
       .then((res) => {
         setDbElements(res?.data);
@@ -202,15 +211,10 @@ function DataContextProvider(props) {
       .then((res) => {
         console.log(res?.data);
         console.log(typeof res?.data);
-        // const a = document.createElement("a");
-        // a.href = content;
-        // ver de generar yo un FileName tipo Extended Ontology
-        // a.download = fileName;
-        // a.click();
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "OntologyDOWNLOAD.owl");
+        link.setAttribute("download", "OntologyGenerated.owl");
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -250,6 +254,23 @@ function DataContextProvider(props) {
       });
   };
 
+  const getMappingProcess = () => {
+    axiosInstance
+      .get(MAPPING_PROCESS)
+      .then((res) => {
+        setMappingProcess(res?.data);
+      })
+      .catch((e) => {
+        console.log(e);
+        if (e?.response?.data?.error) {
+          notifyErrorPersisted(e?.response?.data?.error);
+        } else {
+          notifyError("Something went wrong");
+        }
+        setMappingProcess([]);
+      });
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -264,6 +285,8 @@ function DataContextProvider(props) {
         loadingValidation,
         isMapping,
         stepsAmount,
+        mappingName,
+        mappingProcess,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
@@ -279,7 +302,9 @@ function DataContextProvider(props) {
         setMappedElements,
         setStepsAmount,
         clearAllData,
+        setMappingName,
         getOntologyForDownload,
+        getMappingProcess,
         uuid,
       }}
       {...props}

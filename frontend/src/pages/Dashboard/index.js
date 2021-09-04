@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axiosInstance from "../../axios";
 import DashboardPage from "../../components/DashboardPage";
@@ -9,9 +9,11 @@ import { useDataContext } from "../../context/Context";
 import DashboardCard from "../../components/DashboardCard";
 
 const Dashboard = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { clearAllData, setMappedElements, setIsMapping, setStepsAmount } = useDataContext();
+  const { clearAllData, setMappedElements, setIsMapping, setStepsAmount, getMappingProcess, mappingProcess } = useDataContext();
+
+  useEffect(() => {
+    getMappingProcess();
+  }, []);
 
   const history = useHistory();
 
@@ -25,7 +27,8 @@ const Dashboard = () => {
     // ver el tema de setear files, uri y db connection
     history.push("/home");
   };
-
+  
+  console.log(mappingProcess);
   return (
     <DashboardPage>
       <StepCard
@@ -33,7 +36,7 @@ const Dashboard = () => {
         number={null}
         title={"Click an existing mapping to load it and edit it"}
       >
-        <DashboardCard handleCreateNew={handleCreateNew} />
+        <DashboardCard handleCreateNew={handleCreateNew} process={mappingProcess} />
       </StepCard>
     </DashboardPage>
   );
