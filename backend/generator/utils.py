@@ -1,8 +1,9 @@
+import os
 import psycopg2
 from owlready2 import *
 
 
-def generator(map_proccess, mapping):
+def generator(map_proccess):
 
     ontology = map_proccess.ontology_set.last()
         
@@ -16,6 +17,10 @@ def generator(map_proccess, mapping):
     onto_classes = list(onto.classes())
     classes = [i.iri for i in onto_classes]
 
+    mapping = map_proccess.valid_mapping
+    if mapping is None:
+        return False
+
     list_mapped_elements = []
     for elem in mapping:
         db_elem = list(elem.keys())[0]
@@ -26,19 +31,24 @@ def generator(map_proccess, mapping):
                 list_mapped_elements.append(f'onto:{onto_name}')
 
     try:
-        for _ in range(map_proccess.steps_amount):
+        for i in range(map_proccess.steps_amount):
+            
             res_n = graph.query(
                 f"PREFIX onto:<{onto.base_iri}> "
                 "CONSTRUCT {  ?mapped_object ?a ?b . ?x ?y ?mapped_object ; ?c ?d . ?d a ?e } "  
                 f"WHERE {{ VALUES ?mapped_object {{ {' '.join(list_mapped_elements)} }} ?mapped_object ?a ?b . ?x ?y ?mapped_object ; ?c ?d . ?d a ?e}} "   
             )
             
-            res_n.serialize(format='pretty-xml', destination=f"result-{map_proccess.uuid}.owl")
+            res_n.serialize(format='pretty-xml', destination=f"media/result-{map_proccess.uuid}-{i}.owl")
             
-            temp_onto = get_ontology(f"file://result-{map_proccess.uuid}.owl").load()
+            temp_onto = get_ontology(f"file://media/result-{map_proccess.uuid}-{i}.owl").load()
             onto_classes = list(temp_onto.classes())
             for onto_elem in onto_classes:
-                list_mapped_elements.append(f'onto:{onto_elem.name}')
+                elem_name = f"onto:{onto_elem.name}"
+                if elem_name not in list_mapped_elements:
+                    list_mapped_elements.append(f"onto:{onto_elem.name}")
+            if (i < map_proccess.steps_amount-1) and (os.path.exists(f"media/result-{map_proccess.uuid}-{i}.owl")):
+                os.remove(f"media/result-{map_proccess.uuid}-{i}.owl")
         return True 
     except:
         return False

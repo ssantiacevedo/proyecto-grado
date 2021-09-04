@@ -70,27 +70,40 @@ class ValidationView(views.APIView):
             elem['columns'][1]['foreign_key']
         ]
 
+        errors = []
         for elem in mapping:
             db_elem = list(elem.keys())[0]
             onto_elems = elem[db_elem]
+            onto_mapping_elems = [
+                onto_elem['iri'] for map_elem in mapping for onto_elem in list(map_elem.values())[0]
+            ]
             # Rules List
             if db_elem in tables:
                 # Rule 2: handling of associative tables 
                 if db_elem in associative_tables:
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_object_properties.keys():
-                            return Response(
-                                {'error': '{} is not an OWL Object Property'.format(onto_elem['name'])},
-                                status=status.HTTP_400_BAD_REQUEST
-                            )
+                            errors.append('{} is not an OWL Object Property'.format(onto_elem['name']))
+                        else:
+                            is_mapped_domain_assoc = False
+                            is_mapped_range_assoc = False     
+
+                            for domain_elem in ontos_object_properties[onto_elem['iri']]['domain']:
+                                if domain_elem in onto_mapping_elems:
+                                    is_mapped_domain_assoc = True
+                                    continue
+                            for range_elem in ontos_object_properties[onto_elem['iri']]['range']:
+                                if range_elem in onto_mapping_elems:
+                                    is_mapped_range_assoc = True
+                                    continue
+                            if not is_mapped_domain_assoc or not is_mapped_range_assoc:
+                                errors.append('You must also map the domain and range of the Object Property: {}'.format(onto_elem['name']))
                 else:
                     # Rule 1: mapping of tables to OWL Classes
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_classes:
-                            return Response(
-                                {'error': '{} is not an OWL Class'.format(onto_elem['name'])},
-                                status=status.HTTP_400_BAD_REQUEST
-                            )
+                            errors.append('{} is not an OWL Class'.format(onto_elem['name']))
+
             else:
                 # Rule 6: mapping of foreign keys to OWL Object Properties
                 # Where at least one element of the domain and one 
@@ -98,15 +111,11 @@ class ValidationView(views.APIView):
                 if db_elem in foreign_keys:
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_object_properties.keys():
-                            return Response(
-                                {'error': '{} is not an OWL Object Property'.format(onto_elem['name'])},
-                                status=status.HTTP_400_BAD_REQUEST
-                            )
+                            errors.append('{} is not an OWL Object Property'.format(onto_elem['name']))
+                            continue
+
                         is_mapped_domain = False
                         is_mapped_range = False
-                        onto_mapping_elems = [
-                            onto_elem['iri'] for map_elem in mapping for onto_elem in list(map_elem.values())[0]
-                        ]
 
                         for domain_elem in ontos_object_properties[onto_elem['iri']]['domain']:
                             if domain_elem in onto_mapping_elems:
@@ -115,11 +124,9 @@ class ValidationView(views.APIView):
                         for range_elem in ontos_object_properties[onto_elem['iri']]['range']:
                             if range_elem in onto_mapping_elems:
                                 is_mapped_range = True
+                                continue
                         if not is_mapped_domain or not is_mapped_range:
-                            return Response(
-                                {'error': 'You must also map the domain and range of the Object Property: {}'.format(onto_elem['name'])},
-                                status=status.HTTP_400_BAD_REQUEST
-                            )
+                            errors.append('You must also map the domain and range of the Object Property: {}'.format(onto_elem['name']))
 
                 else:
                 # Rule 3: mapping of columns (not foreign keys) to OWL Data Properties
@@ -127,8 +134,14 @@ class ValidationView(views.APIView):
                 # TODO Rule 5: mapping of columns (not foreign keys) to Ontologies 
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_data_properties + ontos_classes:
-                            return Response(
-                                {'error': 'Onto Element {} is not a Correct Element'.format(onto_elem['name'])},
-                                status=status.HTTP_400_BAD_REQUEST
-                            )
+                            errors.append('Onto Element {} is not a Correct Element'.format(onto_elem['name']))
+
+        if len(errors) > 0:
+            return Response(
+                {'errors': errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        map_proccess.valid_mapping = mapping
+        map_proccess.save()
+
         return Response({"OK": "Correct mapping"}, status=status.HTTP_200_OK)
