@@ -100,7 +100,7 @@ class RelationalDBView(views.APIView):
                 uuid=uuid,
             )
             mapping_process.steps_amount = steps_amount
-            # mapping_process.name = mapping_name
+            mapping_process.name = mapping_name
             mapping_process.relational_db=db
             mapping_process.state='DB_ENT'
             mapping_process.save()
@@ -112,11 +112,3 @@ class MappingProcessViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
     queryset = MappingProcess.objects.all()
     serializer_class = MappingProcessSerializer
-    # def list(self, request):
-    #     mappings = queryset = self.get_queryset()
-    #     res = []
-    #     for mapping in mappings:
-    #         # res.append({ "uuid": mapping.uuid, "name": mapping.name})
-    #         res.append({ "uuid": mapping.uuid, "name": mapping.name})
-
-    #     return Response(res, status=status.HTTP_200_OK)

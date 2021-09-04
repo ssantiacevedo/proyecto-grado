@@ -114,6 +114,7 @@ function DataContextProvider(props) {
     setMappedElements([]);
     setCurrentDbMapping("");
     setCurrentOntoMapping([]);
+    setMappingName('');
   };
 
   const getDbElements = (dbName, dbUser, dbPort, dbPass) => {
@@ -198,19 +199,18 @@ function DataContextProvider(props) {
   const startNewMapping = () => {
     setCurrentDbMapping("");
     setCurrentOntoMapping([]);
+    setMappingName('');
     setIsMapping(true);
   };
 
   const getOntologyForDownload = () => {
     setCurrentDbMapping("");
+    setLoadingOntologyFile(true);
     axiosInstance
       .post(ONTOLOGY_GENERATOR, {
         uuid,
-        mapping: mappedElements,
       })
       .then((res) => {
-        console.log(res?.data);
-        console.log(typeof res?.data);
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;
@@ -225,6 +225,9 @@ function DataContextProvider(props) {
         } else {
           notifyError("Something went wrong");
         }
+      })
+      .finally(() => {
+        setLoadingOntologyFile(false);
       });
   };
 

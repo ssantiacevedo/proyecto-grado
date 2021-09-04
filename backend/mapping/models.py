@@ -14,6 +14,9 @@ class RelationalDB(models.Model):
 
 class MappingProcess(models.Model):
 
+    class Meta:
+        ordering = ['name']
+
     ONTOLOGIES_ENTERED = 'ONTOS_ENT'
     RELATIONAL_DB_ENTERED = 'DB_ENT'
     MAPPING_DONE = 'MAP_DONE'

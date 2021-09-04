@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import axiosInstance from "../../axios";
 import DashboardPage from "../../components/DashboardPage";
 import StepCard from "../../components/StepCard";
-import Spinner from "../../components/Spinner";
 import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";
 import DashboardCard from "../../components/DashboardCard";
@@ -28,7 +25,6 @@ const Dashboard = () => {
     history.push("/home");
   };
   
-  console.log(mappingProcess);
   return (
     <DashboardPage>
       <StepCard

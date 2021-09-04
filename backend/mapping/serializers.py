@@ -5,5 +5,6 @@ from .models import MappingProcess
 class MappingProcessSerializer(serializers.ModelSerializer):
 
     class Meta:
+        
         model = MappingProcess
-        fields = ['uuid']
+        fields = ['uuid', 'name']

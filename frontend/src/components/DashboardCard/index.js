@@ -21,7 +21,7 @@ const DashboardCard = ({ handleCreateNew, process }) => {
         </AddButon>
         <ListContainer>
           {process?.map((p) => (
-            <CardContainer>{`Process: ${p?.uuid}`}</CardContainer>
+            <CardContainer>{`${p?.name || ''}`}</CardContainer>
           ))}
         </ListContainer>
       </ButtonContainer>

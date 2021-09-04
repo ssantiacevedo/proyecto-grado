@@ -52,7 +52,7 @@ const Home = () => {
     await getDbElements(dbName, dbUser, dbPort, dbPass);
     history.push("/mappings");
   };
-  const disabledMapping = !dbUploaded || !ontologyUploaded;
+  const disabledMapping = !dbUploaded || !ontologyUploaded || !mappingName;
   return (
     <CardPage>
       <StepCard

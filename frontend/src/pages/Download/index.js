@@ -8,21 +8,12 @@ import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";
 
 const Download = () => {
-  const [loadingOntology, setLoadingOntology] = useState(false);
-  const { getOntologyForDownload } = useDataContext();
+  const { getOntologyForDownload, loadingOntologyFile } = useDataContext();
 
   const history = useHistory();
 
   const handleDownload = () => {
-    setLoadingOntology(true);
-    // make the request to get the ontology
     getOntologyForDownload();
-    setLoadingOntology(false);
-    // const a = document.createElement("a");
-    // a.href = content;
-    // ver de generar yo un FileName tipo Extended Ontology
-    // a.download = fileName;
-    // a.click();
   };
 
   return (
@@ -33,7 +24,7 @@ const Download = () => {
         title={"Download your extended ontology"}
         description={"Click on the download button to request your ontology"}
       >
-        {loadingOntology ? (
+        {loadingOntologyFile ? (
           <SpinnerContainer>
             <Spinner />
           </SpinnerContainer>
