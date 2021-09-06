@@ -21,7 +21,7 @@ const Header = () => {
     <>
       <Container>
         <TopContainer>
-          <Link to="/home">
+          <Link to="/dashboard">
             <Logo src={LogoUdelar2} alt="Elitegrad logo" />
           </Link>
           <HelpButton ref={setReferenceElement} onClick={togglePopper}>

@@ -23,6 +23,8 @@ const Home = () => {
     resetOntologyElements,
     setStepsAmount,
     stepsAmount,
+    mappingName,
+    setMappingName,
   } = useDataContext();
   // DB Form
   const [dbName, setDbName] = useState("");
@@ -50,7 +52,7 @@ const Home = () => {
     await getDbElements(dbName, dbUser, dbPort, dbPass);
     history.push("/mappings");
   };
-  const disabledMapping = !dbUploaded || !ontologyUploaded;
+  const disabledMapping = !dbUploaded || !ontologyUploaded || !mappingName;
   return (
     <CardPage>
       <StepCard
@@ -93,6 +95,8 @@ const Home = () => {
           handleContinue={handleContinue}
           setStepsAmount={setStepsAmount}
           stepsAmount={stepsAmount}
+          setMappingName={setMappingName}
+          mappingName={mappingName}
         />
       </StepCard>
     </CardPage>

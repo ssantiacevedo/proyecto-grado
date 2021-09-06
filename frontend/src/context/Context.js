@@ -2,9 +2,15 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import { useHistory } from "react-router-dom";
 import axiosInstance from "../axios";
-import { CREATE_DB, CREATE_ONTOLOGY, VALIDATION } from "../axios/routes";
-import { dataMapping } from "../data/dummy";
+import {
+  CREATE_DB,
+  CREATE_ONTOLOGY,
+  VALIDATION,
+  ONTOLOGY_GENERATOR,
+  MAPPING_PROCESS,
+} from "../axios/routes";
 
 const DataContext = createContext({
   dbElements: [],
@@ -19,6 +25,8 @@ const DataContext = createContext({
   currentOntoMapping: [],
   isMapping: false,
   stepsAmount: 2,
+  mappingName: "",
+  mappingProcess: [],
   getDbElements: () => {},
   getOntoElementsWithUris: () => {},
   getOntoElementsWithFile: () => {},
@@ -34,6 +42,11 @@ const DataContext = createContext({
   validateMappings: () => {},
   setMappedElements: () => {},
   setStepsAmount: () => {},
+  setMappingName: () => {},
+  clearAllData: () => {},
+  getOntologyForDownload: () => {},
+  getMappingProcess: () => {},
+  setMappingProcess: () => {},
 });
 
 function DataContextProvider(props) {
@@ -47,6 +60,8 @@ function DataContextProvider(props) {
   const [mappedElements, setMappedElements] = useState([]);
   const [currentDbMapping, setCurrentDbMapping] = useState("");
   const [stepsAmount, setStepsAmount] = useState(2);
+  const [mappingName, setMappingName] = useState("");
+  const [mappingProcess, setMappingProcess] = useState([]);
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [uuid, setUuid] = useState(null);
 
@@ -54,6 +69,8 @@ function DataContextProvider(props) {
     const uuidV4 = uuidv4();
     setUuid(uuidV4);
   }, []);
+
+  const history = useHistory();
 
   const notifySuccess = (successText) =>
     toast.success(<div>{successText}</div>, {
@@ -91,6 +108,15 @@ function DataContextProvider(props) {
   const resetOntologyElements = () => setOntologyElements([]);
   const resetDbElements = () => setDbElements([]);
 
+  const clearAllData = () => {
+    resetOntologyElements();
+    resetDbElements();
+    setMappedElements([]);
+    setCurrentDbMapping("");
+    setCurrentOntoMapping([]);
+    setMappingName('');
+  };
+
   const getDbElements = (dbName, dbUser, dbPort, dbPass) => {
     setDbElements([]);
     setLoadingDB(true);
@@ -102,6 +128,7 @@ function DataContextProvider(props) {
         port: dbPort,
         password: dbPass,
         steps: stepsAmount,
+        mappingName: mappingName,
       })
       .then((res) => {
         setDbElements(res?.data);
@@ -172,7 +199,36 @@ function DataContextProvider(props) {
   const startNewMapping = () => {
     setCurrentDbMapping("");
     setCurrentOntoMapping([]);
+    setMappingName('');
     setIsMapping(true);
+  };
+
+  const getOntologyForDownload = () => {
+    setCurrentDbMapping("");
+    setLoadingOntologyFile(true);
+    axiosInstance
+      .post(ONTOLOGY_GENERATOR, {
+        uuid,
+      })
+      .then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "OntologyGenerated.owl");
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((e) => {
+        if (e?.response?.data?.error) {
+          notifyErrorPersisted(e?.response?.data?.error);
+        } else {
+          notifyError("Something went wrong");
+        }
+      })
+      .finally(() => {
+        setLoadingOntologyFile(false);
+      });
   };
 
   const validateMappings = () => {
@@ -184,6 +240,8 @@ function DataContextProvider(props) {
       })
       .then((res) => {
         notifySuccess("Mapping correct");
+        console.log(history);
+        history.push("/download");
       })
       .catch((e) => {
         if (e?.response?.data?.errors) {
@@ -196,6 +254,23 @@ function DataContextProvider(props) {
       })
       .finally(() => {
         setLoadingValidation(false);
+      });
+  };
+
+  const getMappingProcess = () => {
+    axiosInstance
+      .get(MAPPING_PROCESS)
+      .then((res) => {
+        setMappingProcess(res?.data);
+      })
+      .catch((e) => {
+        console.log(e);
+        if (e?.response?.data?.error) {
+          notifyErrorPersisted(e?.response?.data?.error);
+        } else {
+          notifyError("Something went wrong");
+        }
+        setMappingProcess([]);
       });
   };
 
@@ -213,6 +288,8 @@ function DataContextProvider(props) {
         loadingValidation,
         isMapping,
         stepsAmount,
+        mappingName,
+        mappingProcess,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
@@ -227,6 +304,10 @@ function DataContextProvider(props) {
         validateMappings,
         setMappedElements,
         setStepsAmount,
+        clearAllData,
+        setMappingName,
+        getOntologyForDownload,
+        getMappingProcess,
         uuid,
       }}
       {...props}

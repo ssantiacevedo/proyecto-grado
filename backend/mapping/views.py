@@ -2,9 +2,12 @@ from rest_framework import views, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import views
+from rest_framework import mixins
+from rest_framework import viewsets
 from owlready2 import *
 from .utils import get_database_info, get_ontology_info_from_uri
 import time
+from .serializers import MappingProcessSerializer
 from .models import RelationalDB, Ontology, MappingProcess
 
 
@@ -64,6 +67,7 @@ class RelationalDBView(views.APIView):
             db_port = data.get('port', None)
             db_password = data['password']
             steps_amount = data['steps']
+            mapping_name = data['mappingName']
         except KeyError as e:
             return Response(
                 data={'error': 'Fields are missing'},
@@ -95,11 +99,16 @@ class RelationalDBView(views.APIView):
             mapping_process, _ = MappingProcess.objects.get_or_create(
                 uuid=uuid,
             )
-
             mapping_process.steps_amount = steps_amount
+            mapping_process.name = mapping_name
             mapping_process.relational_db=db
             mapping_process.state='DB_ENT'
             mapping_process.save()
             return Response(res, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(e.__str__(), status=400)
+
+class MappingProcessViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+
+    queryset = MappingProcess.objects.all()
+    serializer_class = MappingProcessSerializer
