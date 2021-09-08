@@ -20,6 +20,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('auth/', include('dj_rest_auth.urls')),
+    path('auth/registration/', include('dj_rest_auth.registration.urls')),
     path('api/mapping/', include('mapping.urls')),
     path('api/validation/', include('validation.urls')),
     path('api/ontology-generator/', include('generator.urls')),
