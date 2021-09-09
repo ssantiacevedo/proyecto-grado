@@ -17,6 +17,9 @@ class MappingProcess(models.Model):
     class Meta:
         ordering = ['name']
 
+    def __str__(self):
+        return self.name
+
     ONTOLOGIES_ENTERED = 'ONTOS_ENT'
     RELATIONAL_DB_ENTERED = 'DB_ENT'
     MAPPING_DONE = 'MAP_DONE'
@@ -58,4 +61,4 @@ class Ontology(models.Model):
         default=URI,
         max_length=10,
         verbose_name='Type of the ontology uploaded')
-    mapping_proccess = models.ForeignKey(MappingProcess, on_delete=models.CASCADE, null=True)
+    mapping_proccess = models.ForeignKey(MappingProcess, on_delete=models.CASCADE, null=True, related_name='ontologies')

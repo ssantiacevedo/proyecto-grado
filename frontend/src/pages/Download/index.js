@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";
 
 const Download = () => {
-  const { getOntologyForDownload, loadingOntologyFile } = useDataContext();
+  const { getOntologyForDownload, loadingOntology } = useDataContext();
 
   const history = useHistory();
 
@@ -24,7 +24,7 @@ const Download = () => {
         title={"Download your extended ontology"}
         description={"Click on the download button to request your ontology"}
       >
-        {loadingOntologyFile ? (
+        {loadingOntology ? (
           <SpinnerContainer>
             <Spinner />
           </SpinnerContainer>

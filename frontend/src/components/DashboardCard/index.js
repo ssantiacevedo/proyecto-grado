@@ -10,7 +10,7 @@ import {
   CardContainer,
 } from "./DashboardCard.styled";
 
-const DashboardCard = ({ handleCreateNew, process }) => {
+const DashboardCard = ({ handleCreateNew, processes, handleLoad }) => {
   console.log(process);
   return (
     <Step1Container>
@@ -20,8 +20,8 @@ const DashboardCard = ({ handleCreateNew, process }) => {
           <IconText>{"Or create a new one"}</IconText>
         </AddButon>
         <ListContainer>
-          {process?.map((p) => (
-            <CardContainer>{`${p?.name || ''}`}</CardContainer>
+          {processes?.map((p) => (
+            <CardContainer key={p?.uuid} onClick={() => handleLoad(p?.uuid)}>{`${p?.name || ''}`}</CardContainer>
           ))}
         </ListContainer>
       </ButtonContainer>

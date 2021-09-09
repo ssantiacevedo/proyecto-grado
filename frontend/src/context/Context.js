@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
 import { useHistory } from "react-router-dom";
 import axiosInstance from "../axios";
 import {
@@ -10,6 +9,7 @@ import {
   VALIDATION,
   ONTOLOGY_GENERATOR,
   MAPPING_PROCESS,
+  detailMappingProcess,
 } from "../axios/routes";
 
 const DataContext = createContext({
@@ -17,8 +17,7 @@ const DataContext = createContext({
   ontologyElements: [],
   mappedElements: [],
   uuid: null,
-  loadingOntologyFile: false,
-  loadingOntologyUri: false,
+  loadingOntology: false,
   loadingValidation: false,
   loadingDB: false,
   currentDbMapping: "",
@@ -27,9 +26,16 @@ const DataContext = createContext({
   stepsAmount: 2,
   mappingName: "",
   mappingProcess: [],
+  dbName: "",
+  dbPass: "",
+  dbUser: "",
+  dbPort: "",
+  inputLists: [],
+  ontologyMethodList: [],
+  ontologyUploaded: false,
   getDbElements: () => {},
-  getOntoElementsWithUris: () => {},
-  getOntoElementsWithFile: () => {},
+  setUuid: () => {},
+  getOntoElements: () => {},
   resetOntologyElements: () => {},
   resetDbElements: () => {},
   deleteMappingElement: () => {},
@@ -47,14 +53,21 @@ const DataContext = createContext({
   getOntologyForDownload: () => {},
   getMappingProcess: () => {},
   setMappingProcess: () => {},
+  getMappingProcessDetail: () => {},
+  setDbName: () => {},
+  setDbPass: () => {},
+  setDbUser: () => {},
+  setDbPort: () => {},
+  setInputLists: () => {},
+  setOntologyMethod: () => {},
+  setOntologyUploaded: () => {},
 });
 
 function DataContextProvider(props) {
   const [dbElements, setDbElements] = useState([]);
   const [ontologyElements, setOntologyElements] = useState([]);
   const [isMapping, setIsMapping] = useState(false);
-  const [loadingOntologyFile, setLoadingOntologyFile] = useState(false);
-  const [loadingOntologyUri, setLoadingOntologyUri] = useState(false);
+  const [loadingOntology, setLoadingOntology] = useState(false);
   const [loadingValidation, setLoadingValidation] = useState(false);
   const [loadingDB, setLoadingDB] = useState(false);
   const [mappedElements, setMappedElements] = useState([]);
@@ -65,10 +78,18 @@ function DataContextProvider(props) {
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [uuid, setUuid] = useState(null);
 
-  useEffect(() => {
-    const uuidV4 = uuidv4();
-    setUuid(uuidV4);
-  }, []);
+  // Db Form
+  const [dbName, setDbName] = useState("");
+  const [dbPass, setDbPass] = useState("");
+  const [dbUser, setDbUser] = useState("");
+  const [dbPort, setDbPort] = useState("");
+
+  // Step 1 form
+  const [inputLists, setInputLists] = useState([{ type: "uri", uri: "", new: true }]);
+  const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
+
+  //Step 3 form
+  const [ontologyUploaded, setOntologyUploaded] = useState(false);
 
   const history = useHistory();
 
@@ -115,6 +136,10 @@ function DataContextProvider(props) {
     setCurrentDbMapping("");
     setCurrentOntoMapping([]);
     setMappingName('');
+    setDbName('');
+    setDbUser('');
+    setDbPass('');
+    setDbPort('');
   };
 
   const getDbElements = (dbName, dbUser, dbPort, dbPass) => {
@@ -141,10 +166,11 @@ function DataContextProvider(props) {
       });
   };
 
-  const getOntoElementsWithFile = (files) => {
+  const getOntoElements = (files) => {
+
     const blob = new File([], uuid);
     files.append("uuid", blob);
-    setLoadingOntologyFile(true);
+    setLoadingOntology(true);
     axiosInstance
       .post(CREATE_ONTOLOGY, files, {
         headers: {
@@ -156,28 +182,10 @@ function DataContextProvider(props) {
         setOntologyElements((old) => [...old, ...res?.data]);
       })
       .catch(() => {
-        notifyError("Error while loading Ontology file");
+        notifyError("Error while loading Ontology Elements");
       })
       .finally(() => {
-        setLoadingOntologyFile(false);
-      });
-  };
-
-  const getOntoElementsWithUris = (uris) => {
-    setLoadingOntologyUri(true);
-    axiosInstance
-      .post(CREATE_ONTOLOGY, {
-        uuid,
-        uris,
-      })
-      .then((res) => {
-        setOntologyElements((old) => [...old, ...res?.data]);
-      })
-      .catch(() => {
-        notifyError("Error while loading Ontology URIs");
-      })
-      .finally(() => {
-        setLoadingOntologyUri(false);
+        setLoadingOntology(false);
       });
   };
 
@@ -205,7 +213,7 @@ function DataContextProvider(props) {
 
   const getOntologyForDownload = () => {
     setCurrentDbMapping("");
-    setLoadingOntologyFile(true);
+    setLoadingOntology(true);
     axiosInstance
       .post(ONTOLOGY_GENERATOR, {
         uuid,
@@ -227,7 +235,7 @@ function DataContextProvider(props) {
         }
       })
       .finally(() => {
-        setLoadingOntologyFile(false);
+        setLoadingOntology(false);
       });
   };
 
@@ -240,7 +248,6 @@ function DataContextProvider(props) {
       })
       .then((res) => {
         notifySuccess("Mapping correct");
-        console.log(history);
         history.push("/download");
       })
       .catch((e) => {
@@ -264,6 +271,46 @@ function DataContextProvider(props) {
         setMappingProcess(res?.data);
       })
       .catch((e) => {
+        if (e?.response?.data?.error) {
+          notifyErrorPersisted(e?.response?.data?.error);
+        } else {
+          notifyError("Something went wrong");
+        }
+        setMappingProcess([]);
+      });
+  };
+
+
+  const getMappingProcessDetail = (uuid) => {
+    setUuid(uuid);
+    axiosInstance
+      .get(detailMappingProcess(uuid))
+      .then((res) => {
+        console.log(res?.data?.valid_mapping);
+        setStepsAmount(res?.data?.steps_amount);
+        setMappedElements(res?.data?.valid_mapping);
+        let ontologyMethodList = [];
+        const ontologies = res?.data?.ontologies?.map(onto => {
+          if(onto?.ontology_type === 'URI') {
+            ontologyMethodList = [...ontologyMethodList, { choice: "uri" }];
+            return { type: "uri", uri: onto.ontology_uri, new: false }
+          } else {
+            ontologyMethodList = [...ontologyMethodList, { choice: "file" }];
+            const fileName = onto.ontology_file.substring(onto.ontology_file.lastIndexOf('/') + 1);
+            return { type: "file", file: onto.ontology_file, name: fileName, new: false };
+
+          }
+        });
+        setInputLists(ontologies);
+        setOntologyMethod(ontologyMethodList);
+        setDbName(res?.data?.relational_db?.relational_db_name);
+        setDbPort(res?.data?.relational_db?.relational_db_port || '');
+        setDbPass(res?.data?.relational_db?.relational_db_password);
+        setDbUser(res?.data?.relational_db?.relational_db_user);
+        setMappingName(res?.data?.name);
+        setOntologyUploaded(true);
+      })
+      .catch((e) => {
         console.log(e);
         if (e?.response?.data?.error) {
           notifyErrorPersisted(e?.response?.data?.error);
@@ -280,8 +327,7 @@ function DataContextProvider(props) {
         dbElements,
         ontologyElements,
         mappedElements,
-        loadingOntologyFile,
-        loadingOntologyUri,
+        loadingOntology,
         loadingDB,
         currentDbMapping,
         currentOntoMapping,
@@ -290,17 +336,24 @@ function DataContextProvider(props) {
         stepsAmount,
         mappingName,
         mappingProcess,
+        dbName,
+        dbPass,
+        dbUser,
+        dbPort,
+        ontologyMethodList,
+        inputLists,
+        ontologyUploaded,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
-        getOntoElementsWithUris,
-        getOntoElementsWithFile,
+        getOntoElements,
         resetOntologyElements,
         resetDbElements,
         deleteMappingElement,
         addMappingElement,
         startNewMapping,
         setIsMapping,
+        setUuid,
         validateMappings,
         setMappedElements,
         setStepsAmount,
@@ -308,6 +361,14 @@ function DataContextProvider(props) {
         setMappingName,
         getOntologyForDownload,
         getMappingProcess,
+        setDbName,
+        setDbPass,
+        setDbPort,
+        setDbUser,
+        getMappingProcessDetail,
+        setInputLists,
+        setOntologyMethod,
+        setOntologyUploaded,
         uuid,
       }}
       {...props}
