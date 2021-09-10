@@ -28,7 +28,7 @@ class ValidationView(views.APIView):
             relational_db.relational_db_password)
 
         ontologies_info = []
-        for onto in map_proccess.ontology_set.all():
+        for onto in map_proccess.ontologies.all():
             if onto.ontology_type == 'FILE':
                 data = get_ontology_info_from_uri(onto.ontology_file.name, True)
             else:

@@ -1,4 +1,5 @@
 from rest_framework import views, status
+import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import views
@@ -7,7 +8,7 @@ from rest_framework import viewsets
 from owlready2 import *
 from .utils import get_database_info, get_ontology_info_from_uri
 import time
-from .serializers import MappingProcessSerializer
+from .serializers import MappingProcessSerializer, MappingProcessSerializerDetailed
 from .models import RelationalDB, Ontology, MappingProcess
 
 
@@ -19,8 +20,10 @@ class OntologyView(views.APIView):
         ontology_objects = []
         uuid = ''
         identifier = 1
+
+        # If files are coming (uris, files, and uuid is coming in this list)
         if len(request.FILES) > 0:
-            files = request.FILES.getlist('onto')
+            files = request.FILES.getlist('onto', None)
             for ff in files:
                 onto_info = Ontology.objects.create(ontology_type='FILE', ontology_file=ff)
                 res.append({ "id": identifier, "data": get_ontology_info_from_uri(onto_info.ontology_file.name, True)})
@@ -29,9 +32,8 @@ class OntologyView(views.APIView):
 
             uuid = request.FILES.getlist('uuid')[0].name
 
-        if 'uris' in data and len(data['uris']) > 0:
-            owls = data['uris']
-            uuid = request.data['uuid']
+            owls = json.loads(data['uris'])
+
             for owl in owls:
                 try:
                     if owl['type'] == 'uri':
@@ -42,24 +44,31 @@ class OntologyView(views.APIView):
                 except Exception as e:
                     return Response(e.__str__(), status=400)
 
-        if (len(res) > 0):
-            try:
-                mapping_process, _ = MappingProcess.objects.get_or_create(uuid=uuid)
-                for ontology in ontology_objects:
-                    mapping_process.ontology_set.add(ontology) 
-                mapping_process.state = 'ONTOS_ENT'
-                mapping_process.save()
-                return Response(res, status=status.HTTP_200_OK)
-            except Exception as e:
-                return Response(e.__str__(), status=400)
+        try: 
+            mapping_process, created = MappingProcess.objects.get_or_create(uuid=uuid)
 
-        return Response(res, status=status.HTTP_200_OK)
+            # If the mapping process exists, return the actual Ontology elements for it
+            if not created:
+                for ontology in Ontology.objects.filter(mapping_proccess__uuid=uuid):
+                    if ontology.ontology_type == 'FILE':
+                        res.append({ "id": identifier, "data": get_ontology_info_from_uri(ontology.ontology_file.name, True)})
+                    else:
+                        res.append({ "id": identifier, "data": get_ontology_info_from_uri(ontology.ontology_uri, False)})
+                    identifier += 1
+
+            # Save the new ontology objects into the mapping process
+            for ontology in ontology_objects:
+                mapping_process.ontologies.add(ontology) 
+            mapping_process.state = 'ONTOS_ENT'
+            mapping_process.save()
+            return Response(res, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(e.__str__(), status=400)
 
 class RelationalDBView(views.APIView):
 
     def post(self, request):  # noqa C901
         data = request.data
-        print(data)
         try:
             uuid = data['uuid']
             db_user = data['user']
@@ -108,7 +117,13 @@ class RelationalDBView(views.APIView):
         except Exception as e:
             return Response(e.__str__(), status=400)
 
-class MappingProcessViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class MappingProcessViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return MappingProcessSerializer
+        if self.action == 'retrieve':
+            return MappingProcessSerializerDetailed
+        return MappingProcessSerializer
 
     queryset = MappingProcess.objects.all()
-    serializer_class = MappingProcessSerializer
+    lookup_field = 'uuid'

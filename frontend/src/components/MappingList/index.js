@@ -34,21 +34,11 @@ const MappingList = () => {
     currentOntoMapping,
     addMappingElement,
     startNewMapping,
-    setCurrentDbMapping,
-    setCurrentOntoMapping,
-    setIsMapping,
     validateMappings,
     isLoadingValidation,
     isMapping,
     setMappedElements,
   } = useDataContext();
-
-  useEffect(() => {
-    setMappedElements([]);
-    setIsMapping(false);
-    setCurrentOntoMapping([]);
-    setCurrentDbMapping("");
-  }, []);
 
   return (
     <DBDataDisplayContainer>

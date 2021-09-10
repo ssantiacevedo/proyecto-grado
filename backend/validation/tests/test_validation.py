@@ -51,7 +51,7 @@ class ValidationTests(TestCase):
             uuid=self.uuid,
             relational_db=self.relational_db,
         )
-        self.mapping_process.ontology_set.add(self.ontology)
+        self.mapping_process.ontologies.add(self.ontology)
         self.iri = "http://www.lesfleursdunormal.fr/static/_downloads/pizza_onto.owl"
         self.success_mapping = [{
             'MappedTable1': [{'name': 'Pizza', 'iri': f'{self.iri}#Pizza'}]},{

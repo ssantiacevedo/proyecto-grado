@@ -11,48 +11,50 @@ import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";
 
 const Home = () => {
-  const [dbUploaded, setDbUploaded] = useState(false);
-  const [ontologyUploaded, setOntologyUploaded] = useState(false);
-  const [inputLists, setInputLists] = useState([{ type: "uri", uri: "" }]);
-  const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
 
   const {
     getDbElements,
-    getOntoElementsWithFile,
-    getOntoElementsWithUris,
+    getOntoElements,
     resetOntologyElements,
     setStepsAmount,
     stepsAmount,
     mappingName,
     setMappingName,
+    dbName,
+    dbPass,
+    dbUser,
+    dbPort,
+    setDbUser,
+    setDbPort,
+    setDbPass,
+    setDbName,
+    inputLists,
+    ontologyMethodList,
+    setInputLists,
+    setOntologyMethod,
+    ontologyUploaded,
+    setOntologyUploaded,
   } = useDataContext();
   // DB Form
-  const [dbName, setDbName] = useState("");
-  const [dbPass, setDbPass] = useState("");
-  const [dbUser, setDbUser] = useState("");
-  const [dbPort, setDbPort] = useState("");
 
   const history = useHistory();
 
-  useEffect(() => {
-    resetOntologyElements();
-  }, []);
-
   const handleContinue = async () => {
-    const uris = [...inputLists].filter((input) => input.type == "uri");
-    const files = [...inputLists].filter((input) => input.type == "file");
+    const uris = [...inputLists].filter((input) => input.type == "uri" && input.new);
+    const files = [...inputLists].filter((input) => input.type == "file" &&  input.new);
     var formData = new FormData();
 
     files.map((file) => {
       formData.append("onto", file?.file);
     });
-
-    await getOntoElementsWithFile(formData);
-    await getOntoElementsWithUris(uris);
+    formData.append('uris', JSON.stringify(uris));
+  
+    await getOntoElements(formData);
     await getDbElements(dbName, dbUser, dbPort, dbPass);
     history.push("/mappings");
   };
-  const disabledMapping = !dbUploaded || !ontologyUploaded || !mappingName;
+  const disabledMapping = !ontologyUploaded || !dbUser || !dbName || !dbPass || !mappingName;
+
   return (
     <CardPage>
       <StepCard
@@ -65,7 +67,7 @@ const Home = () => {
           setInputLists={setInputLists}
           ontologyMethodList={ontologyMethodList}
           setOntologyMethod={setOntologyMethod}
-          setUploaded={setDbUploaded}
+          setUploaded={setOntologyUploaded}
         />
       </StepCard>
       <StepCard
@@ -74,7 +76,6 @@ const Home = () => {
         description={"Fill your Postgres database information to connect"}
       >
         <Step2
-          setUploaded={setOntologyUploaded}
           dbName={dbName}
           dbUser={dbUser}
           dbPass={dbPass}

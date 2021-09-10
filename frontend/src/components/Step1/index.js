@@ -26,7 +26,7 @@ const Step1 = ({
   setOntologyMethod,
 }) => {
   const handleAddClick = () => {
-    setInputLists([...inputLists, { type: "uri", uri: "" }]);
+    setInputLists([...inputLists, { type: "uri", uri: "", new: true }]);
     setOntologyMethod([...ontologyMethodList, { choice: "uri" }]);
   };
 
@@ -41,10 +41,10 @@ const Step1 = ({
     const list = [...inputLists];
     if (ontologyMethodList[index].choice === "file") {
       const { files } = e.target;
-      list[index] = { type: "file", file: files?.[0], name: files?.[0].name };
+      list[index] = { type: "file", file: files?.[0], name: files?.[0].name, new: true };
     } else {
       const { value } = e.target;
-      list[index] = { type: "uri", uri: value };
+      list[index] = { type: "uri", uri: value, new: true };
     }
     setInputLists(list);
   };
@@ -55,9 +55,9 @@ const Step1 = ({
     list[index] = { choice: e.target.value };
 
     if (e.target.value === "file") {
-      inputList[index] = { type: "file", file: "", name: "" };
+      inputList[index] = { type: "file", file: "", name: "", new: true };
     } else {
-      inputList[index] = { type: "uri", uri: "" };
+      inputList[index] = { type: "uri", uri: "", new: true };
     }
 
     setInputLists(inputList);
@@ -79,13 +79,13 @@ const Step1 = ({
                   <FontAwesomeIcon icon={faCloudUploadAlt} />
                   <IconText>Upload Ontology</IconText>
                 </StyledInput>
-                {x?.name && <Text>File name: {x.name}</Text>}
+                {x?.name && <Text>Name: {x.name}</Text>}
                 <input
                   onChange={(e) => handleInputChange(e, i)}
                   id={`file-upload-${i}`}
                   name={`ontology-${i}`}
                   type="file"
-                  accept=".owl, .txt"
+                  accept=".owl, .txt, .xml, .ttl"
                   style={{ display: "none" }}
                 />
               </Fragment>
@@ -121,16 +121,16 @@ const Step1 = ({
         ))}
       </>
       <ButtonContainer>
-        <AddButon onClick={handleAddClick}>
-          <FontAwesomeIcon icon={faPlusSquare} />
-          <IconText>{"Add more ontologies"}</IconText>
-        </AddButon>
         {inputLists?.length > 1 && (
           <AddButon onClick={() => handleRemoveClick(inputLists?.length - 1)}>
             <FontAwesomeIcon icon={faMinusSquare} />
             <IconText>{"Remove last ontology"}</IconText>
           </AddButon>
         )}
+        <AddButon onClick={handleAddClick}>
+          <FontAwesomeIcon icon={faPlusSquare} />
+          <IconText>{"Add more ontologies"}</IconText>
+        </AddButon>
       </ButtonContainer>
     </Step1Container>
   );

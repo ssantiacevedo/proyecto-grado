@@ -3,7 +3,6 @@ import { Step2Container, Text, Input, Label } from "./Step2.styled";
 import { palette } from "../../theme/palette";
 
 const Step2 = ({
-  setUploaded,
   dbName,
   setDbName,
   dbPort,
@@ -13,14 +12,6 @@ const Step2 = ({
   dbUser,
   setDbUser,
 }) => {
-  useEffect(() => {
-    if (dbName.length && dbPass.length && dbUser.length) {
-      setUploaded(true);
-    } else {
-      setUploaded(false);
-    }
-  }, [dbName, dbPass, dbUser, dbPort]);
-
   return (
     <Step2Container>
       <Fragment>
