@@ -33,6 +33,7 @@ export const TableNameContainer = styled.div`
 
 
 export const MappingRow = styled.div`
+  width: 93%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -43,6 +44,7 @@ export const MappingRow = styled.div`
 `;
 
 export const MappingContainer = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin-top: 30px;

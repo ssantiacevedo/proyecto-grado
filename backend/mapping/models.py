@@ -18,7 +18,7 @@ class MappingProcess(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     ONTOLOGIES_ENTERED = 'ONTOS_ENT'
     RELATIONAL_DB_ENTERED = 'DB_ENT'

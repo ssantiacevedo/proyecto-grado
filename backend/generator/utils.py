@@ -5,7 +5,7 @@ from owlready2 import *
 
 def generator(map_proccess):
 
-    ontology = map_proccess.ontology_set.last()
+    ontology = map_proccess.ontologies.last()
         
     if ontology.ontology_type == 'FILE':
         onto = get_ontology("file://media/" + ontology.ontology_file.name).load()

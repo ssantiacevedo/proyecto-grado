@@ -121,16 +121,16 @@ const Step1 = ({
         ))}
       </>
       <ButtonContainer>
-        <AddButon onClick={handleAddClick}>
-          <FontAwesomeIcon icon={faPlusSquare} />
-          <IconText>{"Add more ontologies"}</IconText>
-        </AddButon>
         {inputLists?.length > 1 && (
           <AddButon onClick={() => handleRemoveClick(inputLists?.length - 1)}>
             <FontAwesomeIcon icon={faMinusSquare} />
             <IconText>{"Remove last ontology"}</IconText>
           </AddButon>
         )}
+        <AddButon onClick={handleAddClick}>
+          <FontAwesomeIcon icon={faPlusSquare} />
+          <IconText>{"Add more ontologies"}</IconText>
+        </AddButon>
       </ButtonContainer>
     </Step1Container>
   );

@@ -13,10 +13,10 @@ const Mappings = () => {
   const { ontologyElements, dbElements, loadingOntology, loadingDB } = useDataContext();
   return (
     <MappingPage>
-      <StepCard expanded number={1} title={'Database Elements'} description={'Elements in your .owls and URIs'}>
+      <StepCard expanded number={1} title={'Database Elements'} description={'Elements in the DB connection'}>
         <DBDataDisplay data={dbElements} />
       </StepCard>
-      <StepCard expanded number={2} title={'Ontologies Elements'} description={'Elements in the DB connection'}>
+      <StepCard expanded number={2} title={'Ontologies Elements'} description={'Elements in your .owls and URIs'}>
         <OntoDataDisplay data={ontologyElements} loading={loadingOntology} />
       </StepCard>
       <StepCard expanded number={3} title={'Your current mappings'} description={'Your actual mappings'}>

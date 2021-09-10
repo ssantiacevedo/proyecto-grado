@@ -140,6 +140,8 @@ function DataContextProvider(props) {
     setDbUser('');
     setDbPass('');
     setDbPort('');
+    setInputLists([{ type: "uri", uri: "", new: true }]);
+    setOntologyMethod([{ choice: "uri" }]);
   };
 
   const getDbElements = (dbName, dbUser, dbPort, dbPass) => {
@@ -179,7 +181,7 @@ function DataContextProvider(props) {
         },
       })
       .then((res) => {
-        setOntologyElements((old) => [...old, ...res?.data]);
+        setOntologyElements(() => [...res?.data]);
       })
       .catch(() => {
         notifyError("Error while loading Ontology Elements");
@@ -196,7 +198,7 @@ function DataContextProvider(props) {
   };
 
   const addMappingElement = () => {
-    const list = [...mappedElements];
+    const list = [...mappedElements ? mappedElements : []];
     const newObj = {};
     newObj[currentDbMapping] = currentOntoMapping;
     const newList = [newObj, ...list];
