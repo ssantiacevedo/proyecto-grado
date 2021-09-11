@@ -125,5 +125,7 @@ class MappingProcessViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixi
             return MappingProcessSerializerDetailed
         return MappingProcessSerializer
 
-    queryset = MappingProcess.objects.all()
+    def get_queryset(self):
+        return MappingProcess.objects.filter(user=self.request.user.id)
+
     lookup_field = 'uuid'

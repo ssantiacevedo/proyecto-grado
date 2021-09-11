@@ -11,15 +11,16 @@ import { useDataContext } from "../../context/Context";
 const Download = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { resetOntologyElements, uuid } = useDataContext();
+  const { login, token } = useDataContext();
 
   const history = useHistory();
+  if (token) history.push("/dashboard");
 
   const handleLogin = () => {
-    console.log(email, password);
-    // make the request to login
-    resetOntologyElements();
-    history.push('/dashboard');
+    login(
+      email,
+      password
+    );
   };
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import {
   Container,
   Logo,
@@ -9,14 +10,17 @@ import {
   RulesContainer,
   Rule,
   RuleDescription,
+  LogoutButton,
 } from "./Header.styled";
 import { usePopper } from "../../helpers/usePopper";
 import Popper from "../Popper";
 import LogoUdelar2 from "../../assets/udelarLogo2.svg";
+import { useDataContext } from "../../context/Context";
 
 const Header = () => {
   const [referenceElement, setReferenceElement] = useState(null);
   const { popperOpen, togglePopper } = usePopper(`help-popper`);
+  const { token, logout } = useDataContext();
   return (
     <>
       <Container>
@@ -24,6 +28,7 @@ const Header = () => {
           <Link to="/dashboard">
             <Logo src={LogoUdelar2} alt="Elitegrad logo" />
           </Link>
+          {token && <LogoutButton onClick={logout}> <FontAwesomeIcon icon={faSignOutAlt} /> Logout</LogoutButton>}
           <HelpButton ref={setReferenceElement} onClick={togglePopper}>
             Rules
           </HelpButton>

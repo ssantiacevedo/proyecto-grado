@@ -7,13 +7,15 @@ import { useDataContext } from "../../context/Context";
 import DashboardCard from "../../components/DashboardCard";
 
 const Dashboard = () => {
-  const { clearAllData, getMappingProcess, mappingProcess, getMappingProcessDetail, setUuid } = useDataContext();
+  const { clearAllData, getMappingProcess, mappingProcess, getMappingProcessDetail, setUuid, token } = useDataContext();
+  const history = useHistory();
+
+  if (!token) history.push("/login");
 
   useEffect(() => {
     getMappingProcess();
   }, []);
 
-  const history = useHistory();
 
   const handleCreateNew = () => {
     clearAllData();
@@ -24,7 +26,6 @@ const Dashboard = () => {
 
   const handleLoad = (uuid) => {
     getMappingProcessDetail(uuid);
-    history.push("/home");
   };
   
   return (

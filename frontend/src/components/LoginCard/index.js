@@ -11,7 +11,7 @@ import {
   Label,
 } from "./LoginCard.styled";
 
-const DownloadCard = ({
+const LoginCard = ({
   handleLogin,
   setEmail,
   email,
@@ -49,4 +49,4 @@ const DownloadCard = ({
   );
 };
 
-export default DownloadCard;
+export default LoginCard;

@@ -8,9 +8,14 @@ import OntoDataDisplay from '../../components/OntoDataDisplay';
 import MappingList from '../../components/MappingList';
 import { dataMapping } from '../../data/dummy';
 import { useDataContext } from '../../context/Context';
+import { useHistory } from 'react-router';
 
 const Mappings = () => {
-  const { ontologyElements, dbElements, loadingOntology, loadingDB } = useDataContext();
+  const { ontologyElements, dbElements, loadingOntology, loadingDB, token } = useDataContext();
+  const history = useHistory();
+
+  if (!token) history.push("/login");
+
   return (
     <MappingPage>
       <StepCard expanded number={1} title={'Database Elements'} description={'Elements in the DB connection'}>

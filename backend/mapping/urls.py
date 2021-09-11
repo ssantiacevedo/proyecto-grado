@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from mapping.views import OntologyView, RelationalDBView, MappingProcessViewSet
 
 router = DefaultRouter()
-router.register(r'mapping_process', MappingProcessViewSet)
+router.register(r'mapping_process', MappingProcessViewSet, basename="mapping_process")
 
 urlpatterns = [
     path('ontologies/',

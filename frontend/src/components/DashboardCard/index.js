@@ -11,7 +11,6 @@ import {
 } from "./DashboardCard.styled";
 
 const DashboardCard = ({ handleCreateNew, processes, handleLoad }) => {
-  console.log(process);
   return (
     <Step1Container>
       <ButtonContainer>
