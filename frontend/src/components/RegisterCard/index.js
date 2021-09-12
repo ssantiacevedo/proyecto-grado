@@ -1,7 +1,7 @@
-import React, { useState, Fragment } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignInAlt } from "@fortawesome/free-solid-svg-icons";
-import { palette } from "../../theme/palette";
+import { palette } from '../../theme/palette';
 import {
   Step1Container,
   AddButon,
@@ -9,11 +9,19 @@ import {
   IconText,
   Input,
   Label,
-  RegisterLink,
-} from "./LoginCard.styled";
+  LoginLink,
+} from "./RegisterCard.styled";
 import { useHistory } from "react-router-dom";
 
-const LoginCard = ({ handleLogin, setEmail, email, setPassword, password }) => {
+const RegisterCard = ({
+  handleRegister,
+  setEmail,
+  email,
+  setPassword,
+  password,
+  setConfirmPassword,
+  confirmPassword,
+}) => {
   const history = useHistory();
 
   return (
@@ -32,22 +40,32 @@ const LoginCard = ({ handleLogin, setEmail, email, setPassword, password }) => {
           Password <span style={{ color: palette.darkRed }}>*</span>
         </Label>
         <Input
-          placeholder="password"
+          placeholder="min 8 characters"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           required
         />
-        <AddButon disabled={!email || !password} onClick={handleLogin}>
+        <Label>
+          Confirm Password <span style={{ color: palette.darkRed }}>*</span>
+        </Label>
+        <Input
+          placeholder="min 8 characters"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          type="password"
+          required
+        />
+        <AddButon disabled={!email || !password || !confirmPassword} onClick={handleRegister}>
           <FontAwesomeIcon icon={faSignInAlt} />
-          <IconText>{"Login"}</IconText>
+          <IconText>{"Register"}</IconText>
         </AddButon>
-        <RegisterLink onClick={() => history.push("/register")}>
-         Don´t have an account?  <a>Register</a>
-        </RegisterLink>
+        <LoginLink onClick={() => history.push("/login")}>
+         Already have an account?  <a>Log in</a>
+        </LoginLink>
       </ButtonContainer>
     </Step1Container>
   );
 };
 
-export default LoginCard;
+export default RegisterCard;

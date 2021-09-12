@@ -12,6 +12,7 @@ import {
   detailMappingProcess,
   LOGIN,
   LOGOUT,
+  REGISTER,
 } from "../axios/routes";
 
 const DataContext = createContext({
@@ -66,6 +67,7 @@ const DataContext = createContext({
   setOntologyUploaded: () => {},
   login: () => {},
   logout: () => {},
+  register: () => {},
 });
 
 function DataContextProvider(props) {
@@ -82,8 +84,9 @@ function DataContextProvider(props) {
   const [mappingProcess, setMappingProcess] = useState([]);
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [uuid, setUuid] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('ontology-token') || "");
-
+  const [token, setToken] = useState(
+    localStorage.getItem("ontology-token") || ""
+  );
   // Db Form
   const [dbName, setDbName] = useState("");
   const [dbPass, setDbPass] = useState("");
@@ -104,7 +107,7 @@ function DataContextProvider(props) {
   const notifySuccess = (successText) =>
     toast.success(<div>{successText}</div>, {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
@@ -115,7 +118,7 @@ function DataContextProvider(props) {
   const notifyError = (errorText) =>
     toast.error(<div>{errorText}</div>, {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 3000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
@@ -338,20 +341,53 @@ function DataContextProvider(props) {
   };
 
   const login = (email, password) => {
-    axiosInstance.post(LOGIN, { email, password }).then((res) => {
-      localStorage.setItem('ontology-token', res?.data?.key);
-      setToken(res?.data?.key);
-      history.push("/dashboard");
-    });
+    axiosInstance
+      .post(LOGIN, { email, password })
+      .then((res) => {
+        localStorage.setItem("ontology-token", res?.data?.key);
+        setToken(res?.data?.key);
+        history.push("/dashboard");
+      })
+      .catch((err) => {
+        if (err?.response?.data) {
+          Object.entries(err?.response?.data).map((error) => {
+            notifyError(error?.[1]);
+          });
+        } else {
+          notifyError("Something went wrong");
+        }
+      });
   };
 
   const logout = () => {
     axiosInstance
       .post(LOGOUT, { headers: { Authorization: `Token ${token}` } })
       .then(() => {
-        localStorage.removeItem('ontology-token');
-        setToken('');
+        localStorage.removeItem("ontology-token");
+        setToken("");
         history.push("/login");
+      });
+  };
+
+  const register = (email, password, confirmPassword) => {
+    axiosInstance
+      .post(REGISTER, {
+        username: email,
+        email,
+        password1: password,
+        password2: confirmPassword,
+      })
+      .then((res) => {
+        login(email, password);
+      })
+      .catch((err) => {
+        if (err?.response?.data) {
+          Object.entries(err?.response?.data).map((error) => {
+            notifyError(error?.[1]);
+          });
+        } else {
+          notifyError("Something went wrong");
+        }
       });
   };
 
@@ -407,6 +443,7 @@ function DataContextProvider(props) {
         login,
         logout,
         setToken,
+        register,
         uuid,
       }}
       {...props}
