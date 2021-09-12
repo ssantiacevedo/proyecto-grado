@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Mappings from "./pages/Mappings";
 import Download from "./pages/Download";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import "./App.css";
 
@@ -27,6 +28,7 @@ function App() {
                 <Route exact path="/mappings" component={Mappings} />
                 <Route exact path="/download" component={Download} />
                 <Route exact path="/login" component={Login} />
+                <Route exact path="/register" component={Register} />
                 <Route exact path="/dashboard" component={Dashboard} />
                 <Route path="">
                   <Redirect to="/dashboard" />
