@@ -5,5 +5,6 @@ export const ONTOLOGY_GENERATOR = 'api/ontology-generator/';
 export const MAPPING_PROCESS = 'api/mapping/mapping_process/';
 export const LOGIN = 'auth/login/';
 export const LOGOUT = 'auth/logout/';
+export const REGISTER = 'auth/registration/';
 
 export const detailMappingProcess = (id) => `${MAPPING_PROCESS}${id}/`

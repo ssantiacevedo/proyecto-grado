@@ -12,7 +12,7 @@ export const Step1Container = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  margin-top: 30px;
+  margin-top: 10px;
   align-items: flex-start;
   z-index: 2;
 `;
@@ -26,7 +26,7 @@ export const AddButon = styled.button`
   height: 35px;
   width: 50%;
   opacity: ${(props) => (props.disabled ? "0.7" : "1")};
-  margin-top: 20px;
+  margin-top: 10px;
   background-color: ${palette.alpha600};
   color: white;
 `;
@@ -37,7 +37,7 @@ export const ButtonContainer = styled.div`
   align-items: center;
   width: 100%;
   justify-content: center;
-  margin-top: 10px;
+  margin-bottom: 10px;
 `;
 
 export const Label = styled.span`
@@ -52,7 +52,7 @@ export const Label = styled.span`
 export const Input = styled.input`
   display: inline-block;
   padding: 6px 12px;
-  margin: 5px 0;
+  margin: 3px 0;
   font-family: "Roboto";
   font-size: 13px;
   border-radius: 6px;
@@ -62,7 +62,7 @@ export const Input = styled.input`
   width: 50%;
 `;
 
-export const RegisterLink = styled.span`
+export const LoginLink = styled.span`
   font-family: "Roboto";
   font-size: 14px;
 
