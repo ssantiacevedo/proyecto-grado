@@ -21,7 +21,7 @@ function App() {
             <DataContextProvider>
               <Switch>
                 <Route exact path="/">
-                  <Redirect to="/home" />
+                  <Redirect to="/dashboard" />
                 </Route>
                 <Route exact path="/home" component={Home} />
                 <Route exact path="/mappings" component={Mappings} />
@@ -29,7 +29,7 @@ function App() {
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/dashboard" component={Dashboard} />
                 <Route path="">
-                  <Redirect to="/home" />
+                  <Redirect to="/dashboard" />
                 </Route>
               </Switch>
             </DataContextProvider>

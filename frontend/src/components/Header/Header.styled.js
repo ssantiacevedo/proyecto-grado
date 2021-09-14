@@ -50,6 +50,20 @@ const HelpButton = styled.button`
   color: ${palette.alpha600};
 `;
 
+const LogoutButton = styled.button`
+  
+  border-radius: 8px;
+  cursor: pointer;
+  position: absolute;
+  left: 2rem;
+  margin-top: 0;
+  border: none;
+  font-family: 'Roboto';
+  font-size: 1rem;
+  padding: 0.5rem 3rem;
+  color: ${palette.alpha600};
+`;
+
 const RulesContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -85,4 +99,5 @@ export {
   RulesContainer,
   Rule,
   RuleDescription,
+  LogoutButton,
 };

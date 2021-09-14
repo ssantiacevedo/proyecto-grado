@@ -11,7 +11,6 @@ import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";
 
 const Home = () => {
-
   const {
     getDbElements,
     getOntoElements,
@@ -34,26 +33,34 @@ const Home = () => {
     setOntologyMethod,
     ontologyUploaded,
     setOntologyUploaded,
+    token,
   } = useDataContext();
   // DB Form
 
   const history = useHistory();
 
+  if (!token) history.push("/login");
+
   const handleContinue = async () => {
-    const uris = [...inputLists].filter((input) => input.type == "uri" && input.new);
-    const files = [...inputLists].filter((input) => input.type == "file" &&  input.new);
+    const uris = [...inputLists].filter(
+      (input) => input.type == "uri" && input.new
+    );
+    const files = [...inputLists].filter(
+      (input) => input.type == "file" && input.new
+    );
     var formData = new FormData();
 
     files.map((file) => {
       formData.append("onto", file?.file);
     });
-    formData.append('uris', JSON.stringify(uris));
-  
+    formData.append("uris", JSON.stringify(uris));
+
     await getOntoElements(formData);
     await getDbElements(dbName, dbUser, dbPort, dbPass);
     history.push("/mappings");
   };
-  const disabledMapping = !ontologyUploaded || !dbUser || !dbName || !dbPass || !mappingName;
+  const disabledMapping =
+    !ontologyUploaded || !dbUser || !dbName || !dbPass || !mappingName;
 
   return (
     <CardPage>

@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
 
@@ -44,6 +45,7 @@ class MappingProcess(models.Model):
         verbose_name='State of the mapping proccess',
         max_length=10)
     valid_mapping = models.JSONField(null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class Ontology(models.Model):
     class Meta:

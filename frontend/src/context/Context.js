@@ -10,6 +10,8 @@ import {
   ONTOLOGY_GENERATOR,
   MAPPING_PROCESS,
   detailMappingProcess,
+  LOGIN,
+  LOGOUT,
 } from "../axios/routes";
 
 const DataContext = createContext({
@@ -33,6 +35,7 @@ const DataContext = createContext({
   inputLists: [],
   ontologyMethodList: [],
   ontologyUploaded: false,
+  token: "",
   getDbElements: () => {},
   setUuid: () => {},
   getOntoElements: () => {},
@@ -59,8 +62,10 @@ const DataContext = createContext({
   setDbUser: () => {},
   setDbPort: () => {},
   setInputLists: () => {},
-  setOntologyMethod: () => {},
+  setOntologyMethod: () => {},
   setOntologyUploaded: () => {},
+  login: () => {},
+  logout: () => {},
 });
 
 function DataContextProvider(props) {
@@ -77,6 +82,7 @@ function DataContextProvider(props) {
   const [mappingProcess, setMappingProcess] = useState([]);
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [uuid, setUuid] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('ontology-token') || "");
 
   // Db Form
   const [dbName, setDbName] = useState("");
@@ -85,7 +91,9 @@ function DataContextProvider(props) {
   const [dbPort, setDbPort] = useState("");
 
   // Step 1 form
-  const [inputLists, setInputLists] = useState([{ type: "uri", uri: "", new: true }]);
+  const [inputLists, setInputLists] = useState([
+    { type: "uri", uri: "", new: true },
+  ]);
   const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
 
   //Step 3 form
@@ -135,11 +143,11 @@ function DataContextProvider(props) {
     setMappedElements([]);
     setCurrentDbMapping("");
     setCurrentOntoMapping([]);
-    setMappingName('');
-    setDbName('');
-    setDbUser('');
-    setDbPass('');
-    setDbPort('');
+    setMappingName("");
+    setDbName("");
+    setDbUser("");
+    setDbPass("");
+    setDbPort("");
     setInputLists([{ type: "uri", uri: "", new: true }]);
     setOntologyMethod([{ choice: "uri" }]);
   };
@@ -156,7 +164,7 @@ function DataContextProvider(props) {
         password: dbPass,
         steps: stepsAmount,
         mappingName: mappingName,
-      })
+      }, {headers: { Authorization: `Token ${token}` }},)
       .then((res) => {
         setDbElements(res?.data);
       })
@@ -169,7 +177,6 @@ function DataContextProvider(props) {
   };
 
   const getOntoElements = (files) => {
-
     const blob = new File([], uuid);
     files.append("uuid", blob);
     setLoadingOntology(true);
@@ -178,6 +185,7 @@ function DataContextProvider(props) {
         headers: {
           "Content-Type":
             "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+          Authorization: `Token ${token}`, 
         },
       })
       .then((res) => {
@@ -198,7 +206,7 @@ function DataContextProvider(props) {
   };
 
   const addMappingElement = () => {
-    const list = [...mappedElements ? mappedElements : []];
+    const list = [...(mappedElements ? mappedElements : [])];
     const newObj = {};
     newObj[currentDbMapping] = currentOntoMapping;
     const newList = [newObj, ...list];
@@ -209,7 +217,7 @@ function DataContextProvider(props) {
   const startNewMapping = () => {
     setCurrentDbMapping("");
     setCurrentOntoMapping([]);
-    setMappingName('');
+    setMappingName("");
     setIsMapping(true);
   };
 
@@ -268,7 +276,7 @@ function DataContextProvider(props) {
 
   const getMappingProcess = () => {
     axiosInstance
-      .get(MAPPING_PROCESS)
+      .get(MAPPING_PROCESS, { headers: { Authorization: `Token ${token}` } })
       .then((res) => {
         setMappingProcess(res?.data);
       })
@@ -282,44 +290,68 @@ function DataContextProvider(props) {
       });
   };
 
-
   const getMappingProcessDetail = (uuid) => {
     setUuid(uuid);
     axiosInstance
-      .get(detailMappingProcess(uuid))
+      .get(detailMappingProcess(uuid), {
+        headers: { Authorization: `Token ${token}` },
+      })
       .then((res) => {
-        console.log(res?.data?.valid_mapping);
         setStepsAmount(res?.data?.steps_amount);
         setMappedElements(res?.data?.valid_mapping);
         let ontologyMethodList = [];
-        const ontologies = res?.data?.ontologies?.map(onto => {
-          if(onto?.ontology_type === 'URI') {
+        const ontologies = res?.data?.ontologies?.map((onto) => {
+          if (onto?.ontology_type === "URI") {
             ontologyMethodList = [...ontologyMethodList, { choice: "uri" }];
-            return { type: "uri", uri: onto.ontology_uri, new: false }
+            return { type: "uri", uri: onto.ontology_uri, new: false };
           } else {
             ontologyMethodList = [...ontologyMethodList, { choice: "file" }];
-            const fileName = onto.ontology_file.substring(onto.ontology_file.lastIndexOf('/') + 1);
-            return { type: "file", file: onto.ontology_file, name: fileName, new: false };
-
+            const fileName = onto.ontology_file.substring(
+              onto.ontology_file.lastIndexOf("/") + 1
+            );
+            return {
+              type: "file",
+              file: onto.ontology_file,
+              name: fileName,
+              new: false,
+            };
           }
         });
         setInputLists(ontologies);
         setOntologyMethod(ontologyMethodList);
         setDbName(res?.data?.relational_db?.relational_db_name);
-        setDbPort(res?.data?.relational_db?.relational_db_port || '');
+        setDbPort(res?.data?.relational_db?.relational_db_port || "");
         setDbPass(res?.data?.relational_db?.relational_db_password);
         setDbUser(res?.data?.relational_db?.relational_db_user);
         setMappingName(res?.data?.name);
         setOntologyUploaded(true);
+        history.push("/home");
       })
       .catch((e) => {
-        console.log(e);
         if (e?.response?.data?.error) {
           notifyErrorPersisted(e?.response?.data?.error);
         } else {
           notifyError("Something went wrong");
         }
         setMappingProcess([]);
+      });
+  };
+
+  const login = (email, password) => {
+    axiosInstance.post(LOGIN, { email, password }).then((res) => {
+      localStorage.setItem('ontology-token', res?.data?.key);
+      setToken(res?.data?.key);
+      history.push("/dashboard");
+    });
+  };
+
+  const logout = () => {
+    axiosInstance
+      .post(LOGOUT, { headers: { Authorization: `Token ${token}` } })
+      .then(() => {
+        localStorage.removeItem('ontology-token');
+        setToken('');
+        history.push("/login");
       });
   };
 
@@ -345,6 +377,7 @@ function DataContextProvider(props) {
         ontologyMethodList,
         inputLists,
         ontologyUploaded,
+        token,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
@@ -371,6 +404,9 @@ function DataContextProvider(props) {
         setInputLists,
         setOntologyMethod,
         setOntologyUploaded,
+        login,
+        logout,
+        setToken,
         uuid,
       }}
       {...props}

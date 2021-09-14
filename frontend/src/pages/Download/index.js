@@ -8,9 +8,11 @@ import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";
 
 const Download = () => {
-  const { getOntologyForDownload, loadingOntology } = useDataContext();
+  const { getOntologyForDownload, loadingOntology, token } = useDataContext();
 
   const history = useHistory();
+
+  if (!token) history.push("/login");
 
   const handleDownload = () => {
     getOntologyForDownload();
