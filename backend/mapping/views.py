@@ -60,6 +60,7 @@ class OntologyView(views.APIView):
             for ontology in ontology_objects:
                 mapping_process.ontologies.add(ontology) 
             mapping_process.state = 'ONTOS_ENT'
+            mapping_process.user=request.user
             mapping_process.save()
             return Response(res, status=status.HTTP_200_OK)
         except Exception as e:
@@ -112,6 +113,7 @@ class RelationalDBView(views.APIView):
             mapping_process.name = mapping_name
             mapping_process.relational_db=db
             mapping_process.state='DB_ENT'
+            mapping_process.user=request.user
             mapping_process.save()
             return Response(res, status=status.HTTP_200_OK)
         except Exception as e:
@@ -126,6 +128,6 @@ class MappingProcessViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixi
         return MappingProcessSerializer
 
     def get_queryset(self):
-        return MappingProcess.objects.filter(user=self.request.user.id)
+        return MappingProcess.objects.filter(user=self.request.user)
 
     lookup_field = 'uuid'
