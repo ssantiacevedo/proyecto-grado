@@ -164,7 +164,7 @@ function DataContextProvider(props) {
         password: dbPass,
         steps: stepsAmount,
         mappingName: mappingName,
-      })
+      }, {headers: { Authorization: `Token ${token}` }},)
       .then((res) => {
         setDbElements(res?.data);
       })
@@ -185,6 +185,7 @@ function DataContextProvider(props) {
         headers: {
           "Content-Type":
             "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+          Authorization: `Token ${token}`, 
         },
       })
       .then((res) => {
