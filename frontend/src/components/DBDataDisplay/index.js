@@ -23,18 +23,16 @@ const DBDisplay = ({ data, loading }) => {
     isMapping,
     currentDbMapping,
     currentOntoMapping,
+    currentDbSelected,
+    setCurrentDbSelected,
   } = useDataContext();
   const [referenceElement, setReferenceElement] = useState(null);
   const { popperOpen, togglePopper } = usePopper(`db-popper`);
-
+  console.log(data);
   return (
     <>
       <DBDataDisplayContainer>
-        <Text
-          ref={setReferenceElement}
-        >
-          Your DB Elements
-        </Text>
+        <Text ref={setReferenceElement}>Your DB Elements</Text>
         {loading ? (
           <SpinnerContainer>
             <Spinner />
@@ -46,7 +44,14 @@ const DBDisplay = ({ data, loading }) => {
                 <StyledInput>
                   <TableNameContainer
                     isMapping={isMapping}
-                    onClick={() => isMapping && setCurrentDbMapping(x?.table)}
+                    onClick={() => {
+                      isMapping && setCurrentDbMapping(x?.table);
+                      isMapping &&
+                      setCurrentDbSelected([...currentDbSelected, x]);
+                    }}
+                    active={currentDbSelected.some(
+                      (el) => el?.table === x?.table
+                    )}
                   >
                     <FontAwesomeIcon icon={faTable} />
                     {x?.table && <Text>Table: {x.table}</Text>}
@@ -54,9 +59,14 @@ const DBDisplay = ({ data, loading }) => {
                   <ColumnsContainer>
                     {x?.columns.map((column) => (
                       <ColumnNameContainer
-                        onClick={() =>
-                          isMapping && setCurrentDbMapping(column?.name)
-                        }
+                        onClick={() => {
+                          isMapping && setCurrentDbMapping(column?.name);
+                          isMapping &&
+                          setCurrentDbSelected([...currentDbSelected, { name: `${x?.table}-${column?.name}` }]);
+                        }}
+                        active={currentDbSelected.some(
+                          (el) => el?.name === `${x?.table}-${column?.name}`
+                        )}
                         isMapping={isMapping}
                       >
                         <FontAwesomeIcon icon={faColumns} />

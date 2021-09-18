@@ -37,6 +37,8 @@ const DataContext = createContext({
   ontologyMethodList: [],
   ontologyUploaded: false,
   token: "",
+  currentOntoSelected: [],
+  currentDbSelected: [],
   getDbElements: () => {},
   setUuid: () => {},
   getOntoElements: () => {},
@@ -68,6 +70,8 @@ const DataContext = createContext({
   login: () => {},
   logout: () => {},
   register: () => {},
+  setCurrentOntoSelected: () => {},
+  setCurrentDbSelected: () => {},
 });
 
 function DataContextProvider(props) {
@@ -83,6 +87,9 @@ function DataContextProvider(props) {
   const [mappingName, setMappingName] = useState("");
   const [mappingProcess, setMappingProcess] = useState([]);
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
+  const [currentOntoSelected, setCurrentOntoSelected] = useState([]);
+  const [currentDbSelected, setCurrentDbSelected] = useState([]);
+
   const [uuid, setUuid] = useState(null);
   const [token, setToken] = useState(
     localStorage.getItem("ontology-token") || ""
@@ -151,6 +158,8 @@ function DataContextProvider(props) {
     setDbUser("");
     setDbPass("");
     setDbPort("");
+    setCurrentOntoSelected([]);
+    setCurrentDbSelected([]);
     setInputLists([{ type: "uri", uri: "", new: true }]);
     setOntologyMethod([{ choice: "uri" }]);
   };
@@ -215,6 +224,8 @@ function DataContextProvider(props) {
     const newList = [newObj, ...list];
     setMappedElements(newList);
     setIsMapping(false);
+    setCurrentOntoSelected([]);
+    setCurrentDbSelected([]);
   };
 
   const startNewMapping = () => {
@@ -222,6 +233,8 @@ function DataContextProvider(props) {
     setCurrentOntoMapping([]);
     setMappingName("");
     setIsMapping(true);
+    setCurrentOntoSelected([]);
+    setCurrentDbSelected([]);
   };
 
   const getOntologyForDownload = () => {
@@ -414,6 +427,8 @@ function DataContextProvider(props) {
         inputLists,
         ontologyUploaded,
         token,
+        currentDbSelected,
+        currentOntoSelected,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
@@ -444,6 +459,8 @@ function DataContextProvider(props) {
         logout,
         setToken,
         register,
+        setCurrentDbSelected,
+        setCurrentOntoSelected,
         uuid,
       }}
       {...props}

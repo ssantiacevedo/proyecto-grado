@@ -37,11 +37,11 @@ const Header = () => {
       <Popper white show={popperOpen} referenceElement={referenceElement}>
         <RulesContainer>
           <Rule>
-            <span>#Rule 1:</span>
+            <span>Rule #1:</span>
             <RuleDescription>Database Table to OWL Classes</RuleDescription>
           </Rule>
           <Rule>
-            <span>#Rule 2:</span>
+            <span>Rule #2:</span>
             <RuleDescription>
               Database Bridge Table to Object Properties
             </RuleDescription>
@@ -51,25 +51,25 @@ const Header = () => {
             </RuleDescription>
           </Rule>
           <Rule>
-            <span>#Rule 3:</span>
+            <span>Rule #3:</span>
             <RuleDescription>
               Database Columns (No FK) to Data Properties
             </RuleDescription>
           </Rule>
           <Rule>
-            <span>#Rule 4:</span>
+            <span>Rule #4:</span>
             <RuleDescription>
               Database Columns (No FK) to OWL Classes
             </RuleDescription>
           </Rule>
           <Rule>
-            <span>#Rule 5:</span>
+            <span>Rule #5:</span>
             <RuleDescription>
               Database Columns (No FK) to OWL Ontologies
             </RuleDescription>
           </Rule>
           <Rule>
-            <span>#Rule 6:</span>
+            <span>Rule #6:</span>
             <RuleDescription>
               Database Columns (FK) to Object Properties
             </RuleDescription>
