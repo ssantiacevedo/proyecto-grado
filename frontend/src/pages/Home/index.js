@@ -66,7 +66,7 @@ const Home = () => {
     <CardPage>
       <StepCard
         number={1}
-        title={"Upload your Database Connection"}
+        title={"Upload Database Connection"}
         description={"Fill your Postgres database information to connect"}
       >
         <Step2
@@ -95,8 +95,8 @@ const Home = () => {
       </StepCard>
       <StepCard
         number={3}
-        title={"Confirm your mappings"}
-        description={"Click in the button to define your mappings"}
+        title={"Mappings"}
+        description={"Click in the button to navigate to make your mappings"}
       >
         <Step3
           disabledMapping={disabledMapping}

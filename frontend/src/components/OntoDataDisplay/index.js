@@ -46,7 +46,7 @@ const OntoDataDisplay = ({ data, loading }) => {
         <>
           {data?.map((elements, i) => (
             <OntoContainer key={`ontology-${i}`}>
-              <OntologyTitle>Ontology Elements: </OntologyTitle>
+              <OntologyTitle>Ontology Elements: {elements?.name} </OntologyTitle>
               {elements?.data?.map((x, i) => (
                 <StyledInput htmlFor={`file-upload-${i}`}>
                   <TableNameContainer>

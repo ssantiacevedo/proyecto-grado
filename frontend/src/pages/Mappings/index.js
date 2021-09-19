@@ -24,7 +24,7 @@ const Mappings = () => {
       <StepCard expanded number={2} title={'Context Elements'} description={'Elements in your .owls and URIs'}>
         <OntoDataDisplay data={ontologyElements} loading={loadingOntology} />
       </StepCard>
-      <StepCard expanded number={3} title={'Your current mappings'} description={'Your actual mappings'}>
+      <StepCard expanded number={3} title={'Current Mappings'} description={'Your actual mappings'}>
         <MappingList data={dataMapping} loading={loadingDB} />
       </StepCard>
     </MappingPage>

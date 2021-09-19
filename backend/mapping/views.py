@@ -26,7 +26,7 @@ class OntologyView(views.APIView):
             files = request.FILES.getlist('onto', None)
             for ff in files:
                 onto_info = Ontology.objects.create(ontology_type='FILE', ontology_file=ff)
-                res.append({ "id": identifier, "data": get_ontology_info_from_uri(onto_info.ontology_file.name, True)})
+                res.append({ "name": onto_info.ontology_file.name.split("/")[-1], "id": identifier, "data": get_ontology_info_from_uri(onto_info.ontology_file.name, True)})
                 identifier += 1
                 ontology_objects.append(onto_info)
 
@@ -38,7 +38,7 @@ class OntologyView(views.APIView):
                 try:
                     if owl['type'] == 'uri':
                         onto_info = Ontology.objects.create(ontology_type='URI', ontology_uri=owl['uri'])
-                        res.append({ "id": identifier, "data": get_ontology_info_from_uri(owl['uri'], False)})
+                        res.append({ "name": owl['uri'].split("/")[-1], "id": identifier, "data": get_ontology_info_from_uri(owl['uri'], False)})
                         identifier += 1
                     ontology_objects.append(onto_info)
                 except Exception as e:
@@ -51,9 +51,9 @@ class OntologyView(views.APIView):
             if not created:
                 for ontology in Ontology.objects.filter(mapping_proccess__uuid=uuid):
                     if ontology.ontology_type == 'FILE':
-                        res.append({ "id": identifier, "data": get_ontology_info_from_uri(ontology.ontology_file.name, True)})
+                        res.append({ "name": ontology.ontology_file.name.split("/")[-1], "id": identifier, "data": get_ontology_info_from_uri(ontology.ontology_file.name, True)})
                     else:
-                        res.append({ "id": identifier, "data": get_ontology_info_from_uri(ontology.ontology_uri, False)})
+                        res.append({ "name": ontology.ontology_uri.split("/")[-1], "id": identifier, "data": get_ontology_info_from_uri(ontology.ontology_uri, False)})
                     identifier += 1
 
             # Save the new ontology objects into the mapping process
