@@ -168,15 +168,19 @@ function DataContextProvider(props) {
     setDbElements([]);
     setLoadingDB(true);
     axiosInstance
-      .post(CREATE_DB, {
-        uuid,
-        name: dbName,
-        user: dbUser,
-        port: dbPort,
-        password: dbPass,
-        steps: stepsAmount,
-        mappingName: mappingName,
-      }, {headers: { Authorization: `Token ${token}` }},)
+      .post(
+        CREATE_DB,
+        {
+          uuid,
+          name: dbName,
+          user: dbUser,
+          port: dbPort,
+          password: dbPass,
+          steps: stepsAmount,
+          mappingName: mappingName,
+        },
+        { headers: { Authorization: `Token ${token}` } }
+      )
       .then((res) => {
         setDbElements(res?.data);
       })
@@ -197,7 +201,7 @@ function DataContextProvider(props) {
         headers: {
           "Content-Type":
             "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
-          Authorization: `Token ${token}`, 
+          Authorization: `Token ${token}`,
         },
       })
       .then((res) => {
@@ -219,10 +223,19 @@ function DataContextProvider(props) {
 
   const addMappingElement = () => {
     const list = [...(mappedElements ? mappedElements : [])];
-    const newObj = {};
-    newObj[currentDbMapping] = currentOntoMapping;
-    const newList = [newObj, ...list];
-    setMappedElements(newList);
+
+    if (list.some((arrVal) => currentDbMapping === Object.keys(arrVal)?.[0])) {
+      const itemToAdd = list.find(
+        (arrVal) => currentDbMapping === Object.keys(arrVal)?.[0]
+      );
+      Object.values(itemToAdd)?.[0]?.push(...Object.values(currentOntoMapping));
+    } else {
+      const newObj = {};
+      newObj[currentDbMapping] = currentOntoMapping;
+      const newList = [newObj, ...list];
+      setMappedElements(newList);
+    }
+
     setIsMapping(false);
     setCurrentOntoSelected([]);
     setCurrentDbSelected([]);

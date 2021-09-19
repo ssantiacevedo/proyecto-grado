@@ -33,7 +33,6 @@ const OntoDataDisplay = ({ data, loading }) => {
     setCurrentOntoSelected,
   } = useDataContext();
 
-  console.log(currentOntoSelected);
   const [referenceElement, setReferenceElement] = useState(null);
   const { popperOpen, togglePopper } = usePopper(`onto-popper`);
   return (

@@ -28,7 +28,6 @@ const DBDisplay = ({ data, loading }) => {
   } = useDataContext();
   const [referenceElement, setReferenceElement] = useState(null);
   const { popperOpen, togglePopper } = usePopper(`db-popper`);
-  console.log(data);
   return (
     <>
       <DBDataDisplayContainer>
