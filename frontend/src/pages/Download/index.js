@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import DownloadPage from "../../components/DownloadPage";
 import StepCard from "../../components/StepCard";
@@ -6,12 +6,14 @@ import Spinner from "../../components/Spinner";
 import DownloadCard from "../../components/DownloadCard";
 import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";
+import { v4 as uuidv4 } from "uuid";
 import { palette } from "../../theme/palette";
 import Graph from "react-graph-vis";
 
 const Download = () => {
-  const { getOntologyForDownload, loadingOntology, token } = useDataContext();
-
+  const { getOntologyForDownload, loadingOntology, token, graph } =
+    useDataContext();
+  const [simulation, setSimulation] = useState(false);
   const history = useHistory();
 
   if (!token) history.push("/login");
@@ -20,44 +22,12 @@ const Download = () => {
     getOntologyForDownload();
   };
 
-  // los mapeados van con color verde
-  // las obj property mapeadas van en verde y con width 2
-  const graph = {
-    nodes: [
-      { id: 1, label: "Pizza", title: "node 1 tootip text" },
-      {
-        id: 2,
-        label: "Topping",
-        title: "node 2 tootip text",
-        color: "#5dbb63",
-      },
-      { id: 3, label: "Node 3", color: "#5dbb63" },
-      { id: 4, label: "Node 4" },
-      { id: 5, label: "Node 4" },
-      { id: 6, label: "Node 5", color: "#5dbb63" },
-      { id: 7, label: "Node 5" },
-      { id: 8, label: "Node 5" },
-      { id: 9, label: "Node 5" },
-      { id: 10, label: "Node 5" },
-      { id: 11, label: "Node 5" },
-      { id: 12, label: "Node 5" },
-      {
-        id: 13,
-        label: "Node 5",
-        title: "node 5 tootip text",
-        color: "#5dbb63",
-      },
-    ],
-    edges: [
-      { from: 1, to: 2, label: "Object Prop 1" },
-      { from: 1, to: 3 },
-      { from: 2, to: 3, color: "#5dbb63", width: 2 },
-      { from: 2, to: 5 },
-      { from: 2, to: 10 },
-      { from: 9, to: 6 },
-      { from: 8, to: 7 },
-    ],
-  };
+  const graphToShow = graph
+    ? {
+        nodes: graph?.nodes,
+        edges: graph?.edges,
+      }
+    : null;
 
   const options = {
     edges: {
@@ -68,11 +38,13 @@ const Download = () => {
       font: {
         face: "RobotoBold",
       },
+      length: 250,
     },
     nodes: {
-      shape: "circle",
+      shape: "box",
       color: "rgb(51, 102, 204)",
-      margin: 5,
+      margin: 6,
+      physics: simulation,
       font: {
         color: "white",
         face: "Roboto",
@@ -82,13 +54,12 @@ const Download = () => {
 
   return (
     <DownloadPage>
-      <StepCard
-        number={1}
-        title={"Download your extended context"}
-        description={
-          "Click on the download button to request and visualize your extended context"
-        }
-      >
+      <CardContainer>
+        <Title>Download and preview your extended context</Title>
+        <SubTitle>
+          Click on the download button to request and visualize your extended
+          context
+        </SubTitle>
         {loadingOntology ? (
           <SpinnerContainer>
             <Spinner />
@@ -96,15 +67,27 @@ const Download = () => {
         ) : (
           <>
             <DownloadCard handleDownload={handleDownload} />
+            {graphToShow && !loadingOntology && (
+              <ToggleButton
+                style={{ marginTop: "5rem" }}
+                onClick={() => setSimulation(!simulation)}
+              >
+                Toggle Animation
+              </ToggleButton>
+            )}
           </>
         )}
-      </StepCard>
+      </CardContainer>
       {loadingOntology ? (
         <SpinnerContainer>
           <Spinner />
         </SpinnerContainer>
       ) : (
-        <Graph graph={graph} options={options} />
+        graphToShow && (
+          <>
+            <Graph key={uuidv4()} graph={graphToShow} options={options} />
+          </>
+        )
       )}
     </DownloadPage>
   );
@@ -115,7 +98,54 @@ export default Download;
 export const SpinnerContainer = styled.div`
   display: flex;
   align-items: center;
-  height: 20rem;
+  height: 7rem;
   justify-content: center;
   width: 100%;
+  margin: auto;
+`;
+
+const CardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 0.5%;
+  margin-top: 4rem;
+  align-items: center;
+  border-radius: 16px;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 50px 10px;
+  overflow-y: hidden;
+  height: fit-content;
+  max-height: 80vh;
+`;
+
+const Title = styled.div`
+  font-family: "RobotoBold";
+  font-size: 18px;
+  text-align: center;
+`;
+
+const SubTitle = styled.div`
+  font-family: "Roboto";
+  font-size: 15px;
+  text-align: center;
+  margin-top: 10px;
+  color: ${palette.black};
+`;
+
+const ToggleButton = styled.button`
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 8px;
+  height: 40px;
+  width: 90%;
+  margin: 0 auto;
+  max-width: 200px;
+  margin-top: 20px;
+  background-color: white;
+  color: ${palette.alpha600};
+  border: 1px solid ${palette.alpha600};
 `;

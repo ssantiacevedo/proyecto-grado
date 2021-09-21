@@ -20,17 +20,16 @@ const Page  = ({
 
 const WizardCard = styled.div`
   display: grid;  
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 3fr;
   grid-column-gap: 10px;
   box-shadow: none;
   border-radius: 0;
   background-color: ${palette.white};
   margin: 0;
   width: 100%;
-  padding: 0 5%;
+  padding-left: 4rem;
   height: 100%;
   justify-content: space-evenly;
-  align-items: center;
 
   @media (min-width: 768px) {
     box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);

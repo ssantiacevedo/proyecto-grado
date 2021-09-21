@@ -39,6 +39,7 @@ const DataContext = createContext({
   token: "",
   currentOntoSelected: [],
   currentDbSelected: [],
+  graph: null,
   getDbElements: () => {},
   setUuid: () => {},
   getOntoElements: () => {},
@@ -72,6 +73,7 @@ const DataContext = createContext({
   register: () => {},
   setCurrentOntoSelected: () => {},
   setCurrentDbSelected: () => {},
+  setGraph: () => {},
 });
 
 function DataContextProvider(props) {
@@ -89,7 +91,7 @@ function DataContextProvider(props) {
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [currentOntoSelected, setCurrentOntoSelected] = useState([]);
   const [currentDbSelected, setCurrentDbSelected] = useState([]);
-
+  const [graph, setGraph] = useState(null);
   const [uuid, setUuid] = useState(null);
   const [token, setToken] = useState(
     localStorage.getItem("ontology-token") || ""
@@ -160,6 +162,7 @@ function DataContextProvider(props) {
     setDbPort("");
     setCurrentOntoSelected([]);
     setCurrentDbSelected([]);
+    setGraph(null);
     setInputLists([{ type: "uri", uri: "", new: true }]);
     setOntologyMethod([{ choice: "uri" }]);
   };
@@ -258,7 +261,8 @@ function DataContextProvider(props) {
         uuid,
       })
       .then((res) => {
-        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const url = window.URL.createObjectURL(new Blob([res.data?.file]));
+        setGraph(res?.data?.graph);
         const link = document.createElement("a");
         link.href = url;
         link.setAttribute("download", "OntologyGenerated.owl");
@@ -280,6 +284,7 @@ function DataContextProvider(props) {
 
   const validateMappings = () => {
     setLoadingValidation(true);
+    setGraph(null);
     axiosInstance
       .post(VALIDATION, {
         uuid,
@@ -442,6 +447,7 @@ function DataContextProvider(props) {
         token,
         currentDbSelected,
         currentOntoSelected,
+        graph,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
@@ -474,6 +480,7 @@ function DataContextProvider(props) {
         register,
         setCurrentDbSelected,
         setCurrentOntoSelected,
+        setGraph,
         uuid,
       }}
       {...props}

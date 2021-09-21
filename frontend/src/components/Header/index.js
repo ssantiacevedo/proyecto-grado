@@ -47,7 +47,7 @@ const Header = () => {
             </RuleDescription>
             <RuleDescription>
               You need to map at least one element from the Object Property
-              domain and one from the range th be valid
+              domain and one from the range to be valid
             </RuleDescription>
           </Rule>
           <Rule>
