@@ -110,6 +110,7 @@ export const StyledUri = styled.input`
 `;
 
 export const Row = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;

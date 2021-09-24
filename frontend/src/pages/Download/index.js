@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import DownloadPage from "../../components/DownloadPage";
 import StepCard from "../../components/StepCard";
@@ -11,15 +11,25 @@ import { palette } from "../../theme/palette";
 import Graph from "react-graph-vis";
 
 const Download = () => {
-  const { getOntologyForDownload, loadingOntology, token, graph } =
+  const { getOntologyForDownload, loadingOntology, token, graph, file } =
     useDataContext();
   const [simulation, setSimulation] = useState(false);
   const history = useHistory();
 
   if (!token) history.push("/login");
 
-  const handleDownload = () => {
+  useEffect(() => {
     getOntologyForDownload();
+  },[])
+
+  const handleDownload = () => {
+    const url = window.URL.createObjectURL(new Blob([file]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "OntologyGenerated.owl");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   };
 
   const graphToShow = graph
@@ -60,23 +70,15 @@ const Download = () => {
           Click on the download button to request and visualize your extended
           context
         </SubTitle>
-        {loadingOntology ? (
-          <SpinnerContainer>
-            <Spinner />
-          </SpinnerContainer>
-        ) : (
-          <>
-            <DownloadCard handleDownload={handleDownload} />
-            {graphToShow && !loadingOntology && (
-              <ToggleButton
-                style={{ marginTop: "5rem" }}
-                onClick={() => setSimulation(!simulation)}
-              >
-                Toggle Animation
-              </ToggleButton>
-            )}
-          </>
-        )}
+          <DownloadCard loading={loadingOntology} handleDownload={handleDownload} />
+          {graphToShow && !loadingOntology && (
+            <ToggleButton
+              style={{ marginTop: "5rem" }}
+              onClick={() => setSimulation(!simulation)}
+            >
+              Toggle Animation
+            </ToggleButton>
+          )}
       </CardContainer>
       {loadingOntology ? (
         <SpinnerContainer>

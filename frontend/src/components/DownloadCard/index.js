@@ -8,11 +8,11 @@ import {
   IconText,
 } from "./Download.styled";
 
-const DownloadCard = ({ handleDownload }) => {
+const DownloadCard = ({ handleDownload, loading }) => {
   return (
     <Step1Container>
       <ButtonContainer>
-        <AddButon onClick={handleDownload}>
+        <AddButon disabled={loading} onClick={handleDownload}>
           <FontAwesomeIcon icon={faDownload} />
           <IconText>{"Download"}</IconText>
         </AddButon>

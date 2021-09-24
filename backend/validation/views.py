@@ -70,13 +70,15 @@ class ValidationView(views.APIView):
             elem['columns'][1]['foreign_key']
         ]
 
+        onto_mapping_elems = [
+            onto_elem['iri'] for map_elem in mapping for onto_elem in list(map_elem.values())[0]
+        ]
+
         errors = []
         for elem in mapping:
             db_elem = list(elem.keys())[0]
             onto_elems = elem[db_elem]
-            onto_mapping_elems = [
-                onto_elem['iri'] for map_elem in mapping for onto_elem in list(map_elem.values())[0]
-            ]
+            
             # Rules List
             if db_elem in tables:
                 # Rule 2: handling of associative tables 

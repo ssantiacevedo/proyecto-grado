@@ -4,9 +4,9 @@ from owlready2 import *
 
 
 def generator(map_proccess):
-
+    
     ontologies = map_proccess.ontologies.all()
-
+    onto_path.append("backend/media/")
     load_ontologies = []
     for ontology in ontologies:   
         if ontology.ontology_type == 'FILE':

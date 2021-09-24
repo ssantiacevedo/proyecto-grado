@@ -40,6 +40,7 @@ const DataContext = createContext({
   currentOntoSelected: [],
   currentDbSelected: [],
   graph: null,
+  file: null,
   getDbElements: () => {},
   setUuid: () => {},
   getOntoElements: () => {},
@@ -74,6 +75,7 @@ const DataContext = createContext({
   setCurrentOntoSelected: () => {},
   setCurrentDbSelected: () => {},
   setGraph: () => {},
+  setFile: () => {},
 });
 
 function DataContextProvider(props) {
@@ -92,6 +94,7 @@ function DataContextProvider(props) {
   const [currentOntoSelected, setCurrentOntoSelected] = useState([]);
   const [currentDbSelected, setCurrentDbSelected] = useState([]);
   const [graph, setGraph] = useState(null);
+  const [file, setFile] = useState(null);
   const [uuid, setUuid] = useState(null);
   const [token, setToken] = useState(
     localStorage.getItem("ontology-token") || ""
@@ -163,6 +166,7 @@ function DataContextProvider(props) {
     setCurrentOntoSelected([]);
     setCurrentDbSelected([]);
     setGraph(null);
+    setFile(null);
     setInputLists([{ type: "uri", uri: "", new: true }]);
     setOntologyMethod([{ choice: "uri" }]);
   };
@@ -261,14 +265,15 @@ function DataContextProvider(props) {
         uuid,
       })
       .then((res) => {
-        const url = window.URL.createObjectURL(new Blob([res.data?.file]));
         setGraph(res?.data?.graph);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "OntologyGenerated.owl");
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+        setFile(res?.data?.file);
+        // const url = window.URL.createObjectURL(new Blob([res.data?.file]));
+        // const link = document.createElement("a");
+        // link.href = url;
+        // link.setAttribute("download", "OntologyGenerated.owl");
+        // document.body.appendChild(link);
+        // link.click();
+        // link.remove();
       })
       .catch((e) => {
         if (e?.response?.data?.error) {
@@ -293,6 +298,7 @@ function DataContextProvider(props) {
       .then((res) => {
         notifySuccess("Mapping correct");
         history.push("/download");
+        getOntologyForDownload();
       })
       .catch((e) => {
         if (e?.response?.data?.errors) {
@@ -448,6 +454,7 @@ function DataContextProvider(props) {
         currentDbSelected,
         currentOntoSelected,
         graph,
+        file,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
@@ -481,6 +488,7 @@ function DataContextProvider(props) {
         setCurrentDbSelected,
         setCurrentOntoSelected,
         setGraph,
+        setFile,
         uuid,
       }}
       {...props}
