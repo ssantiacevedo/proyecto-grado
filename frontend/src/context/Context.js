@@ -37,6 +37,10 @@ const DataContext = createContext({
   ontologyMethodList: [],
   ontologyUploaded: false,
   token: "",
+  currentOntoSelected: [],
+  currentDbSelected: [],
+  graph: null,
+  file: null,
   getDbElements: () => {},
   setUuid: () => {},
   getOntoElements: () => {},
@@ -68,6 +72,10 @@ const DataContext = createContext({
   login: () => {},
   logout: () => {},
   register: () => {},
+  setCurrentOntoSelected: () => {},
+  setCurrentDbSelected: () => {},
+  setGraph: () => {},
+  setFile: () => {},
 });
 
 function DataContextProvider(props) {
@@ -83,6 +91,10 @@ function DataContextProvider(props) {
   const [mappingName, setMappingName] = useState("");
   const [mappingProcess, setMappingProcess] = useState([]);
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
+  const [currentOntoSelected, setCurrentOntoSelected] = useState([]);
+  const [currentDbSelected, setCurrentDbSelected] = useState([]);
+  const [graph, setGraph] = useState(null);
+  const [file, setFile] = useState(null);
   const [uuid, setUuid] = useState(null);
   const [token, setToken] = useState(
     localStorage.getItem("ontology-token") || ""
@@ -151,6 +163,10 @@ function DataContextProvider(props) {
     setDbUser("");
     setDbPass("");
     setDbPort("");
+    setCurrentOntoSelected([]);
+    setCurrentDbSelected([]);
+    setGraph(null);
+    setFile(null);
     setInputLists([{ type: "uri", uri: "", new: true }]);
     setOntologyMethod([{ choice: "uri" }]);
   };
@@ -159,15 +175,19 @@ function DataContextProvider(props) {
     setDbElements([]);
     setLoadingDB(true);
     axiosInstance
-      .post(CREATE_DB, {
-        uuid,
-        name: dbName,
-        user: dbUser,
-        port: dbPort,
-        password: dbPass,
-        steps: stepsAmount,
-        mappingName: mappingName,
-      }, {headers: { Authorization: `Token ${token}` }},)
+      .post(
+        CREATE_DB,
+        {
+          uuid,
+          name: dbName,
+          user: dbUser,
+          port: dbPort,
+          password: dbPass,
+          steps: stepsAmount,
+          mappingName: mappingName,
+        },
+        { headers: { Authorization: `Token ${token}` } }
+      )
       .then((res) => {
         setDbElements(res?.data);
       })
@@ -188,7 +208,7 @@ function DataContextProvider(props) {
         headers: {
           "Content-Type":
             "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
-          Authorization: `Token ${token}`, 
+          Authorization: `Token ${token}`,
         },
       })
       .then((res) => {
@@ -210,11 +230,22 @@ function DataContextProvider(props) {
 
   const addMappingElement = () => {
     const list = [...(mappedElements ? mappedElements : [])];
-    const newObj = {};
-    newObj[currentDbMapping] = currentOntoMapping;
-    const newList = [newObj, ...list];
-    setMappedElements(newList);
+
+    if (list.some((arrVal) => currentDbMapping === Object.keys(arrVal)?.[0])) {
+      const itemToAdd = list.find(
+        (arrVal) => currentDbMapping === Object.keys(arrVal)?.[0]
+      );
+      Object.values(itemToAdd)?.[0]?.push(...Object.values(currentOntoMapping));
+    } else {
+      const newObj = {};
+      newObj[currentDbMapping] = currentOntoMapping;
+      const newList = [newObj, ...list];
+      setMappedElements(newList);
+    }
+
     setIsMapping(false);
+    setCurrentOntoSelected([]);
+    setCurrentDbSelected([]);
   };
 
   const startNewMapping = () => {
@@ -222,6 +253,8 @@ function DataContextProvider(props) {
     setCurrentOntoMapping([]);
     setMappingName("");
     setIsMapping(true);
+    setCurrentOntoSelected([]);
+    setCurrentDbSelected([]);
   };
 
   const getOntologyForDownload = () => {
@@ -232,13 +265,8 @@ function DataContextProvider(props) {
         uuid,
       })
       .then((res) => {
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "OntologyGenerated.owl");
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+        setGraph(res?.data?.graph);
+        setFile(res?.data?.file);
       })
       .catch((e) => {
         if (e?.response?.data?.error) {
@@ -254,6 +282,7 @@ function DataContextProvider(props) {
 
   const validateMappings = () => {
     setLoadingValidation(true);
+    setGraph(null);
     axiosInstance
       .post(VALIDATION, {
         uuid,
@@ -262,6 +291,7 @@ function DataContextProvider(props) {
       .then((res) => {
         notifySuccess("Mapping correct");
         history.push("/download");
+        getOntologyForDownload();
       })
       .catch((e) => {
         if (e?.response?.data?.errors) {
@@ -414,6 +444,10 @@ function DataContextProvider(props) {
         inputLists,
         ontologyUploaded,
         token,
+        currentDbSelected,
+        currentOntoSelected,
+        graph,
+        file,
         setCurrentDbMapping,
         setCurrentOntoMapping,
         getDbElements,
@@ -444,6 +478,10 @@ function DataContextProvider(props) {
         logout,
         setToken,
         register,
+        setCurrentDbSelected,
+        setCurrentOntoSelected,
+        setGraph,
+        setFile,
         uuid,
       }}
       {...props}

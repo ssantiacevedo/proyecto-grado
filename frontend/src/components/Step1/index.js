@@ -4,6 +4,7 @@ import {
   faCloudUploadAlt,
   faPlusSquare,
   faMinusSquare,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Text,
@@ -16,6 +17,8 @@ import {
   RadioStyled,
   TextButton,
   StyledUri,
+  Row,
+  InputContainer,
 } from "./Step1.styled";
 
 const Step1 = ({
@@ -32,8 +35,11 @@ const Step1 = ({
 
   const handleRemoveClick = (index) => {
     const list = [...inputLists];
+    const methodList = [...ontologyMethodList];
     list.splice(index, 1);
+    methodList.splice(index, 1);
     setInputLists(list);
+    setOntologyMethod(methodList);
   };
 
   const handleInputChange = (e, index) => {
@@ -41,7 +47,12 @@ const Step1 = ({
     const list = [...inputLists];
     if (ontologyMethodList[index].choice === "file") {
       const { files } = e.target;
-      list[index] = { type: "file", file: files?.[0], name: files?.[0].name, new: true };
+      list[index] = {
+        type: "file",
+        file: files?.[0],
+        name: files?.[0].name,
+        new: true,
+      };
     } else {
       const { value } = e.target;
       list[index] = { type: "uri", uri: value, new: true };
@@ -66,67 +77,65 @@ const Step1 = ({
 
   return (
     <Step1Container>
-      <Text>
-        Upload your ontologies. You can set a list of URIs or update your .owl
-        files
-      </Text>
+      <Text>You can set a list of URIs or update your .owl files</Text>
       <>
         {inputLists.map((x, i) => (
-          <Fragment key={i}>
-            {ontologyMethodList[i]?.choice === "file" && (
-              <Fragment>
-                <StyledInput htmlFor={`file-upload-${i}`}>
-                  <FontAwesomeIcon icon={faCloudUploadAlt} />
-                  <IconText>Upload Ontology</IconText>
-                </StyledInput>
-                {x?.name && <Text>Name: {x.name}</Text>}
-                <input
+          <Row>
+            <InputContainer key={i}>
+              {ontologyMethodList[i]?.choice === "file" && (
+                <Fragment>
+                  <StyledInput htmlFor={`file-upload-${i}`}>
+                    <FontAwesomeIcon icon={faCloudUploadAlt} />
+                    <IconText>Upload Ontology</IconText>
+                  </StyledInput>
+                  {x?.name && <Text>Name: {x.name}</Text>}
+                  <input
+                    onChange={(e) => handleInputChange(e, i)}
+                    id={`file-upload-${i}`}
+                    name={`ontology-${i}`}
+                    type="file"
+                    accept=".owl, .txt, .xml, .ttl"
+                    style={{ display: "none" }}
+                  />
+                </Fragment>
+              )}
+              {ontologyMethodList[i]?.choice === "uri" && (
+                <StyledUri
+                  type="text"
+                  placeholder="URI"
                   onChange={(e) => handleInputChange(e, i)}
-                  id={`file-upload-${i}`}
-                  name={`ontology-${i}`}
-                  type="file"
-                  accept=".owl, .txt, .xml, .ttl"
-                  style={{ display: "none" }}
+                  value={x?.uri}
+                  key={x}
                 />
-              </Fragment>
-            )}
-            {ontologyMethodList[i]?.choice === "uri" && (
-              <StyledUri
-                type="text"
-                placeholder="URI"
-                onChange={(e) => handleInputChange(e, i)}
-                value={x?.uri}
-                key={x}
-              />
-            )}
-            <>
-              <RadioGroupStyled
-                name={`method-${i}`}
-                selectedValue={ontologyMethodList[i]?.choice}
-              >
-                <Text>Type: </Text>
-                <RadioStyled
-                  onChange={(e) => handleChangeButton(e, i)}
-                  value="uri"
-                />
-                <TextButton>URI</TextButton>
-                <RadioStyled
-                  onChange={(e) => handleChangeButton(e, i)}
-                  value="file"
-                />
-                <TextButton>File</TextButton>
-              </RadioGroupStyled>
-            </>
-          </Fragment>
+              )}
+              <>
+                <RadioGroupStyled
+                  name={`method-${i}`}
+                  selectedValue={ontologyMethodList[i]?.choice}
+                >
+                  <Text>Type: </Text>
+                  <RadioStyled
+                    onChange={(e) => handleChangeButton(e, i)}
+                    value="uri"
+                  />
+                  <TextButton>URI</TextButton>
+                  <RadioStyled
+                    onChange={(e) => handleChangeButton(e, i)}
+                    value="file"
+                  />
+                  <TextButton>File</TextButton>
+                </RadioGroupStyled>
+              </>
+            </InputContainer>
+            <FontAwesomeIcon
+              icon={faTrash}
+              style={{ width: "5%", cursor: "pointer", marginBottom: "1rem" }}
+              onClick={() => handleRemoveClick(i)}
+            />
+          </Row>
         ))}
       </>
       <ButtonContainer>
-        {inputLists?.length > 1 && (
-          <AddButon onClick={() => handleRemoveClick(inputLists?.length - 1)}>
-            <FontAwesomeIcon icon={faMinusSquare} />
-            <IconText>{"Remove last ontology"}</IconText>
-          </AddButon>
-        )}
         <AddButon onClick={handleAddClick}>
           <FontAwesomeIcon icon={faPlusSquare} />
           <IconText>{"Add more ontologies"}</IconText>

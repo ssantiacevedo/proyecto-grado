@@ -30,6 +30,8 @@ export const TableNameContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 10px;
+  color: ${(props => props.active && palette.alpha50Blue)};
+  cursor: ${props => props.isMapping ? 'pointer' : 'normal'};
 `;
 
 
@@ -38,6 +40,7 @@ export const ColumnNameContainer = styled.div`
   justify-content: center;
   align-items: center;
   cursor: ${props => props.isMapping ? 'pointer' : 'normal'};
+  color: ${(props => props.active && palette.alpha50Blue)};
 `;
 
 export const ColumnsContainer = styled.div`

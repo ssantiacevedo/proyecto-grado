@@ -29,15 +29,15 @@ const OntoDataDisplay = ({ data, loading }) => {
     currentOntoMapping,
     isMapping,
     currentDbMapping,
+    currentOntoSelected,
+    setCurrentOntoSelected,
   } = useDataContext();
 
   const [referenceElement, setReferenceElement] = useState(null);
   const { popperOpen, togglePopper } = usePopper(`onto-popper`);
   return (
     <OntoDataDisplayContainer>
-      <Text ref={setReferenceElement}>
-        Your Ontologies Elements
-      </Text>
+      <Text ref={setReferenceElement}>Your Ontologies Elements</Text>
       {loading ? (
         <SpinnerContainer>
           <Spinner />
@@ -46,7 +46,7 @@ const OntoDataDisplay = ({ data, loading }) => {
         <>
           {data?.map((elements, i) => (
             <OntoContainer key={`ontology-${i}`}>
-              <OntologyTitle>Ontology Elements: </OntologyTitle>
+              <OntologyTitle>Ontology Elements: {elements?.name} </OntologyTitle>
               {elements?.data?.map((x, i) => (
                 <StyledInput htmlFor={`file-upload-${i}`}>
                   <TableNameContainer>
@@ -72,14 +72,22 @@ const OntoDataDisplay = ({ data, loading }) => {
                   <ColumnsContainer>
                     {x?.classes?.map((c) => (
                       <ColumnNameContainer
-                        onClick={() =>
+                        onClick={() => {
                           isMapping &&
-                          setCurrentOntoMapping([
-                            ...currentOntoMapping,
-                            { name: c?.name, iri: c?.iri },
-                          ])
-                        }
+                            setCurrentOntoMapping([
+                              ...currentOntoMapping,
+                              { name: c?.name, iri: c?.iri },
+                            ]);
+                          isMapping &&
+                            setCurrentOntoSelected([
+                              ...currentOntoMapping,
+                              { name: c?.name, iri: c?.iri },
+                            ]);
+                        }}
                         key={c?.iri}
+                        active={currentOntoSelected.some(
+                          (el) => el?.iri === c?.iri
+                        )}
                         isMapping={isMapping}
                       >
                         <FontAwesomeIcon icon={faMinus} />
@@ -90,16 +98,27 @@ const OntoDataDisplay = ({ data, loading }) => {
                   <ColumnsContainer>
                     {x?.object_properties?.map((objectProperty) => (
                       <ColumnNameContainer
-                        onClick={() =>
+                        onClick={() => {
                           isMapping &&
-                          setCurrentOntoMapping([
-                            ...currentOntoMapping,
-                            {
-                              name: objectProperty?.name,
-                              iri: objectProperty?.iri,
-                            },
-                          ])
-                        }
+                            setCurrentOntoMapping([
+                              ...currentOntoMapping,
+                              {
+                                name: objectProperty?.name,
+                                iri: objectProperty?.iri,
+                              },
+                            ]);
+                          isMapping &&
+                            setCurrentOntoSelected([
+                              ...currentOntoMapping,
+                              {
+                                name: objectProperty?.name,
+                                iri: objectProperty?.iri,
+                              },
+                            ]);
+                        }}
+                        active={currentOntoSelected.some(
+                          (el) => el?.iri === objectProperty?.iri
+                        )}
                         key={objectProperty?.iri}
                         isMapping={isMapping}
                       >
@@ -140,7 +159,7 @@ const OntoDataDisplay = ({ data, loading }) => {
         referenceElement={referenceElement}
       >
         <PopperContainer>
-          Select at least one element from your Ontologies
+          Select at least one element from your Context
         </PopperContainer>
       </Popper>
     </OntoDataDisplayContainer>

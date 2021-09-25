@@ -20,7 +20,7 @@ export const Step1Container = styled.div`
 export const AddButon = styled.button`
   text-decoration: none;
   border: none;
-  cursor: pointer;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   outline: none;
   border-radius: 8px;
   height: 35px;
@@ -28,6 +28,7 @@ export const AddButon = styled.button`
   margin-top: 20px;
   background-color: ${palette.alpha600};
   color: white;
+  opacity: ${props => props.disabled ? '0.7' : '1'};
 `;
 
 export const ButtonContainer = styled.div`

@@ -108,3 +108,17 @@ export const StyledUri = styled.input`
   outline: none;
   width: 50%;
 `;
+
+export const Row = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 95%;
+  align-items: flex-start;
+`;

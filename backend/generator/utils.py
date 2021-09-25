@@ -4,9 +4,9 @@ from owlready2 import *
 
 
 def generator(map_proccess):
-
+    
     ontologies = map_proccess.ontologies.all()
-
+    onto_path.append("backend/media/")
     load_ontologies = []
     for ontology in ontologies:   
         if ontology.ontology_type == 'FILE':
@@ -41,7 +41,7 @@ def generator(map_proccess):
             
             res_n = graph.query(
                 "CONSTRUCT {  ?mapped_object ?a ?b . ?x ?y ?mapped_object ; ?c ?d . ?d a ?e } "  
-                f"WHERE {{ VALUES ?mapped_object {{ {' '.join(list_mapped_elements)} }} ?mapped_object ?a ?b . ?x ?y ?mapped_object ; ?c ?d . ?d a ?e}} "   
+                f"WHERE {{ VALUES ?mapped_object {{ {' '.join(list_mapped_elements)} }} ?mapped_object ?a ?b . ?x ?y ?mapped_object ; ?c ?d . OPTIONAL {{ ?d a ?e }} }} "   
             )
             
             res_n.serialize(format='pretty-xml', destination=f"media/result-{map_proccess.uuid}-{i}.owl")
