@@ -18,10 +18,6 @@ const Download = () => {
 
   if (!token) history.push("/login");
 
-  useEffect(() => {
-    getOntologyForDownload();
-  },[])
-
   const handleDownload = () => {
     const url = window.URL.createObjectURL(new Blob([file]));
     const link = document.createElement("a");

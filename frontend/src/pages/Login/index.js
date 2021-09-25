@@ -8,7 +8,7 @@ import LoginCard from "../../components/LoginCard";
 import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";
 
-const Download = () => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, token } = useDataContext();
@@ -40,4 +40,4 @@ const Download = () => {
   );
 };
 
-export default Download;
+export default Login;

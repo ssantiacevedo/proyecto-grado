@@ -267,13 +267,6 @@ function DataContextProvider(props) {
       .then((res) => {
         setGraph(res?.data?.graph);
         setFile(res?.data?.file);
-        // const url = window.URL.createObjectURL(new Blob([res.data?.file]));
-        // const link = document.createElement("a");
-        // link.href = url;
-        // link.setAttribute("download", "OntologyGenerated.owl");
-        // document.body.appendChild(link);
-        // link.click();
-        // link.remove();
       })
       .catch((e) => {
         if (e?.response?.data?.error) {
