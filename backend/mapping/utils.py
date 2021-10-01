@@ -60,8 +60,8 @@ def get_ontology_info_from_uri(uri, is_file):
         {
             'name':i.name, 
             'iri': i.iri,
-            'domain': [elem.iri for elem in i.domain],
-            'range': [elem.iri for elem in i.range]
+            'domain': [elem.iri for elem in i.domain if elem is not None],
+            'range': [elem.iri for elem in i.range if elem is not None]
         } for i in onto_object_properties]
     data_properties = [{'name':i.name, 'iri': i.iri} for i in onto_data_properties]
 

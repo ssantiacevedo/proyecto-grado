@@ -44,7 +44,12 @@ class GeneratorView(views.APIView):
                     node['color'] = "#5dbb63"
                 nodes.append(node)
             for edge in ontology_elements[1]['object_properties']:
-                new_edge = { "id": edge['iri'], "from": edge['domain'][0], "to": edge['range'][0], "label": edge['name']}
+                new_edge = { 
+                "id": edge['iri'], 
+                "from": edge['domain'][0] if len(edge['domain']) > 1 else None, 
+                "to": edge['range'][0] if len(edge['range']) > 1 else None, 
+                "label": edge['name']
+                }
                 if edge['iri'] in onto_mapping_elems:
                     new_edge['color'] = "#5dbb63"
                     new_edge['width'] = 2
