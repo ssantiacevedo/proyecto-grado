@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from django.http import HttpResponse, HttpResponseNotFound
 from mapping.models import RelationalDB, Ontology, MappingProcess
 from mapping.utils import get_database_info, get_ontology_info_from_uri
-from .utils import generator
+from .utils import generator, onto_graph_generator
 from rest_framework import views, status
 from owlready2 import *
 import json
@@ -32,31 +32,7 @@ class GeneratorView(views.APIView):
             ontology_file = f.read()
         try:
             ontology_elements = get_ontology_info_from_uri(f"result-{map_proccess.uuid}-{map_proccess.steps_amount-1}.owl", True)
-            graph = {}
-            nodes = []
-            edges = []
-            onto_mapping_elems = [
-                onto_elem['iri'] for map_elem in map_proccess.valid_mapping for onto_elem in list(map_elem.values())[0]
-            ]
-            for class_node in ontology_elements[0]['classes']:
-                node = { "id": class_node['iri'], "label": class_node['name']}
-                if class_node['iri'] in onto_mapping_elems:
-                    node['color'] = "#5dbb63"
-                nodes.append(node)
-            for edge in ontology_elements[1]['object_properties']:
-                new_edge = { 
-                "id": edge['iri'], 
-                "from": edge['domain'][0] if len(edge['domain']) > 1 else None, 
-                "to": edge['range'][0] if len(edge['range']) > 1 else None, 
-                "label": edge['name']
-                }
-                if edge['iri'] in onto_mapping_elems:
-                    new_edge['color'] = "#5dbb63"
-                    new_edge['width'] = 2
-                edges.append(new_edge)
-            graph['edges'] = edges
-            graph['nodes'] = nodes
-
+            graph = onto_graph_generator(ontology_elements, map_proccess) 
             return Response({"graph": graph, "file": ontology_file}, status=status.HTTP_200_OK)
         except IOError:
             return Response(msg, status=400) 
