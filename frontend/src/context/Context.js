@@ -283,10 +283,21 @@ function DataContextProvider(props) {
   const validateMappings = () => {
     setLoadingValidation(true);
     setGraph(null);
+    let sanitizedMappedElements = [];
+    mappedElements.map((elem) => {
+      const newObj = {};
+      if (Object.keys(elem)?.[0]?.indexOf("-") !== -1) {
+        newObj[Object.keys(elem)?.[0]?.split("-").pop()] =
+          Object.values(elem)?.[0];
+      } else {
+        newObj[Object.keys(elem)?.[0]] = Object.values(elem)?.[0];
+      }
+      sanitizedMappedElements = [...sanitizedMappedElements, newObj];
+    });
     axiosInstance
       .post(VALIDATION, {
         uuid,
-        mapping: mappedElements,
+        mapping: sanitizedMappedElements,
       })
       .then((res) => {
         notifySuccess("Mapping correct");

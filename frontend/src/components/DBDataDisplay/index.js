@@ -89,7 +89,15 @@ const DBDisplay = ({ data, loading }) => {
                   <ColumnsContainer>
                     {x?.columns.map((column) => (
                       <ColumnNameContainer
-                        onClick={() => handleClickColumn(x, column)}
+                        onClick={() => {
+                          isMapping &&
+                            setCurrentDbMapping(`${x?.table}-${column?.name}`);
+                          isMapping &&
+                            setCurrentDbSelected([
+                              ...currentDbSelected,
+                              { name: `${x?.table}-${column?.name}` },
+                            ]);
+                        }}
                         active={currentDbSelected.some(
                           (el) => el?.name === `${x?.table}-${column?.name}`
                         )}
