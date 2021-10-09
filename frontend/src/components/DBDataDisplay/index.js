@@ -28,6 +28,41 @@ const DBDisplay = ({ data, loading }) => {
   } = useDataContext();
   const [referenceElement, setReferenceElement] = useState(null);
   const { popperOpen, togglePopper } = usePopper(`db-popper`);
+
+  const handleClickTable = (x) => {
+    if (isMapping) {
+      if (currentDbSelected.some((el) => el?.table === x?.table)) {
+        setCurrentDbSelected(
+          currentDbSelected.filter((elem) => elem?.table !== x?.table)
+        );
+        setCurrentDbMapping("");
+      } else {
+        setCurrentDbMapping(x?.table);
+        setCurrentDbSelected([x]);
+      }
+    }
+  };
+
+  const handleClickColumn = (x, column) => {
+    if (isMapping) {
+      if (
+        currentDbSelected.some(
+          (el) => el?.name === `${x?.table}-${column?.name}`
+        )
+      ) {
+        setCurrentDbSelected(
+          currentDbSelected.filter(
+            (elem) => elem?.name !== `${x?.table}-${column?.name}`
+          )
+        );
+        setCurrentDbMapping("");
+      } else {
+        setCurrentDbMapping(column?.name);
+        setCurrentDbSelected([{ name: `${x?.table}-${column?.name}` }]);
+      }
+    }
+  };
+
   return (
     <>
       <DBDataDisplayContainer>
@@ -43,11 +78,7 @@ const DBDisplay = ({ data, loading }) => {
                 <StyledInput>
                   <TableNameContainer
                     isMapping={isMapping}
-                    onClick={() => {
-                      isMapping && setCurrentDbMapping(x?.table);
-                      isMapping &&
-                      setCurrentDbSelected([...currentDbSelected, x]);
-                    }}
+                    onClick={() => handleClickTable(x)}
                     active={currentDbSelected.some(
                       (el) => el?.table === x?.table
                     )}
@@ -58,11 +89,7 @@ const DBDisplay = ({ data, loading }) => {
                   <ColumnsContainer>
                     {x?.columns.map((column) => (
                       <ColumnNameContainer
-                        onClick={() => {
-                          isMapping && setCurrentDbMapping(column?.name);
-                          isMapping &&
-                          setCurrentDbSelected([...currentDbSelected, { name: `${x?.table}-${column?.name}` }]);
-                        }}
+                        onClick={() => handleClickColumn(x, column)}
                         active={currentDbSelected.some(
                           (el) => el?.name === `${x?.table}-${column?.name}`
                         )}
