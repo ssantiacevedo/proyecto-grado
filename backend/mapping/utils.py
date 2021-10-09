@@ -1,6 +1,6 @@
 import psycopg2
 from owlready2 import *
-
+import re
 
 def get_database_info(db_name, user, port, password):
   db_data = {
@@ -39,6 +39,11 @@ def get_database_info(db_name, user, port, password):
   
   return result
 
+def data_prop_range_to_str(name):
+  class_name = re.search("'(.+?)'", name)
+  if class_name:
+    return class_name.group(1)
+  return None
 
 def get_ontology_info_from_uri(uri, is_file):
     #This gets a lot to process. We should change this to recieve a .owl file fron the frontend
@@ -55,15 +60,28 @@ def get_ontology_info_from_uri(uri, is_file):
     onto_data_properties = list(onto.data_properties())
     
     ## Transform generators to string names to be serializable
-    classes = [{'name':i.name, 'iri': i.iri} for i in onto_classes]
+    classes = [
+      {
+        'name':i.label[0] if len(i.label) > 0 else i.name, 
+        'iri': i.iri,
+        'equivalent_to': i.equivalent_to,
+        'is_a': [elem.iri for elem in i.is_a if (elem is not None and elem.name != 'Thing')],
+      } for i in onto_classes
+    ]
     obj_properties = [
-        {
-            'name':i.name, 
-            'iri': i.iri,
-            'domain': [elem.iri for elem in i.domain if elem is not None],
-            'range': [elem.iri for elem in i.range if elem is not None]
-        } for i in onto_object_properties]
-    data_properties = [{'name':i.name, 'iri': i.iri} for i in onto_data_properties]
+      {
+          'name':i.label[0] if len(i.label) > 0 else i.name,
+          'iri': i.iri,
+          'domain': [elem.iri for elem in i.domain if elem is not None],
+          'range': [elem.iri for elem in i.range if elem is not None]
+      } for i in onto_object_properties]
+    data_properties = [
+      {
+        'name':i.label[0] if len(i.label) > 0 else i.name,
+        'domain': [elem.iri for elem in i.domain if elem is not None],
+        'range': [data_prop_range_to_str(str(elem)) for elem in i.range if elem is not None],
+        'iri': i.iri
+      } for i in onto_data_properties]
 
     res = [
         { "classes": classes}, 
