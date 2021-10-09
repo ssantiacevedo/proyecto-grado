@@ -1,10 +1,19 @@
 from rest_framework.response import Response
 from mapping.models import RelationalDB, Ontology, MappingProcess
 from mapping.utils import get_database_info, get_ontology_info_from_uri
+from validation import constants
 from rest_framework import views, status
 from owlready2 import *
 import json
 
+
+def split_name(iri):
+    return iri.split('#')[-1]
+
+def iri_list_to_name(iri_list):
+    if len(list(map(split_name, iri_list))) > 1:
+        return 'The possible ones are: ' + ','.join(list(map(split_name, iri_list)))
+    return 'The possible is: ' + ','.join(list(map(split_name, iri_list)))
 
 class ValidationView(views.APIView):
 
@@ -45,10 +54,10 @@ class ValidationView(views.APIView):
             for onto_object_property in onto[1]['object_properties']:
                 ontos_object_properties[onto_object_property['iri']] = onto_object_property
         
-        ontos_data_properties = []
+        ontos_data_properties = {}
         for onto in ontologies_info:
             for onto_data_property in onto[2]['data_properties']:
-                ontos_data_properties.append(onto_data_property['iri'])
+                ontos_data_properties[onto_data_property['iri']] = onto_data_property
         
         tables = [elem['table'] for elem in db_info]
 
@@ -85,7 +94,7 @@ class ValidationView(views.APIView):
                 if db_elem in associative_tables:
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_object_properties.keys():
-                            errors.append('{} is not an OWL Object Property'.format(onto_elem['name']))
+                            errors.append(constants.IS_NOT_ASSOCIATIVE.format(onto_elem['name'], db_elem))
                         else:
                             is_mapped_domain_assoc = False
                             is_mapped_range_assoc = False     
@@ -98,13 +107,21 @@ class ValidationView(views.APIView):
                                 if range_elem in onto_mapping_elems:
                                     is_mapped_range_assoc = True
                                     continue
-                            if not is_mapped_domain_assoc or not is_mapped_range_assoc:
-                                errors.append('You must also map the domain and range of the Object Property: {}'.format(onto_elem['name']))
+                            if not is_mapped_domain_assoc:
+                                errors.append(constants.NOT_DOMAIN_MAPPED.format(
+                                    onto_elem['name'], 
+                                    iri_list_to_name(ontos_object_properties[onto_elem['iri']]['domain']),
+                                    '2'))
+                            if not is_mapped_range_assoc:
+                                errors.append(constants.NOT_RANGE_MAPPED.format(
+                                    onto_elem['name'], 
+                                    iri_list_to_name(ontos_object_properties[onto_elem['iri']]['range']), 
+                                    '2'))
                 else:
                     # Rule 1: mapping of tables to OWL Classes
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_classes:
-                            errors.append('{} is not an OWL Class'.format(onto_elem['name']))
+                            errors.append(constants.NOT_OWL_CLASS.format(onto_elem['name']))
 
             else:
                 # Rule 6: mapping of foreign keys to OWL Object Properties
@@ -113,7 +130,7 @@ class ValidationView(views.APIView):
                 if db_elem in foreign_keys:
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_object_properties.keys():
-                            errors.append('{} is not an OWL Object Property'.format(onto_elem['name']))
+                            errors.append(constants.NOT_OWL_OBJECT_PROP.format(onto_elem['name']))
                             continue
 
                         is_mapped_domain = False
@@ -127,16 +144,36 @@ class ValidationView(views.APIView):
                             if range_elem in onto_mapping_elems:
                                 is_mapped_range = True
                                 continue
-                        if not is_mapped_domain or not is_mapped_range:
-                            errors.append('You must also map the domain and range of the Object Property: {}'.format(onto_elem['name']))
+                        
+                        if not is_mapped_domain:
+                            errors.append(constants.NOT_DOMAIN_MAPPED.format(
+                                    onto_elem['name'], 
+                                    iri_list_to_name(ontos_object_properties[onto_elem['iri']]['domain']), 
+                                    '6'))
+                        if not is_mapped_range:
+                            errors.append(constants.NOT_RANGE_MAPPED.format(
+                                    onto_elem['name'], 
+                                    iri_list_to_name(ontos_object_properties[onto_elem['iri']]['range']), 
+                                    '6'))
+
 
                 else:
-                # Rule 3: mapping of columns (not foreign keys) to OWL Data Properties
-                # Rule 4: mapping of columns (not foreign keys) to OWL Clases
-                # TODO Rule 5: mapping of columns (not foreign keys) to Ontologies 
+                    # Rule 3: mapping of columns (not foreign keys) to OWL Data Properties
+                    # Rule 4: mapping of columns (not foreign keys) to OWL Clases
+                    # TODO Rule 5: mapping of columns (not foreign keys) to Ontologies 
                     for onto_elem in onto_elems:
-                        if onto_elem['iri'] not in ontos_data_properties + ontos_classes:
-                            errors.append('Onto Element {} is not a Correct Element'.format(onto_elem['name']))
+                        if onto_elem['iri'] in ontos_data_properties:
+                            is_mapped_domain = False
+                            for domain_elem in ontos_data_properties[onto_elem['iri']]['domain']:
+                                if domain_elem in onto_mapping_elems:
+                                    is_mapped_domain = True
+                                    continue
+                            if not is_mapped_domain:
+                                errors.append(constants.NOT_DOMAIN_DATA_PROP.format(
+                                    onto_elem['name'], 
+                                    iri_list_to_name(ontos_data_properties[onto_elem['iri']]['domain']),))
+                        elif onto_elem['iri'] not in list(ontos_data_properties.keys()) + ontos_classes:
+                            errors.append(constants.NOT_CORRECT_ELEMENT.format(onto_elem['name']))
 
         if len(errors) > 0:
             return Response(

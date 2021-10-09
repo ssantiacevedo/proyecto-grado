@@ -7,7 +7,7 @@ import random
 
 
 def generator(map_proccess):
-    
+
     ontologies = map_proccess.ontologies.all()
     onto_path.append("backend/media/")
     load_ontologies = []
@@ -46,12 +46,12 @@ def generator(map_proccess):
                         graph.add((equivalent_classes[i], OWL.sameAs, equivalent_classes[i+1]))
     try:
         for i in range(map_proccess.steps_amount):
-            
+
             res_n = graph.query(
-                "CONSTRUCT {  ?mapped_object ?a ?b . ?x ?y ?mapped_object ; ?c ?d . ?d a ?e } "  
-                f"WHERE {{ VALUES ?mapped_object {{ {' '.join(list_mapped_elements)} }} ?mapped_object ?a ?b . ?x ?y ?mapped_object ; ?c ?d . OPTIONAL {{ ?d a ?e }} }} "   
+                "CONSTRUCT {  ?mapped_object ?a ?b . ?b a ?f . ?x ?y ?mapped_object ; ?c ?d . ?d a ?e } "  
+                f"WHERE {{ VALUES ?mapped_object {{ {' '.join(list_mapped_elements)} }} ?mapped_object ?a ?b . OPTIONAL {{ ?b a ?f }} . ?x ?y ?mapped_object ; ?c ?d . OPTIONAL {{ ?d a ?e }} }} "   
             )
-            
+
             res_n.serialize(format='pretty-xml', destination=f"media/result-{map_proccess.uuid}-{i}.owl")
             
             temp_onto = get_ontology(f"file://media/result-{map_proccess.uuid}-{i}.owl").load()
@@ -75,23 +75,22 @@ def onto_graph_generator(ontology_elements, map_proccess):
     ]
     for class_node in ontology_elements[0]['classes']:
         node = { "id": class_node['iri'], "label": class_node['name']}
+        # Check if the class is subClass of another class 
+        if (len(class_node['is_a']) > 0):
+            for parent_class in class_node['is_a']:
+                from_iri = class_node['iri']
+                to_iri = parent_class
+                new_edge = { 
+                    "id": f'{from_iri}-rdfs:subClassOf-{to_iri}', 
+                    "from": from_iri, 
+                    "to": to_iri,
+                    "label": 'rdfs:subClassOf',
+                    "dashes": True,
+                    "arrows": 'from'
+                }
+                edges.append(new_edge)
         if class_node['iri'] in onto_mapping_elems:
             node['color'] = "#5dbb63"
-            # Check if the class is subClass of another class 
-            if (len(class_node['is_a']) > 1 or (len(class_node['is_a']) == 1 and class_node['is_a'][0] != 'https://www.w3.org/2002/07/owl#Thing')):
-                for parent_class in class_node['is_a']:
-                    if parent_class != 'https://www.w3.org/2002/07/owl#Thing':
-                        from_iri = class_node['iri']
-                        to_iri = parent_class
-                        new_edge = { 
-                            "id": f'{from_iri}-rdfs:subClassOf-{to_iri}', 
-                            "from": from_iri, 
-                            "to": to_iri,
-                            "label": 'rdfs:subClassOf',
-                            "dashes": True,
-                            "arrows": 'from'
-                        }
-                        edges.append(new_edge)
             # Check if the class has equivalent elements
             if (len(class_node['equivalent_to']) > 0):
                 from_iri = class_node['iri']
