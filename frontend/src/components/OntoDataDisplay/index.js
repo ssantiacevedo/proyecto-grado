@@ -35,6 +35,28 @@ const OntoDataDisplay = ({ data, loading }) => {
 
   const [referenceElement, setReferenceElement] = useState(null);
   const { popperOpen, togglePopper } = usePopper(`onto-popper`);
+
+  const handleClickOntoElem = (ontoElem) => {
+    if (isMapping) {
+      if (currentOntoSelected.some((el) => el?.iri === ontoElem?.iri)) {
+        setCurrentOntoSelected(
+          currentOntoMapping.filter((elem) => elem?.iri !== ontoElem?.iri)
+        );
+        setCurrentOntoMapping(
+          currentOntoMapping.filter((elem) => elem?.iri !== ontoElem?.iri)
+        );
+      } else {
+        setCurrentOntoMapping([
+          ...currentOntoMapping,
+          { name: ontoElem?.name, iri: ontoElem?.iri },
+        ]);
+        setCurrentOntoSelected([
+          ...currentOntoMapping,
+          { name: ontoElem?.name, iri: ontoElem?.iri },
+        ]);
+      }
+    }
+  };
   return (
     <OntoDataDisplayContainer>
       <Text ref={setReferenceElement}>Your Ontologies Elements</Text>
@@ -46,7 +68,9 @@ const OntoDataDisplay = ({ data, loading }) => {
         <>
           {data?.map((elements, i) => (
             <OntoContainer key={`ontology-${i}`}>
-              <OntologyTitle>Ontology Elements: {elements?.name} </OntologyTitle>
+              <OntologyTitle>
+                Ontology Elements: {elements?.name}{" "}
+              </OntologyTitle>
               {elements?.data?.map((x, i) => (
                 <StyledInput htmlFor={`file-upload-${i}`}>
                   <TableNameContainer>
@@ -72,18 +96,7 @@ const OntoDataDisplay = ({ data, loading }) => {
                   <ColumnsContainer>
                     {x?.classes?.map((c) => (
                       <ColumnNameContainer
-                        onClick={() => {
-                          isMapping &&
-                            setCurrentOntoMapping([
-                              ...currentOntoMapping,
-                              { name: c?.name, iri: c?.iri },
-                            ]);
-                          isMapping &&
-                            setCurrentOntoSelected([
-                              ...currentOntoMapping,
-                              { name: c?.name, iri: c?.iri },
-                            ]);
-                        }}
+                        onClick={() => handleClickOntoElem(c)}
                         key={c?.iri}
                         active={currentOntoSelected.some(
                           (el) => el?.iri === c?.iri
@@ -98,24 +111,7 @@ const OntoDataDisplay = ({ data, loading }) => {
                   <ColumnsContainer>
                     {x?.object_properties?.map((objectProperty) => (
                       <ColumnNameContainer
-                        onClick={() => {
-                          isMapping &&
-                            setCurrentOntoMapping([
-                              ...currentOntoMapping,
-                              {
-                                name: objectProperty?.name,
-                                iri: objectProperty?.iri,
-                              },
-                            ]);
-                          isMapping &&
-                            setCurrentOntoSelected([
-                              ...currentOntoMapping,
-                              {
-                                name: objectProperty?.name,
-                                iri: objectProperty?.iri,
-                              },
-                            ]);
-                        }}
+                        onClick={() => handleClickOntoElem(objectProperty)}
                         active={currentOntoSelected.some(
                           (el) => el?.iri === objectProperty?.iri
                         )}
@@ -130,16 +126,7 @@ const OntoDataDisplay = ({ data, loading }) => {
                   <ColumnsContainer>
                     {x?.data_properties?.map((dataProperty) => (
                       <ColumnNameContainer
-                        onClick={() =>
-                          isMapping &&
-                          setCurrentOntoMapping([
-                            ...currentOntoMapping,
-                            {
-                              name: dataProperty?.name,
-                              iri: dataProperty?.iri,
-                            },
-                          ])
-                        }
+                        onClick={() => handleClickOntoElem(dataProperty)}
                         key={dataProperty?.iri}
                         isMapping={isMapping}
                       >
