@@ -73,6 +73,7 @@ def onto_graph_generator(ontology_elements, map_proccess):
     onto_mapping_elems = [
         onto_elem['iri'] for map_elem in map_proccess.valid_mapping for onto_elem in list(map_elem.values())[0]
     ]
+    current_edges_per_node = {}
     for class_node in ontology_elements[0]['classes']:
         node = { "id": class_node['iri'], "label": class_node['name']}
         # Check if the class is subClass of another class 
@@ -86,8 +87,13 @@ def onto_graph_generator(ontology_elements, map_proccess):
                     "to": to_iri,
                     "label": 'rdfs:subClassOf',
                     "dashes": True,
-                    "arrows": 'from'
+                    "arrows": 'from',
                 }
+                node_pair_key = from_iri+to_iri if from_iri <= to_iri else to_iri+from_iri
+                if not node_pair_key in current_edges_per_node:
+                    current_edges_per_node[node_pair_key]= 1
+                else:
+                    current_edges_per_node[node_pair_key] += 1
                 edges.append(new_edge)
         if class_node['iri'] in onto_mapping_elems:
             node['color'] = "#5dbb63"
@@ -95,20 +101,38 @@ def onto_graph_generator(ontology_elements, map_proccess):
             if (len(class_node['equivalent_to']) > 0):
                 from_iri = class_node['iri']
                 to_iri = class_node['equivalent_to'][0].iri
+                node_pair_key = from_iri+to_iri if from_iri <= to_iri else to_iri+from_iri
+
+                if not node_pair_key in current_edges_per_node:
+                    current_edges_per_node[node_pair_key]= 1
+                else:
+                    current_edges_per_node[node_pair_key] += 1
+                roundness_coeficient = current_edges_per_node[node_pair_key] * 0.2
                 new_edge = { 
                     "id": f'{from_iri}-owl:sameAs-{to_iri}', 
                     "from": from_iri, 
                     "to": to_iri, 
-                    "label": 'owl:sameAs'
+                    "label": 'owl:sameAs',
+                    "smooth": {"type": 'curvedCW', "enabled": True if current_edges_per_node[node_pair_key] > 1 else False, "type": 'curvedCW', "roundness": roundness_coeficient if current_edges_per_node[node_pair_key] > 1 else 0}
                 }
                 edges.append(new_edge)
         nodes.append(node)
     for edge in ontology_elements[1]['object_properties']:
+        if edge['range'][0] and edge['domain'][0]:
+            node_pair_key = edge['range'][0]+edge['domain'][0] if edge['range'][0] <= edge['domain'][0] else edge['domain'][0]+edge['range'][0]
+            if not node_pair_key in current_edges_per_node:
+                current_edges_per_node[node_pair_key] = 1
+            else:
+                current_edges_per_node[node_pair_key] += 1
+        roundness_coeficient = current_edges_per_node[node_pair_key] * 0.2
+
         new_edge = { 
             "id": edge['iri'], 
             "from": edge['domain'][0] if len(edge['domain']) > 0 else None, 
             "to": edge['range'][0] if len(edge['range']) > 0 else None, 
-            "label": edge['name']
+            "label": edge['name'],
+            "smooth": {"type": 'curvedCW', "enabled": True if current_edges_per_node[node_pair_key] > 1 else False, "type": 'curvedCW', "roundness": roundness_coeficient if current_edges_per_node[node_pair_key] > 1 else 0}
+
         }
         if edge['iri'] in onto_mapping_elems:
             new_edge['color'] = "#5dbb63"
@@ -123,7 +147,7 @@ def onto_graph_generator(ontology_elements, map_proccess):
                 "id": edge['iri'], 
                 "from": edge['domain'][0] if len(edge['domain']) > 0 else None, 
                 "to": id_node if len(edge['range']) > 0 else None, 
-                "label": edge['name']
+                "label": edge['name'],
             }
             if edge['iri'] in onto_mapping_elems:
                 new_edge['color'] = "#5dbb63"
