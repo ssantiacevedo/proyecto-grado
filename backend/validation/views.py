@@ -67,9 +67,9 @@ class ValidationView(views.APIView):
         for db_elem in db_info:
             for column in db_elem['columns']:
                 if column['foreign_key']:
-                    foreign_keys.append(column['name'])
+                    foreign_keys.append({'table': db_elem['table'], 'foreign_key': column['name']})
                 else:
-                    no_foreign_keys.append(column['name'])
+                    no_foreign_keys.append({'table': db_elem['table'], 'no_foreign_key': column['name']})
 
         associative_tables = [
             elem['table'] for elem in db_info if len(elem['columns']) == 2 and 
@@ -87,6 +87,10 @@ class ValidationView(views.APIView):
         for elem in mapping:
             db_elem = list(elem.keys())[0]
             onto_elems = elem[db_elem]
+            table = None
+            column = None
+            if "-" in db_elem:
+                table, column = db_elem.split("-")
             
             # Rules List
             if db_elem in tables:
@@ -127,7 +131,7 @@ class ValidationView(views.APIView):
                 # Rule 6: mapping of foreign keys to OWL Object Properties
                 # Where at least one element of the domain and one 
                 # of the range must also be mapped.
-                if db_elem in foreign_keys:
+                if column is not None and {'table': table, 'foreign_key': column} in foreign_keys:
                     for onto_elem in onto_elems:
                         if onto_elem['iri'] not in ontos_object_properties.keys():
                             errors.append(constants.NOT_OWL_OBJECT_PROP.format(onto_elem['name']))
