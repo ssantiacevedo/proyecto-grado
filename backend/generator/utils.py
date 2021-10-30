@@ -115,7 +115,7 @@ def onto_graph_generator(ontology_elements, map_proccess):
                     "from": from_iri, 
                     "to": to_iri, 
                     "label": '',
-                    'color': '#CC5500'
+                    'color': '#CC5500',
                     "smooth": {"type": 'curvedCW', "enabled": True if current_edges_per_node[node_pair_key] > 1 else False, "type": 'curvedCW', "roundness": roundness_coeficient if current_edges_per_node[node_pair_key] > 1 else 0}
                 }
                 edges.append(new_edge)
