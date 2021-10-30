@@ -23,6 +23,7 @@ def generator(map_proccess):
     onto_classes = []
     for onto in load_ontologies:
         onto_classes.extend(list(onto.classes()))
+        close_world(onto)
     classes = [i.iri for i in onto_classes]
 
     mapping = map_proccess.valid_mapping
@@ -56,6 +57,7 @@ def generator(map_proccess):
             
             temp_onto = get_ontology(f"file://media/result-{map_proccess.uuid}-{i}.owl").load()
             onto_classes = list(temp_onto.classes())
+            close_world(temp_onto)
             for onto_elem in onto_classes:
                 elem_name = f"<{onto_elem.iri}>"
                 if elem_name not in list_mapped_elements:
@@ -112,7 +114,8 @@ def onto_graph_generator(ontology_elements, map_proccess):
                     "id": f'{from_iri}-owl:sameAs-{to_iri}', 
                     "from": from_iri, 
                     "to": to_iri, 
-                    "label": 'owl:sameAs',
+                    "label": '',
+                    'color': '#CC5500'
                     "smooth": {"type": 'curvedCW', "enabled": True if current_edges_per_node[node_pair_key] > 1 else False, "type": 'curvedCW', "roundness": roundness_coeficient if current_edges_per_node[node_pair_key] > 1 else 0}
                 }
                 edges.append(new_edge)
