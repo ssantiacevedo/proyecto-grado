@@ -60,13 +60,17 @@ const Download = () => {
 
   return (
     <DownloadPage>
-      <CardContainer>
-        <Title>Download and preview your extended context</Title>
-        <SubTitle>
-          Click on the download button to request and visualize your extended
-          context
-        </SubTitle>
-          <DownloadCard loading={loadingOntology} handleDownload={handleDownload} />
+      <div>
+        <CardContainer>
+          <Title>Download and preview your extended context</Title>
+          <SubTitle>
+            Click on the download button to request and visualize your extended
+            context
+          </SubTitle>
+          <DownloadCard
+            loading={loadingOntology}
+            handleDownload={handleDownload}
+          />
           {graphToShow && !loadingOntology && (
             <ToggleButton
               style={{ marginTop: "5rem" }}
@@ -75,7 +79,41 @@ const Download = () => {
               Toggle Animation
             </ToggleButton>
           )}
-      </CardContainer>
+        </CardContainer>
+
+        <StyledCardContainer>
+          <ReferenceTitle>Reference table:</ReferenceTitle>
+          <ReferenceContainer>
+            <MappedClass />
+            <Label>Mapped Class</Label>
+          </ReferenceContainer>
+          <ReferenceContainer>
+            <NotMappedClass />
+            <Label>Not Mapped Class</Label>
+          </ReferenceContainer>
+          <ReferenceContainer>
+            <MappedProperties />
+            <Label>Mapped Property</Label>
+          </ReferenceContainer>
+          <ReferenceContainer>
+            <NotMappedProperties />
+            <Label>Not Mapped Property</Label>
+          </ReferenceContainer>
+          <ReferenceContainer>
+            <DataProperties />
+            <Label>Data Property Range</Label>
+          </ReferenceContainer>
+          <ReferenceContainer>
+            <SubClass />
+            <Label>SubClass</Label>
+          </ReferenceContainer>
+          <ReferenceContainer>
+            <TotalMappingSameAs />
+            <Label>TotalMappingSameAs</Label>
+          </ReferenceContainer>
+        </StyledCardContainer>
+      </div>
+
       {loadingOntology ? (
         <SpinnerContainer>
           <Spinner />
@@ -146,4 +184,65 @@ const ToggleButton = styled.button`
   background-color: white;
   color: ${palette.alpha600};
   border: 1px solid ${palette.alpha600};
+`;
+
+const ReferenceContainer = styled.div`
+  display: grid;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  grid-template-columns: 1.5rem 1fr;
+  grid-column-gap: 20px;
+`;
+
+const MappedClass = styled.div`
+  height: 15px;
+  background-color: #5dbb63;
+  border-radius: 5px;
+`;
+
+const NotMappedClass = styled.div`
+  height: 15px;
+  background-color: rgb(51, 102, 204);
+  border-radius: 5px;
+`;
+
+const MappedProperties = styled.div`
+  height: 2px;
+  background-color: #5dbb63;
+`;
+
+const NotMappedProperties = styled.div`
+  height: 2px;
+  background-color: black;
+`;
+
+const DataProperties = styled.div`
+  height: 15px;
+  background-color: #ffff00;
+  border-radius: 5px;
+`;
+
+const SubClass = styled.div`
+  border: 1px dashed black;
+`;
+
+const ReferenceTitle = styled.span`
+  margin-bottom: 5px;
+`;
+
+const TotalMappingSameAs = styled.div`
+  height: 2px;
+  background-color: #CC5500;
+`;
+
+const StyledCardContainer = styled(CardContainer)`
+  padding: 10px;
+`;
+
+const Label = styled.span`
+  font-family: "Roboto";
+  font-size: 15px;
+  text-align: left;
+  color: ${palette.black};
 `;
