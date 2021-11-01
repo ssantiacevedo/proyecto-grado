@@ -129,6 +129,9 @@ const OntoDataDisplay = ({ data, loading }) => {
                         onClick={() => handleClickOntoElem(dataProperty)}
                         key={dataProperty?.iri}
                         isMapping={isMapping}
+                        active={currentOntoSelected.some(
+                          (el) => el?.iri === dataProperty?.iri
+                        )}
                       >
                         <FontAwesomeIcon icon={faMinus} />
                         <Text>{dataProperty?.name}</Text>
