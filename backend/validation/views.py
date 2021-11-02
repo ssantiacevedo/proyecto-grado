@@ -39,9 +39,9 @@ class ValidationView(views.APIView):
         ontologies_info = []
         for onto in map_proccess.ontologies.all():
             if onto.ontology_type == 'FILE':
-                data = get_ontology_info_from_uri(onto.ontology_file.name, True)
+                data = get_ontology_info_from_uri(onto.ontology_file.name, True, False)
             else:
-                data = get_ontology_info_from_uri(onto.ontology_uri, False)
+                data = get_ontology_info_from_uri(onto.ontology_uri, False, False)
             ontologies_info.append(data)
         
         ontos_classes = []

@@ -13,6 +13,7 @@ import {
   LOGIN,
   LOGOUT,
   REGISTER,
+  ONTOLOGY_GRAPH,
 } from "../axios/routes";
 
 const DataContext = createContext({
@@ -39,8 +40,10 @@ const DataContext = createContext({
   token: "",
   currentOntoSelected: [],
   currentDbSelected: [],
+  graphToShow: null,
   graph: null,
   file: null,
+  showGraphModal: false,
   getDbElements: () => {},
   setUuid: () => {},
   getOntoElements: () => {},
@@ -75,7 +78,10 @@ const DataContext = createContext({
   setCurrentOntoSelected: () => {},
   setCurrentDbSelected: () => {},
   setGraph: () => {},
+  getOntologyGraph: () => {},
   setFile: () => {},
+  setGraphToShow: () => {},
+  setShowGraphModal: () => {},
 });
 
 function DataContextProvider(props) {
@@ -96,6 +102,9 @@ function DataContextProvider(props) {
   const [graph, setGraph] = useState(null);
   const [file, setFile] = useState(null);
   const [uuid, setUuid] = useState(null);
+  const [graphToShow, setGraphToShow] = useState(null);
+  const [showGraphModal, setShowGraphModal] = useState(false);
+
   const [token, setToken] = useState(
     localStorage.getItem("ontology-token") || ""
   );
@@ -370,6 +379,25 @@ function DataContextProvider(props) {
       });
   };
 
+  const getOntologyGraph = (onto) => {
+    axiosInstance
+      .post(ONTOLOGY_GRAPH, {
+        url: onto?.name,
+        type: onto?.type,
+      })
+      .then((res) => {
+        setGraphToShow(res?.data?.graph);
+      })
+      .catch((e) => {
+        if (e?.response?.data?.error) {
+          notifyErrorPersisted(e?.response?.data?.error);
+        } else {
+          notifyError("Something went wrong");
+        }
+        setMappingProcess([]);
+      });
+  };
+
   const login = (email, password) => {
     axiosInstance
       .post(LOGIN, { email, password })
@@ -483,6 +511,10 @@ function DataContextProvider(props) {
         setGraph,
         setFile,
         uuid,
+        graphToShow,
+        getOntologyGraph,
+        showGraphModal,
+        setShowGraphModal,
       }}
       {...props}
     />
