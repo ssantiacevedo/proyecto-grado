@@ -45,12 +45,13 @@ def data_prop_range_to_str(name):
     return class_name.group(1)
   return None
 
-def get_ontology_info_from_uri(uri, is_file):
-    #This gets a lot to process. We should change this to recieve a .owl file fron the frontend
-    # onto = get_ontology("http://www.lesfleursdunormal.fr/static/_downloads/pizza_onto.owl").load()
+def get_ontology_info_from_uri(uri, is_file, incomplete = True):
     onto_path.append("backend/media/")
     if is_file:
-        onto = get_ontology("file://media/" + uri).load()
+        if incomplete:
+          onto = get_ontology("file://media/ontologies/" + uri).load()
+        else:
+          onto = get_ontology("file://media/" + uri).load()
     else:
         onto = get_ontology(uri).load()
 

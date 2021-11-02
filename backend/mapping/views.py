@@ -62,9 +62,9 @@ class OntologyView(views.APIView):
                 mapping_process.save()
             for ontology in Ontology.objects.filter(mapping_proccess__uuid=uuid):
                 if ontology.ontology_type == 'FILE':
-                    res.append({ "name": ontology.ontology_file.name.split("/")[-1], "id": ontology.id, "data": get_ontology_info_from_uri(ontology.ontology_file.name, True)})
+                    res.append({ "name": ontology.ontology_file.name.split("/")[-1], "id": ontology.id, "type": 'file', "data": get_ontology_info_from_uri(ontology.ontology_file.name, True, False)})
                 else:
-                    res.append({ "name": ontology.ontology_uri.split("/")[-1], "id": ontology.id, "data": get_ontology_info_from_uri(ontology.ontology_uri, False)})
+                    res.append({ "name": ontology.ontology_uri.split("/")[-1], "id": ontology.id, "uri": ontology.ontology_uri, "type": 'uri', "data": get_ontology_info_from_uri(ontology.ontology_uri, False)})
             return Response(res, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(e.__str__(), status=400)

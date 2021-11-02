@@ -13,6 +13,7 @@ import {
   LOGIN,
   LOGOUT,
   REGISTER,
+  ONTOLOGY_GRAPH,
 } from "../axios/routes";
 
 const DataContext = createContext({
@@ -21,6 +22,7 @@ const DataContext = createContext({
   mappedElements: [],
   uuid: null,
   loadingOntology: false,
+  loadingOntologyGraph: false,
   loadingValidation: false,
   loadingDB: false,
   currentDbMapping: "",
@@ -39,8 +41,10 @@ const DataContext = createContext({
   token: "",
   currentOntoSelected: [],
   currentDbSelected: [],
+  graphToShow: null,
   graph: null,
   file: null,
+  showGraphModal: false,
   getDbElements: () => {},
   setUuid: () => {},
   getOntoElements: () => {},
@@ -75,7 +79,10 @@ const DataContext = createContext({
   setCurrentOntoSelected: () => {},
   setCurrentDbSelected: () => {},
   setGraph: () => {},
+  getOntologyGraph: () => {},
   setFile: () => {},
+  setGraphToShow: () => {},
+  setShowGraphModal: () => {},
 });
 
 function DataContextProvider(props) {
@@ -83,6 +90,7 @@ function DataContextProvider(props) {
   const [ontologyElements, setOntologyElements] = useState([]);
   const [isMapping, setIsMapping] = useState(false);
   const [loadingOntology, setLoadingOntology] = useState(false);
+  const [loadingOntologyGraph, setLoadingOntologyGraph] = useState(false);
   const [loadingValidation, setLoadingValidation] = useState(false);
   const [loadingDB, setLoadingDB] = useState(false);
   const [mappedElements, setMappedElements] = useState([]);
@@ -96,6 +104,9 @@ function DataContextProvider(props) {
   const [graph, setGraph] = useState(null);
   const [file, setFile] = useState(null);
   const [uuid, setUuid] = useState(null);
+  const [graphToShow, setGraphToShow] = useState(null);
+  const [showGraphModal, setShowGraphModal] = useState(false);
+
   const [token, setToken] = useState(
     localStorage.getItem("ontology-token") || ""
   );
@@ -370,6 +381,29 @@ function DataContextProvider(props) {
       });
   };
 
+  const getOntologyGraph = (onto) => {
+    setLoadingOntologyGraph(true);
+    axiosInstance
+      .post(ONTOLOGY_GRAPH, {
+        url: onto?.name,
+        type: onto?.type,
+      })
+      .then((res) => {
+        setGraphToShow(res?.data?.graph);
+      })
+      .catch((e) => {
+        if (e?.response?.data?.error) {
+          notifyErrorPersisted(e?.response?.data?.error);
+        } else {
+          notifyError("Something went wrong");
+        }
+        setMappingProcess([]);
+      })
+      .finally(() => {
+        setLoadingOntologyGraph(false);
+      });
+  };
+
   const login = (email, password) => {
     axiosInstance
       .post(LOGIN, { email, password })
@@ -428,6 +462,7 @@ function DataContextProvider(props) {
         ontologyElements,
         mappedElements,
         loadingOntology,
+        loadingOntologyGraph,
         loadingDB,
         currentDbMapping,
         currentOntoMapping,
@@ -483,6 +518,10 @@ function DataContextProvider(props) {
         setGraph,
         setFile,
         uuid,
+        graphToShow,
+        getOntologyGraph,
+        showGraphModal,
+        setShowGraphModal,
       }}
       {...props}
     />

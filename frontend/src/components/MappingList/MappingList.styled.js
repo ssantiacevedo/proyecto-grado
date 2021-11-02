@@ -119,6 +119,7 @@ export const AddMappingButton = styled.button`
   margin-top: 0px;
   background-color: ${palette.alpha700};
   color: white;
+  z-index: 1;
   opacity: ${props => props.disabled ? '0.7' : '1'};
 `;
 
@@ -133,6 +134,7 @@ export const ConfirmMappingButton = styled.button`
   margin-top: 0px;
   background-color: ${palette.gama800Success};
   color: white;
+  z-index: 1;
   opacity: ${props => props.disabled ? '0.7' : '1'};
 `;
 

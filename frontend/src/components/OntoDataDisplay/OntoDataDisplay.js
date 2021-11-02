@@ -1,15 +1,15 @@
-import styled from 'styled-components';
-import { palette } from '../../theme/palette';
+import styled from "styled-components";
+import { palette } from "../../theme/palette";
 
 export const Text = styled.span`
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-size: 15px;
   text-align: center;
   margin-left: 10px;
 `;
 
 export const IconText = styled.span`
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-size: 13px;
   margin-left: 10px;
 `;
@@ -30,17 +30,16 @@ export const TableNameContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 10px;
-  color: ${(props => props.active && palette.alpha50Blue)};
-  cursor: ${props => props.isMapping ? 'pointer' : 'normal'};
+  color: ${(props) => props.active && palette.alpha50Blue};
+  cursor: ${(props) => (props.isMapping ? "pointer" : "normal")};
 `;
-
 
 export const ColumnNameContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: ${props => props.isMapping ? 'pointer' : 'normal'};
-  color: ${(props => props.active && palette.alpha50Blue)};
+  cursor: ${(props) => (props.isMapping ? "pointer" : "normal")};
+  color: ${(props) => props.active && palette.alpha50Blue};
 `;
 
 export const ColumnsContainer = styled.div`
@@ -50,14 +49,13 @@ export const ColumnsContainer = styled.div`
   padding-left: 20px;
 `;
 
-
 export const StyledInput = styled.label`
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
   padding: 6px 12px;
   margin: 5px 0;
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-size: 13px;
   border-radius: 6px;
 `;
@@ -73,7 +71,7 @@ export const OntoContainer = styled.div`
 `;
 
 export const OntologyTitle = styled.span`
-  font-family: 'RobotoBold';
+  font-family: "RobotoBold";
   font-size: 15px;
   color: ${palette.alpha600};
 `;
@@ -92,4 +90,19 @@ export const PopperContainer = styled.div`
   align-items: center;
   text-align: center;
   padding: 1rem;
+`;
+
+export const GraphButton = styled.button`
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  text-decoration: underline;
+  border-radius: 8px;
+  height: 40px;
+  width: fit-content;
+  margin: 0 auto;
+  margin-top: 5px;
+  background-color: white;
+  color: ${palette.alpha600};
 `;
