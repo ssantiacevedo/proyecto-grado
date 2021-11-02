@@ -34,6 +34,8 @@ const Home = () => {
     ontologyUploaded,
     setOntologyUploaded,
     token,
+    setOntologiesToRemove,
+    ontologiesToRemove,
   } = useDataContext();
   // DB Form
 
@@ -43,18 +45,17 @@ const Home = () => {
 
   const handleContinue = async () => {
     const uris = [...inputLists].filter(
-      (input) => input.type == "uri" && input.new
+      (input) => input.type == "uri"
     );
     const files = [...inputLists].filter(
-      (input) => input.type == "file" && input.new
+      (input) => input.type == "file"
     );
     var formData = new FormData();
-
     files.map((file) => {
       formData.append("onto", file?.file);
     });
-    formData.append("uris", JSON.stringify(uris));
 
+    formData.append("uris", JSON.stringify(uris));
     await getOntoElements(formData);
     await getDbElements(dbName, dbUser, dbPort, dbPass);
     history.push("/mappings");
@@ -91,6 +92,8 @@ const Home = () => {
           ontologyMethodList={ontologyMethodList}
           setOntologyMethod={setOntologyMethod}
           setUploaded={setOntologyUploaded}
+          setOntologiesToRemove={setOntologiesToRemove}
+          ontologiesToRemove={ontologiesToRemove}
         />
       </StepCard>
       <StepCard

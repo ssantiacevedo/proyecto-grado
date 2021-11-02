@@ -29,7 +29,7 @@ const Step1 = ({
   setOntologyMethod,
 }) => {
   const handleAddClick = () => {
-    setInputLists([...inputLists, { type: "uri", uri: "", new: true }]);
+    setInputLists([...inputLists, { type: "uri", uri: "" }]);
     setOntologyMethod([...ontologyMethodList, { choice: "uri" }]);
   };
 
@@ -51,11 +51,10 @@ const Step1 = ({
         type: "file",
         file: files?.[0],
         name: files?.[0].name,
-        new: true,
       };
     } else {
       const { value } = e.target;
-      list[index] = { type: "uri", uri: value, new: true };
+      list[index] = { type: "uri", uri: value };
     }
     setInputLists(list);
   };
@@ -66,9 +65,9 @@ const Step1 = ({
     list[index] = { choice: e.target.value };
 
     if (e.target.value === "file") {
-      inputList[index] = { type: "file", file: "", name: "", new: true };
+      inputList[index] = { type: "file", file: "", name: "" };
     } else {
-      inputList[index] = { type: "uri", uri: "", new: true };
+      inputList[index] = { type: "uri", uri: "" };
     }
 
     setInputLists(inputList);

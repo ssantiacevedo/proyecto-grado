@@ -107,7 +107,7 @@ function DataContextProvider(props) {
 
   // Step 1 form
   const [inputLists, setInputLists] = useState([
-    { type: "uri", uri: "", new: true },
+    { type: "uri", uri: "" },
   ]);
   const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
 
@@ -167,7 +167,7 @@ function DataContextProvider(props) {
     setCurrentDbSelected([]);
     setGraph(null);
     setFile(null);
-    setInputLists([{ type: "uri", uri: "", new: true }]);
+    setInputLists([{ type: "uri", uri: "" }]);
     setOntologyMethod([{ choice: "uri" }]);
   };
 
@@ -336,7 +336,7 @@ function DataContextProvider(props) {
         const ontologies = res?.data?.ontologies?.map((onto) => {
           if (onto?.ontology_type === "URI") {
             ontologyMethodList = [...ontologyMethodList, { choice: "uri" }];
-            return { type: "uri", uri: onto.ontology_uri, new: false };
+            return { type: "uri", uri: onto.ontology_uri, id: onto.id };
           } else {
             ontologyMethodList = [...ontologyMethodList, { choice: "file" }];
             const fileName = onto.ontology_file.substring(
@@ -346,7 +346,7 @@ function DataContextProvider(props) {
               type: "file",
               file: onto.ontology_file,
               name: fileName,
-              new: false,
+              id: onto.id,
             };
           }
         });

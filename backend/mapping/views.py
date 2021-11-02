@@ -1,5 +1,7 @@
+from django.conf import settings
 from rest_framework import views, status
 import json
+from django.db import transaction
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import views
@@ -19,49 +21,50 @@ class OntologyView(views.APIView):
         res = []
         ontology_objects = []
         uuid = ''
-        identifier = 1
+
+        ontos_files_not_modified = [onto for onto in data.getlist('onto') if type(onto) == str]
+        ontos_uris_not_modified = [onto['uri'] for onto in json.loads(data['uris'])]
 
         # If files are coming (uris, files, and uuid is coming in this list)
         if len(request.FILES) > 0:
             files = request.FILES.getlist('onto', None)
             for ff in files:
                 onto_info = Ontology.objects.create(ontology_type='FILE', ontology_file=ff)
-                res.append({ "name": onto_info.ontology_file.name.split("/")[-1], "id": identifier, "data": get_ontology_info_from_uri(onto_info.ontology_file.name, True)})
-                identifier += 1
                 ontology_objects.append(onto_info)
 
             uuid = request.FILES.getlist('uuid')[0].name
 
             owls = json.loads(data['uris'])
 
-            for owl in owls:
-                try:
-                    if owl['type'] == 'uri':
-                        onto_info = Ontology.objects.create(ontology_type='URI', ontology_uri=owl['uri'])
-                        res.append({ "name": owl['uri'].split("/")[-1], "id": identifier, "data": get_ontology_info_from_uri(owl['uri'], False)})
-                        identifier += 1
-                    ontology_objects.append(onto_info)
-                except Exception as e:
-                    return Response(e.__str__(), status=400)
-
         try: 
             mapping_process, created = MappingProcess.objects.get_or_create(uuid=uuid)
-
+                
+            with transaction.atomic():
             # If the mapping process exists, return the actual Ontology elements for it
-            if not created:
-                for ontology in Ontology.objects.filter(mapping_proccess__uuid=uuid):
-                    if ontology.ontology_type == 'FILE':
-                        res.append({ "name": ontology.ontology_file.name.split("/")[-1], "id": identifier, "data": get_ontology_info_from_uri(ontology.ontology_file.name, True)})
-                    else:
-                        res.append({ "name": ontology.ontology_uri.split("/")[-1], "id": identifier, "data": get_ontology_info_from_uri(ontology.ontology_uri, False)})
-                    identifier += 1
+                if not created:
+                    for ontology in Ontology.objects.filter(mapping_proccess__uuid=uuid):
+                        if ontology.ontology_type == 'FILE' and f"{settings.MEDIA_URL}{ontology.ontology_file.name}" not in ontos_files_not_modified and os.path.exists(f"media/{ontology.ontology_file.name}"):
+                            os.remove(f"media/{ontology.ontology_file.name}")
+                            ontology.delete()
+                        elif ontology.ontology_type == 'URI' and ontology.ontology_uri not in ontos_uris_not_modified:
+                            ontology.delete()
 
-            # Save the new ontology objects into the mapping process
-            for ontology in ontology_objects:
-                mapping_process.ontologies.add(ontology) 
-            mapping_process.state = 'ONTOS_ENT'
-            mapping_process.user=request.user
-            mapping_process.save()
+                for owl in owls:
+                    if owl['type'] == 'uri':
+                        onto_info, _ = Ontology.objects.get_or_create(ontology_type='URI', ontology_uri=owl['uri'], mapping_proccess=mapping_process)
+                        ontology_objects.append(onto_info)
+
+                # Save the new ontology objects into the mapping process
+                for ontology in ontology_objects:
+                    mapping_process.ontologies.add(ontology) 
+                mapping_process.state = 'ONTOS_ENT'
+                mapping_process.user = request.user
+                mapping_process.save()
+            for ontology in Ontology.objects.filter(mapping_proccess__uuid=uuid):
+                if ontology.ontology_type == 'FILE':
+                    res.append({ "name": ontology.ontology_file.name.split("/")[-1], "id": ontology.id, "data": get_ontology_info_from_uri(ontology.ontology_file.name, True)})
+                else:
+                    res.append({ "name": ontology.ontology_uri.split("/")[-1], "id": ontology.id, "data": get_ontology_info_from_uri(ontology.ontology_uri, False)})
             return Response(res, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(e.__str__(), status=400)
