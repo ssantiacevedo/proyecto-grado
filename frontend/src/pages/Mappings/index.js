@@ -6,6 +6,7 @@ import StepCard from "../../components/StepCard";
 import DBDataDisplay from "../../components/DBDataDisplay";
 import OntoDataDisplay from "../../components/OntoDataDisplay";
 import MappingList from "../../components/MappingList";
+import Spinner from "../../components/Spinner";
 import { dataMapping } from "../../data/dummy";
 import { useDataContext } from "../../context/Context";
 import { useHistory } from "react-router";
@@ -13,12 +14,14 @@ import Graph from "react-graph-vis";
 import { palette } from "../../theme/palette";
 import { v4 as uuidv4 } from "uuid";
 import GraphReference from "../Download/GraphReference";
+import { SpinnerContainer } from "../Download/Download.styled";
 
 const Mappings = () => {
   const {
     ontologyElements,
     dbElements,
     loadingOntology,
+    loadingOntologyGraph,
     loadingDB,
     token,
     graphToShow,
@@ -89,9 +92,14 @@ const Mappings = () => {
             </ToggleButton>
             <GraphReference mappingProcess />
           </LeftContainer>
-
-          {graphToShow && (
-            <Graph key={uuidv4()} graph={graphToShow} options={options} />
+          {loadingOntologyGraph ? (
+            <SpinnerContainer>
+              <Spinner />
+            </SpinnerContainer>
+          ) : (
+            graphToShow && (
+              <Graph key={uuidv4()} graph={graphToShow} options={options} />
+            )
           )}
         </Container>
       </Modal>
@@ -130,6 +138,7 @@ export const Container = styled.div`
 `;
 
 export const Cross = styled.span`
+  padding: 10px;
   position: absolute;
   top: 10px;
   cursor: pointer;
@@ -146,7 +155,6 @@ const ToggleButton = styled.button`
   height: 40px;
   width: 90%;
   max-width: 200px;
-  margin-top: 20px;
   background-color: white;
   color: ${palette.alpha600};
   border: 1px solid ${palette.alpha600};

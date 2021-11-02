@@ -22,6 +22,7 @@ const DataContext = createContext({
   mappedElements: [],
   uuid: null,
   loadingOntology: false,
+  loadingOntologyGraph: false,
   loadingValidation: false,
   loadingDB: false,
   currentDbMapping: "",
@@ -89,6 +90,7 @@ function DataContextProvider(props) {
   const [ontologyElements, setOntologyElements] = useState([]);
   const [isMapping, setIsMapping] = useState(false);
   const [loadingOntology, setLoadingOntology] = useState(false);
+  const [loadingOntologyGraph, setLoadingOntologyGraph] = useState(false);
   const [loadingValidation, setLoadingValidation] = useState(false);
   const [loadingDB, setLoadingDB] = useState(false);
   const [mappedElements, setMappedElements] = useState([]);
@@ -380,6 +382,7 @@ function DataContextProvider(props) {
   };
 
   const getOntologyGraph = (onto) => {
+    setLoadingOntologyGraph(true);
     axiosInstance
       .post(ONTOLOGY_GRAPH, {
         url: onto?.name,
@@ -395,6 +398,9 @@ function DataContextProvider(props) {
           notifyError("Something went wrong");
         }
         setMappingProcess([]);
+      })
+      .finally(() => {
+        setLoadingOntologyGraph(false);
       });
   };
 
@@ -456,6 +462,7 @@ function DataContextProvider(props) {
         ontologyElements,
         mappedElements,
         loadingOntology,
+        loadingOntologyGraph,
         loadingDB,
         currentDbMapping,
         currentOntoMapping,
