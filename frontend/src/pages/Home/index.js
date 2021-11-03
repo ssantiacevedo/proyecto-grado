@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axiosInstance from "../../axios";
+import React from "react";
 import CardPage from "../../components/CardPage";
 import StepCard from "../../components/StepCard";
 
@@ -14,7 +13,6 @@ const Home = () => {
   const {
     getDbElements,
     getOntoElements,
-    resetOntologyElements,
     setStepsAmount,
     stepsAmount,
     mappingName,
@@ -47,9 +45,10 @@ const Home = () => {
   if (!token) history.push("/login");
 
   const handleContinue = async () => {
-    const uris = [...inputLists].filter((input) => input.type == "uri");
-    const files = [...inputLists].filter((input) => input.type == "file");
+    const uris = [...inputLists].filter((input) => input.type === "uri");
+    const files = [...inputLists].filter((input) => input.type === "file");
     var formData = new FormData();
+    // eslint-disable-next-line array-callback-return
     files.map((file) => {
       formData.append("onto", file?.file);
     });

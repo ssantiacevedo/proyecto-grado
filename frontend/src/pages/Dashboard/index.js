@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import DashboardPage from "../../components/DashboardPage";
 import StepCard from "../../components/StepCard";
@@ -13,7 +13,8 @@ const Dashboard = () => {
   if (!token) history.push("/login");
 
   useEffect(() => {
-    getMappingProcess();
+    if(token) getMappingProcess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

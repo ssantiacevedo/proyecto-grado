@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, createContext, useContext, useEffect } from "react";
+import React, { useState, createContext, useContext } from "react";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 import axiosInstance from "../axios";
@@ -414,6 +414,7 @@ function DataContextProvider(props) {
       })
       .catch((err) => {
         if (err?.response?.data) {
+          // eslint-disable-next-line array-callback-return
           Object.entries(err?.response?.data).map((error) => {
             notifyError(error?.[1]);
           });
@@ -446,6 +447,7 @@ function DataContextProvider(props) {
       })
       .catch((err) => {
         if (err?.response?.data) {
+          // eslint-disable-next-line array-callback-return
           Object.entries(err?.response?.data).map((error) => {
             notifyError(error?.[1]);
           });

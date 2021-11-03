@@ -61,7 +61,7 @@ const RegisterCard = ({
           <IconText>{"Register"}</IconText>
         </AddButon>
         <LoginLink onClick={() => history.push("/login")}>
-         Already have an account?  <a>Log in</a>
+         Already have an account?  <a href='/login"'>Log in</a>
         </LoginLink>
       </ButtonContainer>
     </Step1Container>

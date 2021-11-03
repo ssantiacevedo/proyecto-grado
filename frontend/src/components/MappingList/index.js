@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import spinnerImage from "../../assets/spinner.svg";
 import {
@@ -6,7 +6,6 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  Text,
   MappingContainer,
   MappingRow,
   DBDataDisplayContainer,
@@ -24,7 +23,6 @@ import {
   LeftHeaderContainer,
   StyledSpinnerImage,
 } from "./MappingList.styled";
-import Spinner from "../Spinner";
 import { useDataContext } from "../../context/Context";
 const MappingList = () => {
   const {
@@ -37,7 +35,6 @@ const MappingList = () => {
     validateMappings,
     isLoadingValidation,
     isMapping,
-    setMappedElements,
   } = useDataContext();
 
   return (

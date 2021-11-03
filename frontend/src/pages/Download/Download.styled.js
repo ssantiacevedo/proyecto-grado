@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { palette } from "../../theme/palette";
-import StepCard from "../../components/StepCard";
 
 export const SpinnerContainer = styled.div`
   display: flex;
