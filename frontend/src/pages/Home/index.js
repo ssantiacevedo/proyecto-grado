@@ -36,29 +36,31 @@ const Home = () => {
     token,
     setOntologiesToRemove,
     ontologiesToRemove,
+    loadingOntology,
+    loadingDB,
   } = useDataContext();
   // DB Form
 
   const history = useHistory();
+  const loading = loadingOntology || loadingDB;
 
   if (!token) history.push("/login");
 
   const handleContinue = async () => {
-    const uris = [...inputLists].filter(
-      (input) => input.type == "uri"
-    );
-    const files = [...inputLists].filter(
-      (input) => input.type == "file"
-    );
+    const uris = [...inputLists].filter((input) => input.type == "uri");
+    const files = [...inputLists].filter((input) => input.type == "file");
     var formData = new FormData();
     files.map((file) => {
       formData.append("onto", file?.file);
     });
 
     formData.append("uris", JSON.stringify(uris));
-    await getOntoElements(formData);
-    await getDbElements(dbName, dbUser, dbPort, dbPass);
-    history.push("/mappings");
+    await Promise.all([
+      await getOntoElements(formData),
+      await getDbElements(dbName, dbUser, dbPort, dbPass),
+    ]).then(() => {
+      history.push("/mappings");
+    });
   };
   const disabledMapping =
     !ontologyUploaded || !dbUser || !dbName || !dbPass || !mappingName;
@@ -108,6 +110,7 @@ const Home = () => {
           stepsAmount={stepsAmount}
           setMappingName={setMappingName}
           mappingName={mappingName}
+          loading={loading}
         />
       </StepCard>
     </CardPage>

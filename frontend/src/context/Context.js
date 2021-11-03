@@ -117,9 +117,7 @@ function DataContextProvider(props) {
   const [dbPort, setDbPort] = useState("");
 
   // Step 1 form
-  const [inputLists, setInputLists] = useState([
-    { type: "uri", uri: "" },
-  ]);
+  const [inputLists, setInputLists] = useState([{ type: "uri", uri: "" }]);
   const [ontologyMethodList, setOntologyMethod] = useState([{ choice: "uri" }]);
 
   //Step 3 form
@@ -182,10 +180,10 @@ function DataContextProvider(props) {
     setOntologyMethod([{ choice: "uri" }]);
   };
 
-  const getDbElements = (dbName, dbUser, dbPort, dbPass) => {
+  const getDbElements = async (dbName, dbUser, dbPort, dbPass) => {
     setDbElements([]);
     setLoadingDB(true);
-    axiosInstance
+    await axiosInstance
       .post(
         CREATE_DB,
         {
@@ -202,19 +200,20 @@ function DataContextProvider(props) {
       .then((res) => {
         setDbElements(res?.data);
       })
-      .catch(() => {
+      .catch((err) => {
         notifyError("Error connecting to Postgres DB");
+        throw err;
       })
       .finally(() => {
         setLoadingDB(false);
       });
   };
 
-  const getOntoElements = (files) => {
+  const getOntoElements = async (files) => {
     const blob = new File([], uuid);
     files.append("uuid", blob);
     setLoadingOntology(true);
-    axiosInstance
+    await axiosInstance
       .post(CREATE_ONTOLOGY, files, {
         headers: {
           "Content-Type":
@@ -225,8 +224,9 @@ function DataContextProvider(props) {
       .then((res) => {
         setOntologyElements(() => [...res?.data]);
       })
-      .catch(() => {
+      .catch((err) => {
         notifyError("Error while loading Ontology Elements");
+        throw err;
       })
       .finally(() => {
         setLoadingOntology(false);

@@ -1,12 +1,12 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import React from "react";
+import styled, { keyframes } from "styled-components";
 
-import spinnerImage from '../../assets/spinner.svg';
+import spinnerImage from "../../assets/spinner.svg";
 
-export const Spinner = () => {
+export const Spinner = ({ small }) => {
   return (
     <StyledSpinner>
-      <StyledSpinnerImage src={spinnerImage} />
+      <StyledSpinnerImage small={small} src={spinnerImage} />
     </StyledSpinner>
   );
 };
@@ -22,8 +22,8 @@ const rotate = keyframes`
 
 const StyledSpinnerImage = styled.img`
   display: block;
-  width: 64px;
-  height: 64px;
+  height: ${props => props.small ? '35px' : '64px'};
+  width: ${props => props.small ? '35px' : '64px'};
   animation: ${rotate} 2s linear infinite;
   margin: 0 auto;
 `;
