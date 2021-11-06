@@ -57,7 +57,7 @@ const DBDisplay = ({ data, loading }) => {
         );
         setCurrentDbMapping("");
       } else {
-        setCurrentDbMapping(column?.name);
+        setCurrentDbMapping(`${x?.table}-${column?.name}`);
         setCurrentDbSelected([{ name: `${x?.table}-${column?.name}` }]);
       }
     }

@@ -55,7 +55,7 @@ def generator(map_proccess):
 
             res_n.serialize(format='pretty-xml', destination=f"media/result-{map_proccess.uuid}-{i}.owl")
             
-            temp_onto = get_ontology(f"file://media/result-{map_proccess.uuid}-{i}.owl").load()
+            temp_onto = get_ontology(f"file://media/result-{map_proccess.uuid}-{i}.owl").load(reload = True)
             onto_classes = list(temp_onto.classes())
             close_world(temp_onto)
             for onto_elem in onto_classes:
