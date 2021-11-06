@@ -42,8 +42,8 @@ const OntoDataDisplay = ({ data, loading }) => {
     if (selectedOntologyToOpen) {
       getOntologyGraph(selectedOntologyToOpen);
     }
-    // eslint-disable-next-line array-callback-return
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedOntologyToOpen]);
 
   const handleClickOntoElem = (ontoElem) => {
     if (isMapping) {
