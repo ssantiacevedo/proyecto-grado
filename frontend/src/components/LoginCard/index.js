@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignInAlt } from "@fortawesome/free-solid-svg-icons";
 import { palette } from "../../theme/palette";
@@ -43,7 +43,7 @@ const LoginCard = ({ handleLogin, setEmail, email, setPassword, password }) => {
           <IconText>{"Login"}</IconText>
         </AddButon>
         <RegisterLink onClick={() => history.push("/register")}>
-         Don´t have an account?  <a>Register</a>
+         Don´t have an account?  <a href='/register'>Register</a>
         </RegisterLink>
       </ButtonContainer>
     </Step1Container>

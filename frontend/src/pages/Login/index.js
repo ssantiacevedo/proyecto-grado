@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import axiosInstance from "../../axios";
 import CardPage from "../../components/CardPage";
 import StepCard from "../../components/StepCard";
-import Spinner from "../../components/Spinner";
 import LoginCard from "../../components/LoginCard";
 import { useHistory } from "react-router-dom";
 import { useDataContext } from "../../context/Context";

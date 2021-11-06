@@ -20,7 +20,6 @@ import {
   GraphButton,
 } from "./OntoDataDisplay";
 import Popper from "../Popper";
-import { usePopper } from "../../helpers/usePopper";
 import { useDataContext } from "../../context/Context";
 import Spinner from "../Spinner";
 
@@ -33,19 +32,18 @@ const OntoDataDisplay = ({ data, loading }) => {
     currentOntoSelected,
     setCurrentOntoSelected,
     getOntologyGraph,
-    graphToShow,
     setShowGraphModal,
   } = useDataContext();
 
   const [referenceElement, setReferenceElement] = useState(null);
   const [selectedOntologyToOpen, setSelectedOntologyToOpen] = useState(null);
-  const { popperOpen, togglePopper } = usePopper(`onto-popper`);
 
   useEffect(() => {
     if (selectedOntologyToOpen) {
       getOntologyGraph(selectedOntologyToOpen);
     }
-  }, [selectedOntologyToOpen]);
+    // eslint-disable-next-line array-callback-return
+  }, []);
 
   const handleClickOntoElem = (ontoElem) => {
     if (isMapping) {

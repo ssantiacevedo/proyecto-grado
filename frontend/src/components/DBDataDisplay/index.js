@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Popper from "../Popper";
 import { faTable, faColumns } from "@fortawesome/free-solid-svg-icons";
-import { usePopper } from "../../helpers/usePopper";
 import {
   Text,
   DBDataDisplayContainer,
@@ -27,7 +26,6 @@ const DBDisplay = ({ data, loading }) => {
     setCurrentDbSelected,
   } = useDataContext();
   const [referenceElement, setReferenceElement] = useState(null);
-  const { popperOpen, togglePopper } = usePopper(`db-popper`);
 
   const handleClickTable = (x) => {
     if (isMapping) {
@@ -107,7 +105,7 @@ const DBDisplay = ({ data, loading }) => {
         )}
       </DBDataDisplayContainer>
       <Popper
-        show={isMapping && !currentDbMapping && currentOntoMapping.length == 0}
+        show={isMapping && !currentDbMapping && currentOntoMapping.length === 0}
         referenceElement={referenceElement}
       >
         <PopperContainer>Select one element from your Database</PopperContainer>

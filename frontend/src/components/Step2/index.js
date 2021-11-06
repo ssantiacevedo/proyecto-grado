@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect } from "react";
-import { Step2Container, Text, Input, Label } from "./Step2.styled";
+import React, { Fragment } from "react";
+import { Step2Container, Input, Label } from "./Step2.styled";
 import { palette } from "../../theme/palette";
 
 const Step2 = ({
