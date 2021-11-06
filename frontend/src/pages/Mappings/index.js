@@ -27,6 +27,7 @@ const Mappings = () => {
     graphToShow,
     showGraphModal,
     setShowGraphModal,
+    setGraphToShow,
   } = useDataContext();
 
   const history = useHistory();
@@ -85,7 +86,14 @@ const Mappings = () => {
       </StepCard>
       <Modal show={showGraphModal}>
         <Container>
-          <Cross onClick={() => setShowGraphModal(false)}>X</Cross>
+          <Cross
+            onClick={() => {
+              setShowGraphModal(false);
+              setGraphToShow(null);
+            }}
+          >
+            X
+          </Cross>
           <LeftContainer>
             <ToggleButton onClick={() => setSimulation(!simulation)}>
               Toggle animation

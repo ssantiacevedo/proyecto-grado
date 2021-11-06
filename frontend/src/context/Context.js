@@ -524,6 +524,7 @@ function DataContextProvider(props) {
         getOntologyGraph,
         showGraphModal,
         setShowGraphModal,
+        setGraphToShow,
       }}
       {...props}
     />
