@@ -53,7 +53,7 @@ def get_ontology_info_from_uri(uri, is_file, incomplete = True):
         else:
           onto = get_ontology("file://media/" + uri).load()
     else:
-        onto = get_ontology(uri).load()
+      onto = get_ontology(str(uri).strip()).load()
 
     ## These are generators 
     onto_classes = list(onto.classes())
@@ -67,22 +67,22 @@ def get_ontology_info_from_uri(uri, is_file, incomplete = True):
         'iri': i.iri,
         'equivalent_to': i.equivalent_to,
         'is_a': [elem.iri for elem in i.is_a if (elem is not None and getattr(elem, 'name', None) and elem.name != 'Thing')],
-      } for i in onto_classes
+      } for i in onto_classes if getattr(i, 'iri', None)
     ]
     obj_properties = [
       {
           'name':i.label[0] if len(i.label) > 0 else i.name,
           'iri': i.iri,
-          'domain': [elem.iri for elem in i.domain if elem is not None],
-          'range': [elem.iri for elem in i.range if elem is not None]
-      } for i in onto_object_properties]
+          'domain': [elem.iri for elem in i.domain if elem is not None and getattr(elem, 'iri', None)],
+          'range': [elem.iri for elem in i.range if elem is not None and getattr(elem, 'iri', None)],
+      } for i in onto_object_properties if getattr(i, 'iri', None)]
     data_properties = [
       {
         'name':i.label[0] if len(i.label) > 0 else i.name,
-        'domain': [elem.iri for elem in i.domain if elem is not None],
-        'range': [data_prop_range_to_str(str(elem)) for elem in i.range if elem is not None],
+        'domain': [elem.iri for elem in i.domain if elem is not None and getattr(elem, 'iri', None)],
+        'range': [data_prop_range_to_str(str(elem)) for elem in i.range if elem is not None and getattr(elem, 'iri', None)],
         'iri': i.iri
-      } for i in onto_data_properties]
+      } for i in onto_data_properties if getattr(i, 'iri', None)]
 
     res = [
         { "classes": classes}, 

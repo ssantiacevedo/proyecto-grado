@@ -88,19 +88,24 @@ const DataContext = createContext({
 function DataContextProvider(props) {
   const [dbElements, setDbElements] = useState([]);
   const [ontologyElements, setOntologyElements] = useState([]);
+
   const [isMapping, setIsMapping] = useState(false);
+
   const [loadingOntology, setLoadingOntology] = useState(false);
   const [loadingOntologyGraph, setLoadingOntologyGraph] = useState(false);
   const [loadingValidation, setLoadingValidation] = useState(false);
   const [loadingDB, setLoadingDB] = useState(false);
+
   const [mappedElements, setMappedElements] = useState([]);
   const [currentDbMapping, setCurrentDbMapping] = useState("");
   const [stepsAmount, setStepsAmount] = useState(2);
   const [mappingName, setMappingName] = useState("");
   const [mappingProcess, setMappingProcess] = useState([]);
+
   const [currentOntoMapping, setCurrentOntoMapping] = useState([]);
   const [currentOntoSelected, setCurrentOntoSelected] = useState([]);
   const [currentDbSelected, setCurrentDbSelected] = useState([]);
+
   const [graph, setGraph] = useState(null);
   const [file, setFile] = useState(null);
   const [uuid, setUuid] = useState(null);
@@ -178,6 +183,9 @@ function DataContextProvider(props) {
     setFile(null);
     setInputLists([{ type: "uri", uri: "" }]);
     setOntologyMethod([{ choice: "uri" }]);
+    setLoadingDB(false);
+    setLoadingOntology(false);
+    setLoadingOntologyGraph(false);
   };
 
   const getDbElements = async (dbName, dbUser, dbPort, dbPass) => {
@@ -335,6 +343,9 @@ function DataContextProvider(props) {
   };
 
   const getMappingProcessDetail = (uuid) => {
+    setLoadingDB(false);
+    setLoadingOntology(false);
+    setLoadingOntologyGraph(false);
     setUuid(uuid);
     axiosInstance
       .get(detailMappingProcess(uuid), {
