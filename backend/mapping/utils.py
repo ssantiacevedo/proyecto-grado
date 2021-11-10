@@ -80,7 +80,7 @@ def get_ontology_info_from_uri(uri, is_file, incomplete = True):
       {
         'name':i.label[0] if len(i.label) > 0 else i.name,
         'domain': [elem.iri for elem in i.domain if elem is not None and getattr(elem, 'iri', None)],
-        'range': [data_prop_range_to_str(str(elem)) for elem in i.range if elem is not None and getattr(elem, 'iri', None)],
+        'range': [data_prop_range_to_str(str(elem)) for elem in i.range if elem is not None],
         'iri': i.iri
       } for i in onto_data_properties if getattr(i, 'iri', None)]
 
