@@ -106,4 +106,6 @@ Taking into account the mappings previously shown, the generated context is the 
 
 ![Alt text](/frontend/src/assets/generated_context.png?raw=true "Generated Context")
 
+It should be noted that the RDF graph shown on the screen, due to limitations in the Owlready2 library, not all the data properties are shown. This is because the library recognizes only some types of Data Property ranges. However, the generated .owl file does contain them.
+
 As previously mentioned, the context generated in the form of an ontology can be downloaded by selecting the `Dowlnload` button.

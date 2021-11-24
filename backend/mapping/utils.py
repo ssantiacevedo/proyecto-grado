@@ -65,7 +65,7 @@ def get_ontology_info_from_uri(uri, is_file, incomplete = True):
       {
         'name':i.label[0] if len(i.label) > 0 else i.name, 
         'iri': i.iri,
-        'equivalent_to': i.equivalent_to,
+        'equivalent_to': [elem.iri for elem in i.equivalent_to if elem is not None and getattr(elem, 'iri', None)],
         'is_a': [elem.iri for elem in i.is_a if (elem is not None and getattr(elem, 'name', None) and elem.name != 'Thing')],
       } for i in onto_classes if getattr(i, 'iri', None)
     ]

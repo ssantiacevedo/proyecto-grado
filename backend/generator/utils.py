@@ -121,7 +121,7 @@ def onto_graph_generator(ontology_elements, map_proccess):
                 edges.append(new_edge)
         nodes.append(node)
     for edge in ontology_elements[1]['object_properties']:
-        if edge['range'][0] and edge['domain'][0]:
+        if len(edge['range']) > 0 and len(edge['domain']) > 0:
             node_pair_key = edge['range'][0]+edge['domain'][0] if edge['range'][0] <= edge['domain'][0] else edge['domain'][0]+edge['range'][0]
             if not node_pair_key in current_edges_per_node:
                 current_edges_per_node[node_pair_key] = 1
@@ -190,7 +190,7 @@ def onto_graph_generator_without_mapping(ontology_elements):
                 edges.append(new_edge)
         nodes.append(node)
     for edge in ontology_elements[1]['object_properties']:
-        if edge['range'][0] and edge['domain'][0]:
+        if len(edge['range']) > 0 and len(edge['domain']) > 0:
             node_pair_key = edge['range'][0]+edge['domain'][0] if edge['range'][0] <= edge['domain'][0] else edge['domain'][0]+edge['range'][0]
             if not node_pair_key in current_edges_per_node:
                 current_edges_per_node[node_pair_key] = 1
