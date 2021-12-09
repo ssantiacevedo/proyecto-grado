@@ -8,7 +8,7 @@ import {
   DataProperties,
   SubClass,
   ReferenceTitle,
-  TotalMappingSameAs,
+  Equivalent,
   StyledCardContainer,
   Label,
 } from "./Download.styled";
@@ -55,8 +55,8 @@ const GraphReference = ({ fixed = false, mappingProcess = false }) => {
       </ReferenceContainer>
       {!mappingProcess && (
         <ReferenceContainer>
-          <TotalMappingSameAs />
-          <Label>TotalMappingSameAs</Label>
+          <Equivalent />
+          <Label>Equivalent</Label>
         </ReferenceContainer>
       )}
     </StyledCardContainer>
