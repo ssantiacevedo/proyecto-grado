@@ -100,7 +100,7 @@ export const ReferenceTitle = styled.span`
   margin-bottom: 5px;
 `;
 
-export const TotalMappingSameAs = styled.div`
+export const Equivalent = styled.div`
   height: 2px;
   background-color: #CC5500;
 `;
