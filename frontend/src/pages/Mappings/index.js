@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import styled from "styled-components";
 import MappingPage from "../../components/MappingPage";
 import StepCard from "../../components/StepCard";
@@ -32,8 +32,33 @@ const Mappings = () => {
 
   const history = useHistory();
   const [simulation, setSimulation] = useState(false);
+  const [network, setNetwork] = useState(null);
+
+  const handleZoomIn = () => {
+    network.moveTo({
+      scale: network.getScale() + 0.2,
+      animation: {
+        duration: 300,
+        easingFunction: "easeInOutQuad",
+      },
+    });
+  };
+
+  const handleZoomOut = () => {
+    network.moveTo({
+      scale: network.getScale() - 0.2,
+      animation: {
+        duration: 300,
+        easingFunction: "easeInOutQuad",
+      },
+    });
+  };
 
   const options = {
+    interaction: {
+      zoomView: true,
+    },
+    autoResize: true,
     edges: {
       color: "#000000",
       arrows: {
@@ -55,6 +80,18 @@ const Mappings = () => {
       },
     },
   };
+
+  const graph = useMemo(
+    () => (
+      <Graph
+        key={uuidv4()}
+        graph={graphToShow}
+        options={options}
+        getNetwork={(network) => setNetwork(network)}
+      />
+    ),
+    [graphToShow]
+  );
 
   if (!token) history.push("/login");
 
@@ -106,7 +143,13 @@ const Mappings = () => {
             </SpinnerContainer>
           ) : (
             graphToShow && (
-              <Graph key={uuidv4()} graph={graphToShow} options={options} />
+              <>
+                {graph}
+                <ZoomContainer>
+                  <ZoomInButton onClick={handleZoomIn}>+</ZoomInButton>
+                  <ZoomOutButton onClick={handleZoomOut}>-</ZoomOutButton>
+                </ZoomContainer>
+              </>
             )
           )}
         </Container>
@@ -152,6 +195,53 @@ export const Cross = styled.span`
   cursor: pointer;
   right: 10px;
   z-index: 10001;
+`;
+
+export const ZoomContainer = styled.div`
+  padding: 10px;
+  position: absolute;
+  cursor: pointer;
+  bottom: 62px;
+  right: 10px;
+  flex-direction: column;
+  display: flex;
+  z-index: 10001;
+`;
+
+export const ZoomInButton = styled.button`
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10001;
+  margin-bottom: 10px;
+  background-color: white;
+  border-radius: 8px;
+  border-width: 0;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  touch-action: manipulation;
+  border: 1px solid #004a82;
+  color: #004a82;
+`;
+
+export const ZoomOutButton = styled.button`
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10001;
+  margin-bottom: 10px;
+  background-color: white;
+  border-radius: 8px;
+  border-width: 0;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  touch-action: manipulation;
+  border: 1px solid #004a82;
+  color: #004a82;
 `;
 
 const ToggleButton = styled.button`

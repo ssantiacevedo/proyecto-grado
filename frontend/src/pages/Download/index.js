@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import styled from "styled-components";
 import DownloadPage from "../../components/DownloadPage";
 import Spinner from "../../components/Spinner";
 import DownloadCard from "../../components/DownloadCard";
@@ -18,6 +19,7 @@ import GraphReference from "./GraphReference";
 const Download = () => {
   const { loadingOntology, token, graph, file } = useDataContext();
   const [simulation, setSimulation] = useState(false);
+  const [network, setNetwork] = useState(null);
   const history = useHistory();
 
   if (!token) history.push("/login");
@@ -30,6 +32,26 @@ const Download = () => {
     document.body.appendChild(link);
     link.click();
     link.remove();
+  };
+
+  const handleZoomIn = () => {
+    network.moveTo({
+      scale: network.getScale() + 0.2,
+      animation: {
+        duration: 300,
+        easingFunction: "easeInOutQuad",
+      },
+    });
+  };
+
+  const handleZoomOut = () => {
+    network.moveTo({
+      scale: network.getScale() - 0.2,
+      animation: {
+        duration: 300,
+        easingFunction: "easeInOutQuad",
+      },
+    });
   };
 
   const graphToShow = graph
@@ -61,6 +83,18 @@ const Download = () => {
       },
     },
   };
+
+  const graphComponent = useMemo(
+    () => (
+      <Graph
+        key={uuidv4()}
+        graph={graphToShow}
+        options={options}
+        getNetwork={(network) => setNetwork(network)}
+      />
+    ),
+    [graph]
+  );
 
   return (
     <DownloadPage>
@@ -94,7 +128,11 @@ const Download = () => {
       ) : (
         graphToShow && (
           <>
-            <Graph key={uuidv4()} graph={graphToShow} options={options} />
+            {graphComponent}
+            <ZoomContainer>
+              <ZoomInButton onClick={handleZoomIn}>+</ZoomInButton>
+              <ZoomOutButton onClick={handleZoomOut}>-</ZoomOutButton>
+            </ZoomContainer>
           </>
         )
       )}
@@ -103,3 +141,50 @@ const Download = () => {
 };
 
 export default Download;
+
+export const ZoomContainer = styled.div`
+  padding: 10px;
+  position: absolute;
+  cursor: pointer;
+  bottom: 62px;
+  right: 10px;
+  flex-direction: column;
+  display: flex;
+  z-index: 10001;
+`;
+
+export const ZoomInButton = styled.button`
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10001;
+  margin-bottom: 10px;
+  background-color: white;
+  border-radius: 8px;
+  border-width: 0;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  touch-action: manipulation;
+  border: 1px solid #004a82;
+  color: #004a82;
+`;
+
+export const ZoomOutButton = styled.button`
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10001;
+  margin-bottom: 10px;
+  background-color: white;
+  border-radius: 8px;
+  border-width: 0;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  touch-action: manipulation;
+  border: 1px solid #004a82;
+  color: #004a82;
+`;
