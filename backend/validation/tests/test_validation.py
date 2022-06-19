@@ -182,7 +182,7 @@ class ValidationTests(TestCase):
         }
 
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
-        error_msg = constants.NOT_RANGE_MAPPED.format('has_topping', 'The possible is: Topping', '6')
+        error_msg = constants.NOT_RANGE_MAPPED.format('has_topping', 'The possible is: Topping', '5')
         
         self.assertEqual(res.data['errors'][0], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
@@ -199,7 +199,7 @@ class ValidationTests(TestCase):
         }
 
         res = self.client.post(VALIDATION_URL, json.dumps(payload), content_type='application/json')
-        error_msg = constants.NOT_DOMAIN_MAPPED.format('has_topping', 'The possible is: Pizza', '6')
+        error_msg = constants.NOT_DOMAIN_MAPPED.format('has_topping', 'The possible is: Pizza', '5')
         
         self.assertEqual(res.data['errors'][0], error_msg)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

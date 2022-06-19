@@ -153,12 +153,12 @@ class ValidationView(views.APIView):
                             errors.append(constants.NOT_DOMAIN_MAPPED.format(
                                     onto_elem['name'], 
                                     iri_list_to_name(ontos_object_properties[onto_elem['iri']]['domain']), 
-                                    '6'))
+                                    '5'))
                         if not is_mapped_range:
                             errors.append(constants.NOT_RANGE_MAPPED.format(
                                     onto_elem['name'], 
                                     iri_list_to_name(ontos_object_properties[onto_elem['iri']]['range']), 
-                                    '6'))
+                                    '5'))
 
 
                 else:
