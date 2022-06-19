@@ -93,7 +93,7 @@ const Download = () => {
         getNetwork={(network) => setNetwork(network)}
       />
     ),
-    [graph]
+    [graph, simulation]
   );
 
   return (

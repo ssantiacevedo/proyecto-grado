@@ -90,7 +90,7 @@ const Mappings = () => {
         getNetwork={(network) => setNetwork(network)}
       />
     ),
-    [graphToShow]
+    [graphToShow, simulation]
   );
 
   if (!token) history.push("/login");

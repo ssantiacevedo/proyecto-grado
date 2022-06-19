@@ -11,9 +11,9 @@ def split_name(iri):
     return iri.split('#')[-1]
 
 def iri_list_to_name(iri_list):
-    if len(list(map(split_name, iri_list))) > 1:
-        return 'The possible ones are: ' + ', '.join(list(map(split_name, iri_list)))
-    return 'The possible is: ' + ', '.join(list(map(split_name, iri_list)))
+    if len(list(dict.fromkeys(list(map(split_name, iri_list))))) > 1:
+        return 'The possible ones are: ' + ', '.join(list(dict.fromkeys(list(map(split_name, iri_list)))))
+    return 'The possible is: ' + ', '.join(list(dict.fromkeys(list(map(split_name, iri_list)))))
 
 class ValidationView(views.APIView):
 

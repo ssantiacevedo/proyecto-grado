@@ -63,8 +63,9 @@ const DBDisplay = ({ data, loading }) => {
 
   return (
     <>
+      <div ref={setReferenceElement} style={{ visibility: "hidden" }} />
       <DBDataDisplayContainer>
-        <Text ref={setReferenceElement}>Your DB Elements</Text>
+        <Text>Your DB Elements</Text>
         {loading ? (
           <SpinnerContainer>
             <Spinner />
