@@ -43,7 +43,7 @@ const Header = () => {
           <Rule>
             <span>Rule #2:</span>
             <RuleDescription>
-              Database Bridge Table to Object Properties
+              Associative Table to Object Properties
             </RuleDescription>
             <RuleDescription>
               You need to map at least one element from the Object Property
@@ -64,12 +64,6 @@ const Header = () => {
           </Rule>
           <Rule>
             <span>Rule #5:</span>
-            <RuleDescription>
-              Database Columns (No FK) to OWL Ontologies
-            </RuleDescription>
-          </Rule>
-          <Rule>
-            <span>Rule #6:</span>
             <RuleDescription>
               Database Columns (FK) to Object Properties
             </RuleDescription>
