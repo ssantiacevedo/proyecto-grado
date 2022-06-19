@@ -102,7 +102,7 @@ def onto_graph_generator(ontology_elements, map_proccess):
             # Check if the class has equivalent elements
             if (len(class_node['equivalent_to']) > 0):
                 from_iri = class_node['iri']
-                to_iri = class_node['equivalent_to'][0].iri
+                to_iri = class_node['equivalent_to'][0]
                 node_pair_key = from_iri+to_iri if from_iri <= to_iri else to_iri+from_iri
 
                 if not node_pair_key in current_edges_per_node:
